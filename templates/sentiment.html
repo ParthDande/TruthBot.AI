@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Analysis - FakeCheck.AI</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #10B981;
+            --secondary-color: #059669;
+            --background-color: #F3F4F6;
+            --text-color: #1F2937;
+            --card-bg: #FFFFFF;
+            --positive-color: #32CD32;
+            --negative-color: #FF4500;
+            --neutral-color: #FFA500;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+        .container {
+            width: 90%;
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        /* Header Styles */
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            color: white;
+            text-decoration: none;
+        }
+        .logo i {
+            margin-right: 0.5rem;
+        }
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        .nav-links a:hover {
+            color: #E5E7EB;
+        }
+        /* Existing styles */
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+        }
+        form {
+            margin-bottom: 2rem;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            margin-left: -10px;
+            background-color: var(--card-bg);
+            border: none;
+            border-radius: 5px;
+            color: var(--text-color);
+            font-size: 1rem;
+        }
+        @keyframes comicPop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        input[type="submit"] {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        input[type="submit"]:hover {
+            background-color: var(--secondary-color);
+            animation: comicPop 0.3s ease-in-out;
+        }
+        .result {
+            background-color: var(--card-bg);
+            border-left: 6px solid var(--positive-color);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 5px;
+            display: none;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 2rem;
+        }
+        .loading-bar {
+            width: 0;
+            height: 4px;
+            background-color: var(--positive-color);
+            transition: width 0.5s;
+        }
+        .report-card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 2rem;
+            margin-top: 2rem;
+            box-shadow: 0 0 10px rgba(0,255,0,0.2);
+            display: none;
+        }
+        .sentiment-meter {
+            width: 100%;
+            height: 20px;
+            background-color: #555;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 1rem;
+            border: 2px solid #000;
+        }
+        .sentiment-value {
+            height: 100%;
+            width: 50%;
+            background-color: var(--positive-color);
+            transition: width 1s;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 2rem;
+            color: var(--card-bg);
+        }
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            .container {
+                width: 95%;
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="/" class="logo">
+                <i class="fas fa-shield-alt"></i>
+                FakeCheck.AI
+            </a>
+            <div class="nav-links">
+                <a href="/"><i class="fas fa-shield-alt"></i> Fake News Detection</a>
+                <a href="/summarization"><i class="fas fa-file-alt"></i> Text Summarizer</a>
+                <a href="/sentiment"><i class="fas fa-chart-bar"></i> Credibility Check</a>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        <h1>Text Sentiment Analysis</h1>
+        <form id="sentiment-form" method="POST">
+            <input type="text" id="user_input" name="user_input" placeholder="Enter your text here..." required>
+            <input type="submit" value="Analyze Sentiment">
+        </form>
+        <div class="loading">
+            <p>Analyzing sentiment...</p>
+            <div class="loading-bar"></div>
+        </div>
+        <div class="report-card">
+            <h2>Sentiment Analysis Report</h2>
+            <p><strong>Input Text:</strong> <span id="input-text"></span></p>
+            <p><strong>Sentiment:</strong> <span id="sentiment-result"></span></p>
+            <div class="sentiment-meter">
+                <div class="sentiment-value"></div>
+            </div>
+            <p><strong>Confidence:</strong> <span id="confidence"></span></p>
+        </div>
+        <div class="footer">
+            <p>Powered by FakeCheckAI 2024</p>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function() {
+            $('#sentiment-form').on('submit', function(e) {
+                e.preventDefault();
+                $('.report-card').hide();
+                $('.loading').show();
+                $('.loading-bar').css('width', '0%');
+                
+                var progress = 0;
+                var interval = setInterval(function() {
+                    progress += 5;
+                    $('.loading-bar').css('width', progress + '%');
+                    if (progress >= 100) {
+                        clearInterval(interval);
+                    }
+                }, 50);
+                
+                $.ajax({
+                    url: '/sentiment',
+                    method: 'POST',
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        setTimeout(function() {
+                            $('.loading').hide();
+                            $('#input-text').text(response.text);
+                            $('#sentiment-result').text(response.sentiment);
+                            $('#confidence').text(response.confidence + '%');
+                            $('.sentiment-value').css('width', response.confidence + '%');
+                            if (response.sentiment === 'Positive') {
+                                $('.sentiment-value').css('background-color', 'var(--positive-color)');
+                            } else if (response.sentiment === 'Negative') {
+                                $('.sentiment-value').css('background-color', 'var(--negative-color)');
+                            } else {
+                                $('.sentiment-value').css('background-color', 'var(--neutral-color)');
+                            }
+                            $('.report-card').fadeIn();
+                        }, 500);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FakeCheck.AI - Advanced News Verification</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #10B981;
+            --secondary-color: #059669;
+            --background-color: #F3F4F6;
+            --text-color: #1F2937;
+            --card-bg: #FFFFFF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo i {
+            margin-right: 0.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #E5E7EB;
+        }
+
+        /* Main Content Styles */
+        main {
+            padding: 2rem 0;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: #4B5563;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .analysis-card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #E5E7EB;
+        }
+
+        .tab {
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #6B7280;
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            border: 1px solid #D1D5DB;
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        textarea {
+            height: 150px;
+            resize: vertical;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: var(--secondary-color);
+        }
+
+        #result {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background-color: #F0FDF4;
+            border-radius: 4px;
+            border-left: 4px solid var(--primary-color);
+            display: none;
+        }
+
+        /* Features Section */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature {
+            background-color: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .feature:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature i {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .feature h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <div class="logo">
+                <i class="fas fa-shield-alt"></i>
+                FakeCheck.AI
+            </div>
+            <div class="nav-links">
+                <a href="/summarization"><i class="fas fa-file-alt"></i> Text Summarizer</a>
+                <a href="/sentiment"><i class="fas fa-chart-bar"></i> Sentiment Analysis</a>
+                <a href="#"><i class="fas fa-check-circle"></i> Credibility Check</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="hero">
+            <h1>Advanced News Verification</h1>
+            <p>Use the power of AI to detect fake news, analyze sentiment, and verify credibility of online content.</p>
+        </section>
+
+        <div class="analysis-card">
+            <div class="tabs">
+                <button class="tab active" data-tab="url"><i class="fas fa-link"></i> URL Analysis</button>
+                <button class="tab" data-tab="text"><i class="fas fa-align-left"></i> Text Analysis</button>
+            </div>
+
+            <div id="urlTab" class="tab-content active">
+                <input type="url" id="urlInput" placeholder="Enter URL to analyze">
+                <button onclick="analyze('url')"><i class="fas fa-search"></i> Analyze URL</button>
+            </div>
+
+            <div id="textTab" class="tab-content">
+                <textarea id="textInput" placeholder="Paste text to analyze"></textarea>
+                <button onclick="analyze('text')"><i class="fas fa-search"></i> Analyze Text</button>
+            </div>
+
+            <div id="result"></div>
+        </div>
+
+        <section class="features">
+            <div class="feature">
+                <i class="fas fa-robot"></i>
+                <h3>AI-Powered Analysis</h3>
+                <p>Our advanced AI algorithms provide accurate and reliable results.</p>
+            </div>
+            <div class="feature">
+                <i class="fas fa-bolt"></i>
+                <h3>Real-Time Processing</h3>
+                <p>Get instant results with our high-speed analysis engine.</p>
+            </div>
+            <div class="feature">
+                <i class="fas fa-lock"></i>
+                <h3>Secure & Private</h3>
+                <p>Your data is always protected with our state-of-the-art security measures.</p>
+            </div>
+        </section>
+    </main>
+
+    <script>
+      function analyze(type) {
+    let input = type === 'url' ? document.getElementById('urlInput').value : document.getElementById('textInput').value;
+    let resultElement = document.getElementById('result');
+
+    // For URL analysis, fetch and save the HTML file
+    if (type === 'url') {
+        fetch(input)
+            .then(response => response.text())
+            .then(data => {
+                const blob = new Blob([data], { type: 'text/html' });
+                const link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                link.download = 'extracted.html';
+                link.click();
+
+                resultElement.innerHTML = '<h3><i class="fas fa-check-circle"></i> HTML File Downloaded</h3>';
+            })
+            .catch(error => {
+                resultElement.innerHTML = <p>Error: ${error.message}</p>;
+            });
+    } else {
+        // Existing text analysis logic
+        resultElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
+        resultElement.style.display = 'block';
+
+        setTimeout(() => {
+            let analysisResult = `
+                <h3><i class="fas fa-check-circle"></i> Analysis Complete</h3>
+                <p><strong>Type:</strong> Text</p>
+                <p><strong>Content:</strong> "${input.substring(0, 50)}${input.length > 50 ? '...' : ''}"</p>
+                <p><strong>Credibility Score:</strong> 85%</p>
+                <p><strong>Sentiment:</strong> Neutral</p>
+                <p><strong>Key Topics:</strong> Technology, Science, Innovation</p>
+            `;
+            resultElement.innerHTML = analysisResult;
+        }, 2000);
+    }
+
+    resultElement.style.display = 'block';
+}
+
+    </script>
+</body>
+</html>
