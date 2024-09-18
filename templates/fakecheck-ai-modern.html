@@ -135,7 +135,7 @@
             display: block;
         }
 
-        input, textarea {
+        #urlInput, #textInput {
             width: 100%;
             padding: 0.75rem;
             margin-bottom: 1rem;
@@ -145,14 +145,14 @@
             transition: border-color 0.3s ease;
         }
 
-        input:focus, textarea:focus {
-            outline: none;
-            border-color: var(--primary-color);
-        }
-
-        textarea {
+        #textInput {
             height: 150px;
             resize: vertical;
+        }
+
+        #urlInput:focus, #textInput:focus {
+            outline: none;
+            border-color: var(--primary-color);
         }
 
         button {
@@ -286,47 +286,40 @@
     </main>
 
     <script>
-      function analyze(type) {
-    let input = type === 'url' ? document.getElementById('urlInput').value : document.getElementById('textInput').value;
-    let resultElement = document.getElementById('result');
+        function switchTab(tabName) {
+            const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('.tab-content');
 
-    // For URL analysis, fetch and save the HTML file
-    if (type === 'url') {
-        fetch(input)
-            .then(response => response.text())
-            .then(data => {
-                const blob = new Blob([data], { type: 'text/html' });
-                const link = document.createElement('a');
-                link.href = window.URL.createObjectURL(blob);
-                link.download = 'extracted.html';
-                link.click();
+            tabs.forEach(tab => tab.classList.remove('active'));
+            tabContents.forEach(content => content.classList.remove('active'));
 
-                resultElement.innerHTML = '<h3><i class="fas fa-check-circle"></i> HTML File Downloaded</h3>';
-            })
-            .catch(error => {
-                resultElement.innerHTML = <p>Error: ${error.message}</p>;
+            const activeTab = document.querySelector(`[data-tab="${tabName}"]`);
+            const activeContent = document.getElementById(`${tabName}Tab`);
+
+            activeTab.classList.add('active');
+            activeContent.classList.add('active');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    switchTab(this.getAttribute('data-tab'));
+                });
             });
-    } else {
-        // Existing text analysis logic
-        resultElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
-        resultElement.style.display = 'block';
+        });
 
-        setTimeout(() => {
-            let analysisResult = `
-                <h3><i class="fas fa-check-circle"></i> Analysis Complete</h3>
-                <p><strong>Type:</strong> Text</p>
-                <p><strong>Content:</strong> "${input.substring(0, 50)}${input.length > 50 ? '...' : ''}"</p>
-                <p><strong>Credibility Score:</strong> 85%</p>
-                <p><strong>Sentiment:</strong> Neutral</p>
-                <p><strong>Key Topics:</strong> Technology, Science, Innovation</p>
-            `;
-            resultElement.innerHTML = analysisResult;
-        }, 2000);
-    }
+        function analyze(type) {
+            let input = type === 'url' ? document.getElementById('urlInput').value : document.getElementById('textInput').value;
+            let resultElement = document.getElementById('result');
 
-    resultElement.style.display = 'block';
-}
+            resultElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
+            resultElement.style.display = 'block';
 
+            // Simulating analysis process
+            setTimeout(() => {
+                resultElement.innerHTML = 'Analysis complete. Results would be displayed here.';
+            }, 2000);
+        }
     </script>
 </body>
 </html>
