@@ -7,6 +7,7 @@ import random
 from news_analysis import TextAnalysis
 from transformers import pipeline
 nltk.download('vader_lexicon')
+
 @app.route("/") 
 def home(): 
 
@@ -25,11 +26,11 @@ def news_sentiment_analysis():
             'confidence': round(confidence, 2)})
     
     return render_template('sentiment.html')
+summarizer = pipeline("summarization", model="sshleifer/distilbart-cnn-6-6")
 
 @app.route('/summarization', methods=['GET', 'POST'])
 def news_summarization():
         if request.method == "POST":
-                summarizer = pipeline("summarization",model="sshleifer/distilbart-cnn-6-6")
                 text = request.form["text"]
                 max_length = int(request.form["max_length"])
                 summary = summarizer(text, max_length=max_length, min_length=30, do_sample=False)[0]['summary_text']
