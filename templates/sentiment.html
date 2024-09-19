@@ -243,13 +243,29 @@
                             $('#sentiment-result').text(response.sentiment);
                             $('#confidence').text(response.confidence + '%');
                             $('.sentiment-value').css('width', response.confidence + '%');
-                            if (response.sentiment === 'Positive') {
-                                $('.sentiment-value').css('background-color', 'var(--positive-color)');
-                            } else if (response.sentiment === 'Negative') {
-                                $('.sentiment-value').css('background-color', 'var(--negative-color)');
-                            } else {
-                                $('.sentiment-value').css('background-color', 'var(--neutral-color)');
+                            
+                            // Map the sentiment to appropriate colors and labels
+                            var sentimentColor, sentimentLabel;
+                            switch(response.sentiment.toLowerCase()) {
+                                case 'positive':
+                                    sentimentColor = 'var(--positive-color)';
+                                    sentimentLabel = 'Positive';
+                                    break;
+                                case 'negative':
+                                    sentimentColor = 'var(--negative-color)';
+                                    sentimentLabel = 'Negative';
+                                    break;
+                                case 'neutral':
+                                    sentimentColor = 'var(--neutral-color)';
+                                    sentimentLabel = 'Neutral';
+                                    break;
+                                default:
+                                    sentimentColor = 'var(--neutral-color)';
+                                    sentimentLabel = 'Unknown';
                             }
+                            
+                            $('.sentiment-value').css('background-color', sentimentColor);
+                            $('#sentiment-result').text(sentimentLabel);
                             $('.report-card').fadeIn();
                         }, 500);
                     }
