@@ -1,10 +1,9 @@
-from flask import Flask, request, render_template, jsonify
+
 import nltk
 from nltk.sentiment import SentimentIntensityAnalyzer
 import time
 import random
 from transformers import pipeline
-
 class TextAnalysis:
     def __init__(self):
         self.sia = SentimentIntensityAnalyzer()

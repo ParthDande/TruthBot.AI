@@ -19,7 +19,7 @@ obj = TextAnalysis()
 
 
 
-summarizer = pipeline("summarization", model="t5-small", framework="tf")
+summarizer = pipeline("summarization", model="t5-small")
 
 @app.route("/")
 def home():
