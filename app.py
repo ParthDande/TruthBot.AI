@@ -29,7 +29,7 @@ def news_sentiment_analysis():
 @app.route('/summarization', methods=['GET', 'POST'])
 def news_summarization():
         if request.method == "POST":
-                summarizer = pipeline("summarization")
+                summarizer = pipeline("summarization",model="sshleifer/distilbart-cnn-6-6")
                 text = request.form["text"]
                 max_length = int(request.form["max_length"])
                 summary = summarizer(text, max_length=max_length, min_length=30, do_sample=False)[0]['summary_text']
