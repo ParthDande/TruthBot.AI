@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template,jsonify 
+from flask import Flask, request, render_template, jsonify 
 app = Flask(__name__)
 import nltk
 from nltk.sentiment import SentimentIntensityAnalyzer
@@ -6,8 +6,10 @@ import time
 import random
 from news_analysis import TextAnalysis
 from transformers import pipeline
+
 @app.route("/") 
 def home(): 
+
     return render_template('fakecheck-ai-modern.html')
 #if we run this file directly then the __name__ variable will be __main__ 
 
@@ -36,6 +38,11 @@ def news_summarization():
                 else:
                         return render_template("summarization.html", summary=summary)
         return render_template("summarization.html", summary="")
-if __name__ == "__main__": 
+
+@app.route('/plagiarism')
+def news_plagiarism_check():
+    return render_template('plagiarism.html')
+
+if __name__ == '__main__':
     obj = TextAnalysis()
-    app.run(host='0.0.0.0', port=5000,debug =True)
+    app.run(host='0.0.0.0', port=5000,debug=True)

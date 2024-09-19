@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FakeCheck.AI - Advanced Plagiarism Detection</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #10B981;
+            --secondary-color: #059669;
+            --background-color: #F3F4F6;
+            --text-color: #1F2937;
+            --card-bg: #FFFFFF;
+            --positive-color: #32CD32;
+            --negative-color: #FF4500;
+            --neutral-color: #FFA500;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            color: white;
+            text-decoration: none;
+        }
+
+        .logo i {
+            margin-right: 0.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #E5E7EB;
+        }
+
+        /* Main Content Styles */
+        main {
+            padding: 2rem 0;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: #4B5563;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .analysis-card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #E5E7EB;
+        }
+
+        .tab {
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #6B7280;
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            border-bottom: 2px solid var(--background-color);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        #textInput, #fileInput {
+            width: 100%;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            border: 1px solid #D1D5DB;
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        #textInput {
+            height: 200px;
+            resize: vertical;
+        }
+
+        #textInput:focus, #fileInput:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+
+            color: var(--background-color);
+            background-color: var(--secondary-color);
+        }
+
+        #result {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background-color: #EEF2FF;
+            border-radius: 4px;
+            border-left: 4px solid var(--primary-color);
+            display: none;
+        }
+
+        /* Features Section */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature {
+            background-color: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .feature:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature i {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .feature h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="/" class="logo">
+                <i class="fas fa-shield-alt"></i>
+                FakeCheck.AI
+            </a>
+            <div class="nav-links">
+                <a href="/"><i class="fas fa-shield-alt"></i> FakeCheck</a>
+                <a href="/summarization"><i class="fas fa-file-alt"></i> Text Summarizer</a>
+                <a href="/sentiment"><i class="fas fa-smile"></i> Sentiment Analysis</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="hero">
+            <h1>Advanced Plagiarism Detection</h1>
+            <p>Use the power of AI to detect plagiarism and ensure the originality of your content.</p>
+        </section>
+
+        <div class="analysis-card">
+            <div class="tabs">
+                <button class="tab active" data-tab="text"><i class="fas fa-align-left"></i> Text Check</button>
+                <button class="tab" data-tab="file"><i class="fas fa-file-upload"></i> File Upload</button>
+            </div>
+
+            <div id="textTab" class="tab-content active">
+                <textarea id="textInput" placeholder="Paste your text here to check for plagiarism"></textarea>
+                <button onclick="analyzePlagiarism('text')"><i class="fas fa-search"></i> Check for Plagiarism</button>
+            </div>
+
+            <div id="fileTab" class="tab-content">
+                <input type="file" id="fileInput" accept=".txt,.doc,.docx,.pdf">
+                <button onclick="analyzePlagiarism('file')"><i class="fas fa-upload"></i> Upload and Check</button>
+            </div>
+
+            <div id="result"></div>
+        </div>
+
+        <section class="features">
+            <div class="feature">
+                <i class="fas fa-robot"></i>
+                <h3>AI-Powered Analysis</h3>
+                <p>Our advanced AI algorithms provide accurate and reliable plagiarism detection.</p>
+            </div>
+            <div class="feature">
+                <i class="fas fa-bolt"></i>
+                <h3>Real-Time Processing</h3>
+                <p>Get instant results with our high-speed plagiarism checking engine.</p>
+            </div>
+            <div class="feature">
+                <i class="fas fa-lock"></i>
+                <h3>Secure & Private</h3>
+                <p>Your content is always protected with our state-of-the-art security measures.</p>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        function switchTab(tabName) {
+            const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabs.forEach(tab => tab.classList.remove('active'));
+            tabContents.forEach(content => content.classList.remove('active'));
+
+            const activeTab = document.querySelector(`[data-tab="${tabName}"]`);
+            const activeContent = document.getElementById(`${tabName}Tab`);
+
+            activeTab.classList.add('active');
+            activeContent.classList.add('active');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    switchTab(this.getAttribute('data-tab'));
+                });
+            });
+        });
+
+        function analyzePlagiarism(type) {
+            let input = type === 'text' ? document.getElementById('textInput').value : document.getElementById('fileInput').value;
+            let resultElement = document.getElementById('result');
+
+            if (!input) {
+                alert("Please enter text or select a file to check for plagiarism.");
+                return;
+            }
+
+            resultElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing for plagiarism...';
+            resultElement.style.display = 'block';
+
+            // Simulating plagiarism check process
+            setTimeout(() => {
+                let plagiarismScore = Math.floor(Math.random() * 100);
+                let resultHTML = `
+                    <h3><i class="fas fa-check-circle"></i> Plagiarism Check Complete</h3>
+                    <p><strong>Originality Score:</strong> ${100 - plagiarismScore}%</p>
+                    <p><strong>Plagiarism Detected:</strong> ${plagiarismScore}%</p>
+                    <p>Detailed report would be available here in a real implementation.</p>
+                `;
+                resultElement.innerHTML = resultHTML;
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
