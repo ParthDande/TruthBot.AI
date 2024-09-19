@@ -16,7 +16,10 @@ nltk.download('vader_lexicon')
 obj = TextAnalysis()
 
 # Summarization pipeline
-summarizer = pipeline("summarization", model="sshleifer/distilbart-cnn-6-6")
+
+
+
+summarizer = pipeline("summarization", model="t5-small", framework="tf")
 
 @app.route("/")
 def home():
