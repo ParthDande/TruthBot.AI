@@ -1,21 +1,39 @@
-from flask import Flask, render_template, request, jsonify
-from transformers import pipeline
+from flask import Flask, request, render_template, jsonify
+import requests
 
 app = Flask(__name__)
 
-# Initialize the summarization pipeline
-summarizer = pipeline("summarization")
+# Hugging Face API URL for summarization
+API_URL = "https://api-inference.huggingface.co/models/facebook/bart-large-cnn"
+headers = {"Authorization": "Bearer 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"}
 
-@app.route("/", methods=["GET", "POST"])
+def query(payload):
+    response = requests.post(API_URL, headers=headers, json=payload)
+    return response.json()
+
+@app.route("/summarization", methods=["GET", "POST"])
 def index():
     if request.method == "POST":
         text = request.form["text"]
         max_length = int(request.form["max_length"])
-        summary = summarizer(text, max_length=max_length, min_length=30, do_sample=False)[0]['summary_text']
+        min_length = 10  
+
+        result = query({
+            "inputs": text,
+            "parameters": {
+                "max_length": max_length,
+                "min_length": min_length
+            }
+        })
+
+        # Extract the summary text from the response
+        summary = result[0]['summary_text']
+
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             return jsonify({'summary': summary})
         else:
             return render_template("summarization.html", summary=summary)
+
     return render_template("summarization.html", summary="")
 
 if __name__ == "__main__":

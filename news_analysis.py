@@ -1,20 +1,19 @@
-
-import nltk
-from nltk.sentiment import SentimentIntensityAnalyzer
 import time
 import random
-from transformers import pipeline
+from huggingface_hub import InferenceClient
+
 class TextAnalysis:
     def __init__(self):
-        self.sia = SentimentIntensityAnalyzer()
-    
+            self.client = InferenceClient(
+            model="cardiffnlp/twitter-roberta-base-sentiment-latest",
+            token="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"
+        )
+
     def analyze_sentiment(self, text):
-        sentiment_scores = self.sia.polarity_scores(text)
-        compound_score = sentiment_scores['compound']
-        
-        if compound_score >= 0.05:
-            return "Positive", abs(compound_score) * 100
-        elif compound_score <= -0.05:
-            return "Negative", abs(compound_score) * 100
-        else:
-            return "Neutral", (1 - abs(compound_score)) * 100
+        result = self.client.text_classification(text)
+
+        # Extract sentiment and score with the highest score
+        sentiment = result[0]['label']
+        score = result[0]['score']
+        return sentiment,score
+
