@@ -1,4 +1,2 @@
-Flask==2.3.2
-transformers==4.35.1
-nltk==3.8.1
-torch
+flask
+huggingface_hub
