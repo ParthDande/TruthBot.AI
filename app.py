@@ -15,9 +15,6 @@ nltk.download('vader_lexicon')
 # Initialize Sentiment Analysis Object
 obj = TextAnalysis()
 
-# Global variable to store summarizer model
-summarizer = None
-
 @app.route("/")
 def home():
     return render_template('fakecheck-ai-modern.html')
@@ -40,9 +37,8 @@ def news_sentiment_analysis():
 
 @app.route('/summarization', methods=['GET', 'POST'])
 def news_summarization():
-    global summarizer
-    if summarizer is None:
-        summarizer = pipeline("summarization", model="t5-small")
+    
+    summarizer = pipeline("summarization")
     
     if request.method == "POST":
         text = request.form["text"]
