@@ -8,14 +8,14 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #10B981;
-            --secondary-color: #059669;
-            --background-color: #F3F4F6;
-            --text-color: #1F2937;
-            --card-bg: #FFFFFF;
-            --positive-color: #32CD32;
-            --negative-color: #FF4500;
-            --neutral-color: #FFA500;
+        --primary-color: #008CBA; /* Sea Blue */
+        --secondary-color: #00BFA5; /* Aqua Green */
+        --background-color: #F0F4F8; /* Light Sky Blue */
+        --text-color: #1B263B; /* Navy Blue */
+        --card-bg: #FFFFFF; /* White */
+        --positive-color: #32CD32;
+        --negative-color: #FF4500;
+        --neutral-color: #FFA500;
         }
         * {
             margin: 0;
@@ -187,13 +187,13 @@
             <div class="nav-links">
                 <a href="/"><i class="fas fa-shield-alt"></i> Fake News Detection</a>
                 <a href="/summarization"><i class="fas fa-file-alt"></i> Text Summarizer</a>
-                <a href="/sentiment"><i class="fas fa-chart-bar"></i> Credibility Check</a>
+                <a href="/plagiarism"><i class="fas fa-check-circle"></i> Plagiarism Check</a>
             </div>
         </nav>
     </header>
 
     <div class="container">
-        <h1>Text Sentiment Analysis</h1>
+        <h1>News Sentiment Analysis</h1>
         <form id="sentiment-form" method="POST">
             <input type="text" id="user_input" name="user_input" placeholder="Enter your text here..." required>
             <input type="submit" value="Analyze Sentiment">

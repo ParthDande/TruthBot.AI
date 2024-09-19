@@ -6,7 +6,7 @@ import time
 import random
 from news_analysis import TextAnalysis
 from transformers import pipeline
-
+nltk.download('vader_lexicon')
 @app.route("/") 
 def home(): 
 
