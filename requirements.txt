@@ -1,10 +1,7 @@
 Flask==2.3.2
 transformers==4.35.1
 nltk==3.8.1
+torch
 tensorflow==2.15.0
 tf-keras
-<<<<<<< Updated upstream
-torch
-=======
-torch
->>>>>>> Stashed changes
+
