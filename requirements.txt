@@ -1,5 +1,4 @@
 Flask==2.3.2
 transformers==4.35.1
 nltk==3.8.1
-tensorflow
-tf-keras
+torch
