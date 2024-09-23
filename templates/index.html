@@ -3,47 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Text Analysis - FakeCheck.AI</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <title>FakeCheck.AI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root {
-        --primary-color: #008CBA; /* Sea Blue */
-        --secondary-color: #00BFA5; /* Aqua Green */
-        --background-color: #F0F4F8; /* Light Sky Blue */
-        --text-color: #1B263B; /* Navy Blue */
-        --card-bg: #FFFFFF; /* White */
-        --positive-color: #32CD32;
-        --negative-color: #FF4500;
-        --neutral-color: #FFA500;
+            --primary-color: #008CBA; /* Sea Blue */
+            --secondary-color: #00BFA5; /* Aqua Green */
+            --background-color: #F0F4F8; /* Light Sky Blue */
+            --text-color: #ffffff; /* White text color */
         }
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            background-color: var(--background-color);
-            color: var(--text-color);
-        }
-        .container {
-            width: 90%;
-            max-width: 800px;
-            margin: 2rem auto;
-            padding: 2rem;
-            background-color: var(--card-bg);
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        /* Header Styles */
+
+        /* Navbar Styling */
         header {
             background-color: var(--primary-color);
             color: white;
-            padding: 1rem 0;
+            padding: 0.75rem 0; /* Adjusted padding for consistency */
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
+
         nav {
             display: flex;
             justify-content: space-between;
@@ -52,225 +30,186 @@
             max-width: 1200px;
             margin: 0 auto;
         }
+
         .logo {
-            font-size: 1.5rem;
+            font-size: 1.5rem; /* Ensure this matches summarization.html */
             font-weight: bold;
             display: flex;
             align-items: center;
             color: white;
             text-decoration: none;
         }
+
         .logo i {
             margin-right: 0.5rem;
         }
+
         .nav-links {
             display: flex;
             gap: 1.5rem;
         }
+
         .nav-links a {
             color: white;
             text-decoration: none;
             font-weight: 500;
             transition: color 0.3s ease;
         }
+
         .nav-links a:hover {
             color: #E5E7EB;
         }
-        /* Existing styles */
-        h1 {
-            color: var(--primary-color);
-            text-align: center;
-            font-size: 2.5rem;
-            margin-bottom: 2rem;
+
+        /* Text Styling */
+        p {
+            font-weight: 500;
+            font-size: 1.125rem;
+            line-height: 1.75rem;
         }
-        form {
-            margin-bottom: 2rem;
+
+        .content-section h2, h3 {
+            font-weight: bold;
         }
-        input[type="text"] {
-            width: 100%;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            margin-left: -10px;
-            background-color: var(--card-bg);
-            border: none;
-            border-radius: 5px;
-            color: var(--text-color);
-            font-size: 1rem;
+
+        .content-section p {
+            color: #4a5568;
+            font-weight: 500;
         }
-        @keyframes comicPop {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-        input[type="submit"] {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 1rem 2rem;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: background-color 0.3s;
-            position: relative;
-            overflow: hidden;
-        }
-        input[type="submit"]:hover {
-            background-color: var(--secondary-color);
-            animation: comicPop 0.3s ease-in-out;
-        }
-        .result {
-            background-color: var(--card-bg);
-            border-left: 6px solid var(--positive-color);
-            padding: 1rem;
-            margin-bottom: 1rem;
-            border-radius: 5px;
-            display: none;
-        }
-        .loading {
-            display: none;
-            text-align: center;
-            margin-top: 2rem;
-        }
-        .loading-bar {
-            width: 0;
-            height: 4px;
-            background-color: var(--positive-color);
-            transition: width 0.5s;
-        }
-        .report-card {
-            background-color: var(--card-bg);
-            border-radius: 10px;
-            padding: 2rem;
-            margin-top: 2rem;
-            box-shadow: 0 0 10px rgba(0,255,0,0.2);
-            display: none;
-        }
-        .sentiment-meter {
-            width: 100%;
-            height: 20px;
-            background-color: #555;
-            border-radius: 10px;
-            overflow: hidden;
-            margin-top: 1rem;
-            border: 2px solid #000;
-        }
-        .sentiment-value {
-            height: 100%;
-            width: 50%;
-            background-color: var(--positive-color);
-            transition: width 1s;
-        }
-        .footer {
-            text-align: center;
-            margin-top: 2rem;
-            color: var(--card-bg);
-        }
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-            }
-            .container {
-                width: 95%;
-                padding: 1rem;
-            }
+
+        body {
+            background-color: var(--background-color);
         }
     </style>
 </head>
-<body>
+<body class="min-h-screen bg-gray-100">
+    <!-- Navbar -->
     <header>
-        <nav>
+        <nav class="flex justify-between items-center px-4 md:px-8 lg:px-16">
             <a href="/" class="logo">
                 <i class="fas fa-shield-alt"></i>
                 FakeCheck.AI
             </a>
-            <div class="nav-links">
-                <a href="/"><i class="fas fa-shield-alt"></i> Fake News Detection</a>
+            <div class="nav-links hidden md:flex">
+                <a href="/analyze"><i class="fas fa-search"></i> Fake Detection</a>
                 <a href="/summarization"><i class="fas fa-file-alt"></i> Text Summarizer</a>
+                <a href="/sentiment"><i class="fas fa-chart-bar"></i> Sentiment Analysis</a>
                 <a href="/plagiarism"><i class="fas fa-check-circle"></i> Plagiarism Check</a>
+            </div>
+            <div class="md:hidden">
+                <button id="menu-toggle" class="text-white focus:outline-none">
+                    <i class="fas fa-bars"></i>
+                </button>
             </div>
         </nav>
     </header>
 
-    <div class="container">
-        <h1>News Sentiment Analysis</h1>
-        <form id="sentiment-form" method="POST">
-            <input type="text" id="user_input" name="user_input" placeholder="Enter your text here..." required>
-            <input type="submit" value="Analyze Sentiment">
-        </form>
-        <div class="loading">
-            <p>Analyzing sentiment...</p>
-            <div class="loading-bar"></div>
-        </div>
-        <div class="report-card">
-            <h2>Sentiment Analysis Report</h2>
-            <p><strong>Input Text:</strong> <span id="input-text"></span></p>
-            <p><strong>Sentiment:</strong> <span id="sentiment-result"></span></p>
-            <div class="sentiment-meter">
-                <div class="sentiment-value"></div>
-            </div>
-            <p><strong>Confidence:</strong> <span id="confidence"></span></p>
-        </div>
-        <div class="footer">
-            <p>Powered by FakeCheckAI 2024</p>
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden md:hidden">
+        <div class="flex flex-col items-center bg-white shadow-lg">
+            <a href="/analyze" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Fake Detection</a>
+            <a href="/summarization" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Text Summarizer</a>
+            <a href="/sentiment" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Sentiment Analysis</a>
+            <a href="/plagiarism" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Plagiarism Check</a>
         </div>
     </div>
+
+    <!-- Home Section -->
+    <section id="home" class="min-h-screen pt-16 flex items-center">
+        <div class="container mx-auto px-4">
+            <div class="text-center">
+                <h2 class="text-4xl font-bold text-gray-800 mb-4">Welcome to FakeCheck.AI</h2>
+                <p class="text-xl text-gray-700 mb-8 font-medium">Your trusted source for content analysis and verification.</p>
+                <div class="bg-white p-6 rounded-lg shadow-md max-w-2xl mx-auto">
+                    <div class="w-full h-8 bg-gray-200 rounded mb-4"></div>
+                    <div class="w-3/4 h-4 bg-gray-200 rounded mb-4 mx-auto"></div>
+                </div>
+            </div>
+            <div class="text-center mt-12"> 
+                <i class="fas fa-chevron-down text-4xl text-gray-400 animate-bounce cursor-pointer" onclick="scrollToSection('about')"></i>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="min-h-screen bg-gray-200 py-16 content-section">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12">About Our Platform</h2>
+            <div class="flex flex-col md:flex-row items-center justify-between">
+                <div class="md:w-1/2 mb-8 md:mb-0">
+                    <img src="static/images/breathtaking_illustration_of_A (1).jpeg" alt="Content analysis illustration" class="rounded-lg shadow-md">
+                </div>
+                <div class="md:w-1/2 md:pl-8">
+                    <h3 class="text-2xl font-semibold mb-4">Our Mission</h3>
+                    <p class="text-gray-700 mb-4">
+                        At FakeCheck.AI, we're committed to providing cutting-edge tools for content analysis and verification. Our platform empowers users to detect fake news, summarize texts, analyze sentiment, and check for plagiarism.
+                    </p>
+                    <h3 class="text-2xl font-semibold mb-4">Our Approach</h3>
+                    <p class="text-gray-700 mb-4">
+                        We leverage advanced AI and machine learning techniques to deliver accurate and reliable results. Our goal is to promote information integrity and help users make informed decisions in the digital age.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reviews Section -->
+    <section id="reviews" class="min-h-screen py-16 bg-blue-50 content-section">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12">Meet the Team</h2>
+            <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-8">
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-user-circle text-4xl text-blue-500 mr-4"></i>
+                    <div>
+                        <h4 class="font-semibold text-lg" id="reviewName"></h4>
+                        <div class="flex">
+                            <span class="text-yellow-400"></span>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-gray-700 italic" id="reviewText"></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-4 text-center">
+            <p>&copy; 2024 FakeCheck.AI. All rights reserved.</p>
+        </div>
+    </footer>
+
     <script>
-        $(document).ready(function() {
-            $('#sentiment-form').on('submit', function(e) {
-                e.preventDefault();
-                $('.report-card').hide();
-                $('.loading').show();
-                $('.loading-bar').css('width', '0%');
-                
-                var progress = 0;
-                var interval = setInterval(function() {
-                    progress += 5;
-                    $('.loading-bar').css('width', progress + '%');
-                    if (progress >= 100) {
-                        clearInterval(interval);
-                    }
-                }, 50);
-                
-                $.ajax({
-                    url: '/sentiment',
-                    method: 'POST',
-                    data: $(this).serialize(),
-                    success: function(response) {
-                        setTimeout(function() {
-                            $('.loading').hide();
-                            $('#input-text').text(response.text);
-                            $('#sentiment-result').text(response.sentiment);
-                            $('#confidence').text(response.confidence + '%');
-                            $('.sentiment-value').css('width', response.confidence + '%');
-                            
-                            // Map the sentiment to appropriate colors and labels
-                            var sentimentColor, sentimentLabel;
-                            switch(response.sentiment.toLowerCase()) {
-                                case 'positive':
-                                    sentimentColor = 'var(--positive-color)';
-                                    sentimentLabel = 'Positive';
-                                    break;
-                                case 'negative':
-                                    sentimentColor = 'var(--negative-color)';
-                                    sentimentLabel = 'Negative';
-                                    break;
-                                case 'neutral':
-                                    sentimentColor = 'var(--neutral-color)';
-                                    sentimentLabel = 'Neutral';
-                                    break;
-                                default:
-                                    sentimentColor = 'var(--neutral-color)';
-                                    sentimentLabel = 'Unknown';
-                            }
-                            
-                            $('.sentiment-value').css('background-color', sentimentColor);
-                            $('#sentiment-result').text(sentimentLabel);
-                            $('.report-card').fadeIn();
-                        }, 500);
-                    }
-                });
-            });
+        // Scroll to section function
+        function scrollToSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            section.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Reviews carousel
+        const reviews = [
+            { name: "Parth Dande", text: "Hi I am Parth Dande and I love data science and machine learning." },
+            { name: "Pratik Bhatia", text: "Hi I am Pratik Bhatia and I love to design and develop new things." },
+            { name: "Shrinit Sandhan", text: "Hi I am Shrinit Sandhan and I like to analyze and evaluate data." },
+            { name: "Bhargav Joshi", text: "Hi I am Bhargav Joshi and I love to develop and learn new things." },
+        ];
+
+        let currentReview = 0;
+        const reviewName = document.getElementById('reviewName');
+        const reviewText = document.getElementById('reviewText');
+
+        function updateReview() {
+            reviewName.textContent = reviews[currentReview].name;
+            reviewText.textContent = '"' + reviews[currentReview].text + '"';
+            currentReview = (currentReview + 1) % reviews.length;
+        }
+
+        updateReview();
+        setInterval(updateReview, 5000);
+
+        // Mobile menu toggle
+        document.getElementById('menu-toggle').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
         });
     </script>
 </body>
