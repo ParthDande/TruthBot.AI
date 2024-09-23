@@ -15,13 +15,13 @@ def query(payload):
 def index():
     if request.method == "POST":
         text = request.form["text"]
-        max_length = int(request.form["max_length"])
-        min_length = 10  
-
+        input_length = len(text)
+        min_length = max(1, int(input_length * 0.1))
+        min_length = max(1, int(input_length * 0.05))
         result = query({
             "inputs": text,
             "parameters": {
-                "max_length": max_length,
+                "max_length": min_length,
                 "min_length": min_length
             }
         })
