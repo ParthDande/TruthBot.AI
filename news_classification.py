@@ -5,10 +5,9 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 import nltk
 import joblib
 
-#  NLTK data path and download necessary resources
-nltk.data.path.append('C:/Users/parth/Desktop/fake-news-classification/nltk_data')
-nltk.download('stopwords', download_dir='C:/Users/parth/Desktop/fake-news-classification/nltk_data')
-nltk.download('punkt', download_dir='C:/Users/parth/Desktop/fake-news-classification/nltk_data')
+
+nltk.download('stopwords')
+nltk.download('punkt')
 
 # stopwords
 stop_words = set(stopwords.words('english'))
