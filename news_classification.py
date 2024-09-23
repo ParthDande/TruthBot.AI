@@ -4,10 +4,8 @@ from nltk.corpus import stopwords
 from sklearn.feature_extraction.text import TfidfVectorizer
 import nltk
 import joblib
-nltk.download('stopwords', download_dir='nltk_data/')
+nltk.data.path.append('nltk_data/')
 
-nltk.download('punkt', download_dir='nltk_data/')  
-nltk.download('punkt_tab', download_dir = 'nltk_data/')
 # stopwords
 stop_words = set(stopwords.words('english'))
 
