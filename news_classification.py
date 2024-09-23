@@ -4,11 +4,10 @@ from nltk.corpus import stopwords
 from sklearn.feature_extraction.text import TfidfVectorizer
 import nltk
 import joblib
+nltk.download('stopwords', download_dir='nltk_data/')
 
-
-nltk.download('stopwords')
-nltk.download('punkt')
-
+nltk.download('punkt', download_dir='nltk_data/')  
+nltk.download('punkt_tab', download_dir = 'nltk_data/')
 # stopwords
 stop_words = set(stopwords.words('english'))
 
@@ -42,7 +41,7 @@ class FakeNewsClassifier:
 
 # Testing the model
 obj = FakeNewsClassifier()
-text_to_classify ="Angelina Jolie is going to be the next president of the United States"
+"""text_to_classify ="Angelina Jolie is going to be the next president of the United States"
 domain = "www.cnn.com"
 vectorized_text = obj.preprocess_custom_input(text_to_classify, domain)
-prediction, confidence = obj.fake_news_classifier(vectorized_text)
+prediction, confidence = obj.fake_news_classifier(vectorized_text)"""
