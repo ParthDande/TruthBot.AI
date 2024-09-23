@@ -7,12 +7,12 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
         :root {
-    --primary-color: #008CBA; /* Sea Blue */
-    --secondary-color: #00BFA5; /* Aqua Green */
-    --background-color: #F0F4F8; /* Light Sky Blue */
-    --text-color: #1B263B; /* Navy Blue */
-    --card-bg: #FFFFFF; /* White */
-}
+            --primary-color: #008CBA; /* Sea Blue */
+            --secondary-color: #00BFA5; /* Aqua Green */
+            --background-color: #F0F4F8; /* Light Sky Blue */
+            --text-color: #1B263B; /* Navy Blue */
+            --card-bg: #FFFFFF; /* White */
+        }
 
         * {
             margin: 0;
@@ -45,31 +45,31 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
         }
-
         .logo {
             font-size: 1.5rem;
             font-weight: bold;
             display: flex;
             align-items: center;
+            color: white;
+            text-decoration: none;
         }
-
         .logo i {
             margin-right: 0.5rem;
         }
-
         .nav-links {
             display: flex;
             gap: 1.5rem;
         }
-
         .nav-links a {
             color: white;
             text-decoration: none;
             font-weight: 500;
             transition: color 0.3s ease;
         }
-
         .nav-links a:hover {
             color: #E5E7EB;
         }
@@ -154,6 +154,22 @@
             border-color: var(--primary-color);
         }
 
+        #domainInput {
+            width: 100%;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            border: 1px solid #D1D5DB; /* Match existing input styles */
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+            background-color: var(--card-bg); /* Match card background */
+        }
+
+        #domainInput:focus {
+            outline: none;
+            border-color: var(--primary-color); /* Highlight on focus */
+        }
+
         button {
             background-color: var(--primary-color);
             color: white;
@@ -173,10 +189,62 @@
         #result {
             margin-top: 1.5rem;
             padding: 1.5rem;
-            background-color: #F0FDF4;
-            border-radius: 4px;
-            border-left: 4px solid var(--primary-color);
+            border-radius: 8px;
             display: none;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        #result.real {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+
+        #result.fake {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+
+        .result-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .result-text {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .confidence {
+            font-size: 1.2rem;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        .loader {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--primary-color);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         /* Features Section */
@@ -224,18 +292,111 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        .loading-bar {
+            width: 100%;
+            height: 5px;
+            background-color: #D1D5DB; /* Background color of the loading bar */
+            position: relative;
+            overflow: hidden;
+            display: none; /* Initially hidden */
+        }
+
+        .loading-bar .progress {
+            height: 100%;
+            background-color: var(--primary-color); /* Color of the loading progress */
+            width: 0; /* Start with 0 width */
+            animation: loading 2s linear infinite; /* Animation for loading effect */
+        }
+
+        @keyframes loading {
+            0% { width: 0; }
+            50% { width: 100%; }
+            100% { width: 0; }
+        }
+
+        /* New Loading Animation */
+        .loading-container {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            margin-top: 2rem;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(0, 140, 186, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Enhanced Result Styling */
+        #result {
+            margin-top: 2rem;
+            padding: 2rem;
+            border-radius: 12px;
+            display: none;
+            transition: all 0.3s ease;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        #result.real {
+            background-color: #e6f7ff;
+            border: 2px solid #91d5ff;
+        }
+
+        #result.fake {
+            background-color: #fff1f0;
+            border: 2px solid #ffa39e;
+        }
+
+        .result-icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .result-text {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .confidence {
+            font-size: 1.2rem;
+            color: #666;
+        }
+
+        .result-details {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e8e8e8;
+            font-size: 1rem;
+            color: #333;
+        }
+
+        /* Remove old loading bar styles */
+        .loading-bar, .loading-bar .progress {
+            display: none;
+        }
     </style>
 </head>
 <body>
     <header>
-        <nav class="container">
-            <div class="logo">
+        <nav>
+            <a href="/" class="logo">
                 <i class="fas fa-shield-alt"></i>
                 FakeCheck.AI
-            </div>
+            </a>
             <div class="nav-links">
+                <a href="/sentiment"><i class="fas fa-shield-alt"></i>Sentiment Analysis</a>
                 <a href="/summarization"><i class="fas fa-file-alt"></i> Text Summarizer</a>
-                <a href="/sentiment"><i class="fas fa-chart-bar"></i> Sentiment Analysis</a>
                 <a href="/plagiarism"><i class="fas fa-check-circle"></i> Plagiarism Check</a>
             </div>
         </nav>
@@ -249,21 +410,26 @@
 
         <div class="analysis-card">
             <div class="tabs">
-                <button class="tab active" data-tab="url"><i class="fas fa-link"></i> URL Analysis</button>
-                <button class="tab" data-tab="text"><i class="fas fa-align-left"></i> Text Analysis</button>
+                <!-- Removed URL Analysis Tab -->
+                <button class="tab active" data-tab="text"><i class="fas fa-align-left"></i> Text Analysis</button>
             </div>
 
-            <div id="urlTab" class="tab-content active">
-                <input type="url" id="urlInput" placeholder="Enter URL to analyze">
-                <button onclick="analyze('url')"><i class="fas fa-search"></i> Analyze URL</button>
+            <div id="textTab" class="tab-content active">
+                <textarea id="textInput" name="textInput" placeholder="Paste text to analyze"></textarea>
+                <input type="text" id="domainInput" name="domainInput" placeholder="Enter domain (e.g., www.bbc.com)">
+                <button onclick="analyze()"><i class="fas fa-search"></i> Analyze Text</button>
             </div>
 
-            <div id="textTab" class="tab-content">
-                <textarea id="textInput" placeholder="Paste text to analyze"></textarea>
-                <button onclick="analyze('text')"><i class="fas fa-search"></i> Analyze Text</button>
+            <div class="loading-container">
+                <div class="loading-spinner"></div>
             </div>
 
-            <div id="result"></div>
+            <div id="result">
+                <i class="result-icon fas"></i>
+                <p class="result-text"></p>
+                <p class="confidence"></p>
+                <div class="result-details"></div>
+            </div>
         </div>
 
         <section class="features">
@@ -286,39 +452,84 @@
     </main>
 
     <script>
-        function switchTab(tabName) {
-            const tabs = document.querySelectorAll('.tab');
-            const tabContents = document.querySelectorAll('.tab-content');
+        function analyze() {
+            let textInput = document.getElementById('textInput').value;
+            let domainInput = document.getElementById('domainInput').value;
 
-            tabs.forEach(tab => tab.classList.remove('active'));
-            tabContents.forEach(content => content.classList.remove('active'));
-
-            const activeTab = document.querySelector(`[data-tab="${tabName}"]`);
-            const activeContent = document.getElementById(`${tabName}Tab`);
-
-            activeTab.classList.add('active');
-            activeContent.classList.add('active');
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.addEventListener('click', function() {
-                    switchTab(this.getAttribute('data-tab'));
-                });
-            });
-        });
-
-        function analyze(type) {
-            let input = type === 'url' ? document.getElementById('urlInput').value : document.getElementById('textInput').value;
+            let loadingContainer = document.querySelector('.loading-container');
             let resultElement = document.getElementById('result');
 
-            resultElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
-            resultElement.style.display = 'block';
+            // Hide previous results and show loading animation
+            resultElement.style.display = 'none';
+            loadingContainer.style.display = 'flex';
 
-            // Simulating analysis process
-            setTimeout(() => {
-                resultElement.innerHTML = 'Analysis complete. Results would be displayed here.';
-            }, 2000);
+            fetch('/analyze', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ text: textInput, domain: domainInput })
+            })
+            .then(response => response.json())
+            .then(data => {
+                loadingContainer.style.display = 'none';
+                resultElement.style.display = 'block';
+
+                let iconElement = resultElement.querySelector('.result-icon');
+                let textElement = resultElement.querySelector('.result-text');
+                let confidenceElement = resultElement.querySelector('.confidence');
+                let detailsElement = resultElement.querySelector('.result-details');
+
+                if (data.prediction !== undefined && data.confidence !== undefined) {
+                    if (data.prediction.toLowerCase() === 'real') {
+                        resultElement.className = 'real';
+                        iconElement.className = 'result-icon fas fa-check-circle';
+                        textElement.textContent = 'Verified: Real News';
+                        iconElement.style.color = '#52c41a';
+                    } else if (data.prediction.toLowerCase() === 'fake') {
+                        resultElement.className = 'fake';
+                        iconElement.className = 'result-icon fas fa-exclamation-triangle';
+                        textElement.textContent = 'Alert: Potential Fake News';
+                        iconElement.style.color = '#f5222d';
+                    } else {
+                        resultElement.className = '';
+                        iconElement.className = 'result-icon fas fa-question-circle';
+                        textElement.textContent = 'Inconclusive Analysis';
+                        iconElement.style.color = '#faad14';
+                    }
+                    confidenceElement.textContent = `Confidence Level: ${data.confidence}%`;
+                    detailsElement.textContent = `Our AI-powered analysis suggests this content is ${data.prediction.toLowerCase()} with ${data.confidence}% confidence. Always verify information from multiple reliable sources.`;
+                } else if (data.error) {
+                    resultElement.className = '';
+                    iconElement.className = 'result-icon fas fa-exclamation-circle';
+                    textElement.textContent = 'Analysis Error';
+                    confidenceElement.textContent = '';
+                    detailsElement.textContent = data.error;
+                    iconElement.style.color = '#ff4d4f';
+                } else {
+                    resultElement.className = '';
+                    iconElement.className = 'result-icon fas fa-question-circle';
+                    textElement.textContent = 'Unexpected Response';
+                    confidenceElement.textContent = '';
+                    detailsElement.textContent = 'Please try again or contact support if the issue persists.';
+                    iconElement.style.color = '#faad14';
+                }
+            })
+            .catch(error => {
+                loadingContainer.style.display = 'none';
+                resultElement.style.display = 'block';
+                resultElement.className = '';
+                let iconElement = resultElement.querySelector('.result-icon');
+                let textElement = resultElement.querySelector('.result-text');
+                let confidenceElement = resultElement.querySelector('.confidence');
+                let detailsElement = resultElement.querySelector('.result-details');
+                iconElement.className = 'result-icon fas fa-exclamation-circle';
+                textElement.textContent = 'Error';
+                confidenceElement.textContent = '';
+                detailsElement.textContent = 'An error occurred during analysis. Please try again later.';
+                iconElement.style.color = '#ff4d4f';
+                console.error('Error:', error);
+            });
         }
     </script>
 </body>
