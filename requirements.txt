@@ -1,6 +1,9 @@
 flask
-huggingface_hub
+huggingface-hub
 xgboost
 nltk
 joblib
 scikit-learn
+PyPDF2
+lightgbm
+catboost

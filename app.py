@@ -5,9 +5,9 @@ from news_analysis import TextAnalysis
 import requests
 from xgboost import XGBClassifier
 from news_classification import FakeNewsClassifier
-
+from plagiarism import PlagiarismDetection
 app = Flask(__name__)
-
+import PyPDF2
 @app.route("/", methods=["GET"])
 def home():
     return render_template('index.html')
@@ -93,16 +93,39 @@ def index():
 
     return render_template("summarization.html", summary="")
 
-@app.route('/plagiarism')
+
+@app.route('/plagiarism', methods=['GET', 'POST'])
 def news_plagiarism_check():
-    return render_template('plagiarism.html')
+    if request.method == 'POST':
+        if 'text' in request.form:
+            text = request.form['text']
+        elif 'file' in request.files:
+            file = request.files['file']
+            if file.filename.endswith('.pdf'):
+                from PyPDF2 import PdfReader  # Import PDF reader
+                reader = PdfReader(file)
+                text = ""
+                for page in reader.pages:
+                    text += page.extract_text()  # Convert PDF to text
+            else:
+                text = file.read().decode('utf-8')
+        else:
+            return jsonify({"error": "No text or file provided"}), 400
 
+        output, human, ai = plagiarism.ai_plagiarism(text)
+        return jsonify({
+            "output": output,
+            "human": human,
+            "ai": ai
+        })
 
+    return render_template('plagiarism.html') # Render the template for GET requests"""
 
 if __name__ == '__main__':
         # Initialize a new model instance
     loaded_model = XGBClassifier()
     news_detection = FakeNewsClassifier()
+    plagiarism = PlagiarismDetection()
     # Load the model from the file
     loaded_model.load_model('fake_news_model.json')
     # Run the app
