@@ -8,12 +8,12 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
         :root {
-    --primary-color: #008CBA; /* Sea Blue */
-    --secondary-color: #00BFA5; /* Aqua Green */
-    --background-color: #F0F4F8; /* Light Sky Blue */
-    --text-color: #1B263B; /* Navy Blue */
-    --card-bg: #FFFFFF; /* White */
-}
+            --primary-color: #008CBA;
+            --secondary-color: #00BFA5;
+            --background-color: #F0F4F8;
+            --text-color: #1B263B;
+            --card-bg: #FFFFFF;
+        }
         * {
             margin: 0;
             padding: 0;
@@ -26,15 +26,19 @@
             line-height: 1.6;
         }
         .container {
-            width: 90%;
-            max-width: 800px;
+            width: 95%;
+            max-width: 1200px;
             margin: 2rem auto;
+            display: flex;
+            gap: 2rem;
+        }
+        .input-container, .output-container {
+            flex: 1;
             background-color: var(--card-bg);
             padding: 2rem;
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
-        /* Header Styles */
         header {
             background-color: var(--primary-color);
             color: white;
@@ -45,7 +49,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            width: 90%;
+            width: 95%;
             max-width: 1200px;
             margin: 0 auto;
         }
@@ -73,13 +77,8 @@
         .nav-links a:hover {
             color: #E5E7EB;
         }
-        /* Main Content Styles */
-        main {
-            padding: 2rem 0;
-        }
         h1, h2 {
             color: var(--primary-color);
-            text-align: center;
             margin-bottom: 1rem;
         }
         form {
@@ -91,16 +90,17 @@
             color: var(--primary-color);
             font-weight: bold;
         }
-        textarea, input[type="number"] {
+        textarea {
             width: 100%;
+            height: 300px;
             padding: 0.75rem;
             margin-bottom: 1rem;
             border: 1px solid #D1D5DB;
             border-radius: 4px;
             font-size: 1rem;
-            transition: border-color 0.3s ease;
+            resize: vertical;
         }
-        textarea:focus, input[type="number"]:focus {
+        textarea:focus {
             outline: none;
             border-color: var(--primary-color);
         }
@@ -117,18 +117,13 @@
         input[type="submit"]:hover {
             background-color: var(--secondary-color);
         }
-        .summary {
-            background-color: #f0f9f6;
-            padding: 1.5rem;
-            border-radius: 4px;
-            border-left: 5px solid var(--primary-color);
-        }
         .loading-bar {
             width: 100%;
             height: 4px;
             background-color: #E5E7EB;
             overflow: hidden;
             display: none;
+            margin-bottom: 1rem;
         }
         .loading-bar-progress {
             width: 0;
@@ -141,14 +136,28 @@
             50% { width: 100%; }
             100% { width: 0; }
         }
-        /* Responsive Design */
+        #summary-text {
+            list-style-type: none;
+            padding: 0;
+        }
+        #summary-text li {
+            margin-bottom: 0.5rem;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+        #summary-text li::before {
+            content: "\2022";
+            color: var(--primary-color);
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
         @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
             .nav-links {
                 display: none;
-            }
-            .container {
-                width: 95%;
-                padding: 1rem;
             }
         }
     </style>
@@ -161,7 +170,7 @@
                 FakeCheck.AI
             </a>
             <div class="nav-links">
-                <a href="/"><i class="fas fa-file-alt"></i> Fake News Detection</a>
+                <a href="/analyze"><i class="fas fa-file-alt"></i> Fake News Detector</a>
                 <a href="/sentiment"><i class="fas fa-chart-bar"></i> Sentiment Analysis</a>
                 <a href="/plagiarism"><i class="fas fa-check-circle"></i> Plagiarism Check</a>
             </div>
@@ -170,19 +179,21 @@
 
     <main>
         <div class="container">
-            <h1>News Summarizer</h1>
-            <p style="text-align: center; color: #6B7280; margin-bottom: 1.5rem;">Enter a news article to summarize</p>
-            <form method="POST" id="summarize-form">
-                <label for="text">Enter your text:</label>
-                <textarea name="text" id="text" rows="10" required></textarea>
-                <input type="submit" value="Summarize">
-            </form>
-            <div class="loading-bar">
-                <div class="loading-bar-progress"></div>
+            <div class="input-container">
+                <h1>News Summarizer</h1>
+                <p style="color: #6B7280; margin-bottom: 1.5rem;">Enter a news article to summarize</p>
+                <form method="POST" id="summarize-form">
+                    <label for="text">Enter your text:</label>
+                    <textarea name="text" id="text" required></textarea>
+                    <input type="submit" value="Summarize">
+                </form>
+                <div class="loading-bar">
+                    <div class="loading-bar-progress"></div>
+                </div>
             </div>
-            <div id="summary-container" style="display: none;">
-                <h2 style="text-align: center; color: var(--primary-color);">Summary:</h2>
-                <div class="summary" id="summary-text" style="padding: 1.5rem; border-radius: 8px; background-color: #f9f9f9; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);"></div>
+            <div class="output-container">
+                <h2>Summary</h2>
+                <ul id="summary-text"></ul>
             </div>
         </div>
     </main>
@@ -192,7 +203,7 @@
             $('#summarize-form').on('submit', function(e) {
                 e.preventDefault();
                 $('.loading-bar').show();
-                $('#summary-container').hide();
+                $('#summary-text').empty();
                 
                 $.ajax({
                     url: '/summarization',
@@ -200,8 +211,12 @@
                     data: $(this).serialize(),
                     success: function(response) {
                         $('.loading-bar').hide();
-                        $('#summary-container').show();
-                        $('#summary-text').text(response.summary);
+                        const summaryPoints = response.summary.split('. ');
+                        summaryPoints.forEach(point => {
+                            if (point.trim() !== '') {
+                                $('#summary-text').append(`<li>${point}.</li>`);
+                            }
+                        });
                     },
                     error: function() {
                         $('.loading-bar').hide();

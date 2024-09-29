@@ -171,7 +171,6 @@
         }
 
         button:hover {
-
             color: var(--background-color);
             background-color: var(--secondary-color);
         }
@@ -230,6 +229,50 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        .analysis-container {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .input-section, .output-section {
+            flex: 1;
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .input-section {
+            display: flex;
+            flex-direction: column;
+        }
+
+        #textInput, #fileInput {
+            flex-grow: 1;
+            margin-bottom: 1rem;
+        }
+
+        #textInput {
+            min-height: 300px;
+        }
+
+        .output-section {
+            display: flex;
+            flex-direction: column;
+            background-color: var(--background-color);
+        }
+
+        #result {
+            flex-grow: 1;
+            display: flex;
+            align-items: flex-start;
+            justify-content: flex-start;
+            color: var(--text-color);
+            overflow-y: auto;
+            max-height: 500px;
+        }
     </style>
 </head>
 <body>
@@ -240,7 +283,7 @@
                 FakeCheck.AI
             </a>
             <div class="nav-links">
-                <a href="/"><i class="fas fa-shield-alt"></i> FakeCheck</a>
+                <a href="/analyze"><i class="fas fa-file-alt"></i> Fake News Detector</a>
                 <a href="/summarization"><i class="fas fa-file-alt"></i> Text Summarizer</a>
                 <a href="/sentiment"><i class="fas fa-smile"></i> Sentiment Analysis</a>
             </div>
@@ -253,23 +296,29 @@
             <p>Use the power of AI to detect plagiarism and ensure the originality of your content.</p>
         </section>
 
-        <div class="analysis-card">
-            <div class="tabs">
-                <button class="tab active" data-tab="text"><i class="fas fa-align-left"></i> Text Check</button>
-                <button class="tab" data-tab="file"><i class="fas fa-file-upload"></i> File Upload</button>
+        <div class="analysis-container">
+            <div class="input-section">
+                <div class="tabs">
+                    <button class="tab active" data-tab="text"><i class="fas fa-align-left"></i> Text Check</button>
+                    <button class="tab" data-tab="file"><i class="fas fa-file-upload"></i> File Upload</button>
+                </div>
+
+                <div id="textTab" class="tab-content active">
+                    <textarea id="textInput" placeholder="Paste your text here to check for plagiarism"></textarea>
+                </div>
+
+                <div id="fileTab" class="tab-content">
+                    <input type="file" id="fileInput" accept=".txt,.doc,.docx,.pdf">
+                </div>
+
+                <button onclick="analyzePlagiarism()"><i class="fas fa-search"></i> Check for Plagiarism</button>
             </div>
 
-            <div id="textTab" class="tab-content active">
-                <textarea id="textInput" placeholder="Paste your text here to check for plagiarism"></textarea>
-                <button onclick="analyzePlagiarism('text')"><i class="fas fa-search"></i> Check for Plagiarism</button>
+            <div class="output-section">
+                <div id="result">
+                    <p>Your analysis results will appear here.</p>
+                </div>
             </div>
-
-            <div id="fileTab" class="tab-content">
-                <input type="file" id="fileInput" accept=".txt,.doc,.docx,.pdf">
-                <button onclick="analyzePlagiarism('file')"><i class="fas fa-upload"></i> Upload and Check</button>
-            </div>
-
-            <div id="result"></div>
         </div>
 
         <section class="features">
@@ -292,6 +341,7 @@
     </main>
 
     <script>
+        // Existing tab switching code remains unchanged
         function switchTab(tabName) {
             const tabs = document.querySelectorAll('.tab');
             const tabContents = document.querySelectorAll('.tab-content');
@@ -314,29 +364,90 @@
             });
         });
 
-        function analyzePlagiarism(type) {
-            let input = type === 'text' ? document.getElementById('textInput').value : document.getElementById('fileInput').value;
+        function analyzePlagiarism() {
+            let activeTab = document.querySelector('.tab.active').getAttribute('data-tab');
+            let input;
             let resultElement = document.getElementById('result');
 
-            if (!input) {
-                alert("Please enter text or select a file to check for plagiarism.");
-                return;
+            if (activeTab === 'text') {
+                input = document.getElementById('textInput').value;
+                if (!input.trim()) {
+                    alert("Please enter text to check for plagiarism.");
+                    return;
+                }
+            } else {
+                input = document.getElementById('fileInput').files[0];
+                if (!input) {
+                    alert("Please select a file to check for plagiarism.");
+                    return;
+                }
             }
 
             resultElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing for plagiarism...';
-            resultElement.style.display = 'block';
 
-            // Simulating plagiarism check process
-            setTimeout(() => {
-                let plagiarismScore = Math.floor(Math.random() * 100);
+            let formData = new FormData();
+            if (activeTab === 'text') {
+                formData.append('text', input);
+            } else {
+                formData.append('file', input);
+            }
+
+            fetch('/plagiarism', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                let output = data.output;
+                let humanPercentage = Math.round(data.human);
+                let aiPercentage = Math.round(data.ai);
+                let plagiarismStatus = output.trim().toLowerCase() === 'human_written' ? 'Low' : 'High';
+                let statusColor = plagiarismStatus === 'Low' ? '#4CAF50' : '#ff4d4d';
+
                 let resultHTML = `
-                    <h3><i class="fas fa-check-circle"></i> Plagiarism Check Complete</h3>
-                    <p><strong>Originality Score:</strong> ${100 - plagiarismScore}%</p>
-                    <p><strong>Plagiarism Detected:</strong> ${plagiarismScore}%</p>
-                    <p>Detailed report would be available here in a real implementation.</p>
+                    <div style="width: 100%; padding: 20px;">
+                        <h3 style="color: var(--text-color); margin-bottom: 15px;">
+                            <i class="fas fa-check-circle" style="color: #4CAF50;"></i> Plagiarism Check Complete
+                        </h3>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <span style="font-size: 18px; font-weight: bold;">Plagiarism Status:</span>
+                            <span style="font-size: 18px; font-weight: bold; color: ${statusColor};">${plagiarismStatus}</span>
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                <span>Human Written</span>
+                                <span>${humanPercentage}%</span>
+                            </div>
+                            <div style="background-color: #e9ecef; height: 20px; border-radius: 10px; overflow: hidden;">
+                                <div style="width: ${humanPercentage}%; background-color: #4CAF50; height: 100%;"></div>
+                            </div>
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                <span>AI Written</span>
+                                <span>${aiPercentage}%</span>
+                            </div>
+                            <div style="background-color: #e9ecef; height: 20px; border-radius: 10px; overflow: hidden;">
+                                <div style="width: ${aiPercentage}%; background-color: #ff4d4d; height: 100%;"></div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 20px;">
+                            <h4 style="color: var(--text-color); margin-bottom: 10px;">Analysis Output:</h4>
+                            <div style="background-color: var(--card-bg); border: 1px solid #e9ecef; border-radius: 5px; padding: 15px; white-space: pre-wrap; font-family: monospace;">${output}</div>
+                        </div>
+                    </div>
                 `;
                 resultElement.innerHTML = resultHTML;
-            }, 2000);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                resultElement.innerHTML = '<p style="color: #ff4d4d;">Error occurred while analyzing. Please try again.</p>';
+            });
         }
     </script>
 </body>
