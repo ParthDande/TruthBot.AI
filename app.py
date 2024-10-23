@@ -113,4 +113,4 @@ def news_plagiarism_check():
 if __name__ == '__main__':
     news_detection = FakeNewsClassifier()
     obj = TextAnalysis()
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5000,debug=True)

@@ -5,13 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FakeCheck.AI - Advanced News Verification</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <script src="/static/js/theme.js"></script>
     <style>
-        :root {
-            --primary-color: #008CBA; /* Sea Blue */
-            --secondary-color: #00BFA5; /* Aqua Green */
-            --background-color: #F0F4F8; /* Light Sky Blue */
-            --text-color: #1B263B; /* Navy Blue */
-            --card-bg: #FFFFFF; /* White */
+             :root {
+            --primary-color: #fffefe;
+            --secondary-color: #00BFA5;
+            --background-color: #257fd9;
+            --text-color: #000000;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --team-bg: #f8fafc;
+        }
+
+        [data-theme="dark"] {
+            --primary-color: #1a1a1a;
+            --secondary-color: #00BFA5;
+            --background-color: #121212;
+            --text-color: #ffffff;
+            --card-bg: rgba(40, 40, 40, 0.9);
+            --team-bg: #1a1a1a;
         }
 
         * {
@@ -32,6 +43,7 @@
             max-width: 1200px;
             margin: 0 auto;
         }
+        
 
         /* Header Styles */
         header {
@@ -42,13 +54,17 @@
         }
 
         nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 90%;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%; /* Make the nav bar full width */
+        max-width: 1200px;
+        margin: 0 auto; /* Center the nav in the container */
+        padding: 0; /* Remove padding to ensure it touches the edge */
+    }
+
+
+        
         .logo {
             font-size: 1.5rem;
             font-weight: bold;
@@ -60,18 +76,23 @@
         .logo i {
             margin-right: 0.5rem;
         }
+        .logo img {
+            height: 50px; 
+            width: auto;  
+            margin-left: 0; 
+        }
         .nav-links {
             display: flex;
             gap: 1.5rem;
         }
         .nav-links a {
-            color: white;
+            color: var(--text-color);
             text-decoration: none;
             font-weight: 500;
             transition: color 0.3s ease;
         }
         .nav-links a:hover {
-            color: #E5E7EB;
+            color:var(--secondary-color);
         }
 
         /* Main Content Styles */
@@ -87,12 +108,12 @@
         h1 {
             font-size: 2.5rem;
             margin-bottom: 1rem;
-            color: var(--primary-color);
+            color: var(--text-color);
         }
 
         .hero p {
             font-size: 1.1rem;
-            color: #4B5563;
+            color:var(--text-color);
             max-width: 600px;
             margin: 0 auto;
         }
@@ -115,7 +136,7 @@
             padding: 0.75rem 1.5rem;
             font-size: 1rem;
             font-weight: 500;
-            color: #6B7280;
+            color: var(--text-color);
             background: none;
             border: none;
             cursor: pointer;
@@ -138,7 +159,7 @@
             width: 100%;
             padding: 0.75rem;
             margin-bottom: 1rem;
-            border: 1px solid #D1D5DB;
+            border: 1px solid var(--primary-color);
             border-radius: 4px;
             font-size: 1rem;
             transition: border-color 0.3s ease;
@@ -161,6 +182,7 @@
             border: 1px solid #D1D5DB; /* Match existing input styles */
             border-radius: 4px;
             font-size: 1rem;
+            color:var(--text-color);
             transition: border-color 0.3s ease;
             background-color: var(--card-bg); /* Match card background */
         }
@@ -171,8 +193,8 @@
         }
 
         button {
-            background-color: var(--primary-color);
-            color: white;
+            background-color: var(--secondary-color);
+            color: var(--primary-color);
             border: none;
             padding: 0.75rem 1.5rem;
             border-radius: 4px;
@@ -182,8 +204,8 @@
         }
 
         button:hover {
-            color: var(--background-color);
-            background-color: var(--secondary-color);
+            color:var(--primary-color);
+            background-color: var(--text-color);
         }
 
         #result {
@@ -269,7 +291,7 @@
 
         .feature i {
             font-size: 2rem;
-            color: var(--primary-color);
+            color: var(--text-color);
             margin-bottom: 1rem;
         }
 
@@ -391,8 +413,8 @@
     <header>
         <nav>
             <a href="/" class="logo">
-                <i class="fas fa-shield-alt"></i>
-                FakeCheck.AI
+                <img src="static/images/truthbot-high-resolution-logo-transparent.png" alt="TruthBot.AI Logo">
+            </a>
             </a>
             <div class="nav-links">
                 <a href="/sentiment"><i class="fas fa-shield-alt"></i>Sentiment Analysis</a>
@@ -409,10 +431,7 @@
         </section>
 
         <div class="analysis-card">
-            <div class="tabs">
-                <!-- Removed URL Analysis Tab -->
-                <button class="tab active" data-tab="text"><i class="fas fa-align-left"></i> Text Analysis</button>
-            </div>
+            
 
             <div id="textTab" class="tab-content active">
                 <textarea id="textInput" name="textInput" placeholder="Paste text to analyze"></textarea>
@@ -431,24 +450,6 @@
                 <div class="result-details"></div>
             </div>
         </div>
-
-        <section class="features">
-            <div class="feature">
-                <i class="fas fa-robot"></i>
-                <h3>AI-Powered Analysis</h3>
-                <p>Our advanced AI algorithms provide accurate and reliable results.</p>
-            </div>
-            <div class="feature">
-                <i class="fas fa-bolt"></i>
-                <h3>Real-Time Processing</h3>
-                <p>Get instant results with our high-speed analysis engine.</p>
-            </div>
-            <div class="feature">
-                <i class="fas fa-lock"></i>
-                <h3>Secure & Private</h3>
-                <p>Your data is always protected with our state-of-the-art security measures.</p>
-            </div>
-        </section>
     </main>
 
     <script>

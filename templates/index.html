@@ -5,212 +5,340 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FakeCheck.AI</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/static/js/theme.js"></script>
     <style>
         :root {
-            --primary-color: #008CBA; /* Sea Blue */
-            --secondary-color: #00BFA5; /* Aqua Green */
-            --background-color: #F0F4F8; /* Light Sky Blue */
-            --text-color: #ffffff; /* White text color */
+            --primary-color: #fffefe;
+            --secondary-color: #00BFA5;
+            --background-color: #257fd9;
+            --text-color: #000000;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --team-bg: #f8fafc;
+        }
+
+        [data-theme="dark"] {
+            --primary-color: #1a1a1a;
+            --secondary-color: #00BFA5;
+            --background-color: #121212;
+            --text-color: #ffffff;
+            --card-bg: rgba(40, 40, 40, 0.9);
+            --team-bg: #1a1a1a;
+        }
+
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--background-color);
+            transition: background-color 0.3s ease;
         }
 
         /* Navbar Styling */
         header {
             background-color: var(--primary-color);
-            color: white;
-            padding: 0.75rem 0; /* Adjusted padding for consistency */
+            padding: 0.75rem 0;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease;
+        }
+        nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%; /* Make the nav bar full width */
+        max-width: 1200px;
+        margin: 0 auto; /* Center the nav in the container */
+        padding: 0; /* Remove padding to ensure it touches the edge */
+    }
+
+        .logo img {
+            height: 50px;
+            width: auto;
         }
 
-        nav {
+        /* Dark Mode Toggle */
+        .theme-toggle {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-color);
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: background-color 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            background-color: rgba(128, 128, 128, 0.1);
+        }
+
+        /* Tool Grid Styling */
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            max-width: 1000px;
+            margin: 3rem auto;
+            padding: 0 1rem;
+        }
+
+        .tool-button {
+            background: var(--card-bg);
+            border-radius: 1rem;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
             align-items: center;
-            width: 90%;
+            justify-content: center;
+            min-height: 200px;
+            text-decoration: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .tool-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .tool-button i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+        }
+
+        .tool-button h3 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+        }
+
+        .tool-button p {
+            color: var(--text-color);
+            opacity: 0.8;
+            font-size: 1rem;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        /* Team Section Styling */
+        .team-section {
+            background-color: var(--team-bg);
+            padding: 4rem 0;
+            transition: background-color 0.3s ease;
+        }
+
+        .team-container {
             max-width: 1200px;
             margin: 0 auto;
+            padding: 0 2rem;
         }
 
-        .logo {
-            font-size: 1.5rem; /* Ensure this matches summarization.html */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .team-member {
+            background: var(--card-bg);
+            border-radius: 1rem;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .team-member:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .team-member i {
+            font-size: 3rem;
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+        }
+
+        .team-member h3 {
+            color: var(--text-color);
+            margin: 1rem 0;
+        }
+
+        .team-member p {
+            color: var(--text-color);
+            opacity: 0.8;
+        }
+
+        /* Section Headers */
+        .section-title {
+            color: var(--text-color);
+            text-align: center;
+            font-size: 2.5rem;
             font-weight: bold;
-            display: flex;
-            align-items: center;
-            color: white;
-            text-decoration: none;
+            margin-bottom: 2rem;
         }
 
-        .logo i {
-            margin-right: 0.5rem;
+        /* Footer Styling */
+        footer {
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            padding: 2rem 0;
+            text-align: center;
+            transition: background-color 0.3s ease;
         }
 
-        .nav-links {
-            display: flex;
-            gap: 1.5rem;
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .tool-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .team-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
 
-        .nav-links a {
-            color: white;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
-
-        .nav-links a:hover {
-            color: #E5E7EB;
-        }
-
-        /* Text Styling */
-        p {
-            font-weight: 500;
-            font-size: 1.125rem;
-            line-height: 1.75rem;
-        }
-
-        .content-section h2, h3 {
-            font-weight: bold;
-        }
-
-        .content-section p {
-            color: #4a5568;
-            font-weight: 500;
-        }
-
-        body {
-            background-color: var(--background-color);
+        @media (max-width: 480px) {
+            .team-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
-<body class="min-h-screen bg-gray-100">
+<body>
     <!-- Navbar -->
     <header>
-        <nav class="flex justify-between items-center px-4 md:px-8 lg:px-16">
+        <nav>
             <a href="/" class="logo">
-                <i class="fas fa-shield-alt"></i>
-                FakeCheck.AI
+                <img src="static/images/truthbot-high-resolution-logo-transparent.png" alt="TruthBot.AI Logo">
             </a>
-            <div class="nav-links hidden md:flex">
-                <a href="/analyze"><i class="fas fa-search"></i> Fake Detection</a>
-                <a href="/summarization"><i class="fas fa-file-alt"></i> Text Summarizer</a>
-                <a href="/sentiment"><i class="fas fa-chart-bar"></i> Sentiment Analysis</a>
-                <a href="/plagiarism"><i class="fas fa-check-circle"></i> Plagiarism Check</a>
-            </div>
-            <div class="md:hidden">
-                <button id="menu-toggle" class="text-white focus:outline-none">
-                    <i class="fas fa-bars"></i>
-                </button>
-            </div>
+            <button id="theme-toggle" class="theme-toggle">
+                <i class="fas fa-moon"></i>
+            </button>
         </nav>
     </header>
 
-    <!-- Mobile Menu -->
-    <div id="mobile-menu" class="hidden md:hidden">
-        <div class="flex flex-col items-center bg-white shadow-lg">
-            <a href="/analyze" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Fake Detection</a>
-            <a href="/summarization" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Text Summarizer</a>
-            <a href="/sentiment" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Sentiment Analysis</a>
-            <a href="/plagiarism" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Plagiarism Check</a>
-        </div>
-    </div>
-
-    <!-- Home Section -->
-    <section id="home" class="min-h-screen pt-16 flex items-center">
-        <div class="container mx-auto px-4">
-            <div class="text-center">
-                <h2 class="text-4xl font-bold text-gray-800 mb-4">Welcome to FakeCheck.AI</h2>
-                <p class="text-xl text-gray-700 mb-8 font-medium">Your trusted source for content analysis and verification.</p>
-                <div class="bg-white p-6 rounded-lg shadow-md max-w-2xl mx-auto">
-                    <div class="w-full h-8 bg-gray-200 rounded mb-4"></div>
-                    <div class="w-3/4 h-4 bg-gray-200 rounded mb-4 mx-auto"></div>
+    <!-- Main Content -->
+    <main>
+        <!-- Tools Section -->
+        <section class="hero-section">
+            <div class="container">
+                <h2 class="section-title">Choose Your Tool</h2>
+                <div class="tool-grid">
+                    <a href="/analyze" class="tool-button">
+                        <i class="fas fa-search"></i>
+                        <h3>Fake Detection</h3>
+                        <p>Verify the authenticity of content using advanced AI analysis</p>
+                    </a>
+                    <a href="/summarization" class="tool-button">
+                        <i class="fas fa-file-alt"></i>
+                        <h3>Text Summarizer</h3>
+                        <p>Generate concise summaries of long text documents</p>
+                    </a>
+                    <a href="/sentiment" class="tool-button">
+                        <i class="fas fa-chart-bar"></i>
+                        <h3>Sentiment Analysis</h3>
+                        <p>Analyze the emotional tone and sentiment of text</p>
+                    </a>
+                    <a href="/plagiarism" class="tool-button">
+                        <i class="fas fa-check-circle"></i>
+                        <h3>Plagiarism Check</h3>
+                        <p>Check content originality and detect potential plagiarism</p>
+                    </a>
                 </div>
             </div>
-            <div class="text-center mt-12"> 
-                <i class="fas fa-chevron-down text-4xl text-gray-400 animate-bounce cursor-pointer" onclick="scrollToSection('about')"></i>
-            </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- About Section -->
-    <section id="about" class="min-h-screen bg-gray-200 py-16 content-section">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold text-center mb-12">About Our Platform</h2>
-            <div class="flex flex-col md:flex-row items-center justify-between">
-                <div class="md:w-1/2 mb-8 md:mb-0">
-                    <img src="static/images/breathtaking_illustration_of_A (1).jpeg" alt="Content analysis illustration" class="rounded-lg shadow-md">
-                </div>
-                <div class="md:w-1/2 md:pl-8">
-                    <h3 class="text-2xl font-semibold mb-4">Our Mission</h3>
-                    <p class="text-gray-700 mb-4">
-                        At FakeCheck.AI, we're committed to providing cutting-edge tools for content analysis and verification. Our platform empowers users to detect fake news, summarize texts, analyze sentiment, and check for plagiarism.
-                    </p>
-                    <h3 class="text-2xl font-semibold mb-4">Our Approach</h3>
-                    <p class="text-gray-700 mb-4">
-                        We leverage advanced AI and machine learning techniques to deliver accurate and reliable results. Our goal is to promote information integrity and help users make informed decisions in the digital age.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Reviews Section -->
-    <section id="reviews" class="min-h-screen py-16 bg-blue-50 content-section">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold text-center mb-12">Meet the Team</h2>
-            <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-8">
-                <div class="flex items-center mb-4">
-                    <i class="fas fa-user-circle text-4xl text-blue-500 mr-4"></i>
-                    <div>
-                        <h4 class="font-semibold text-lg" id="reviewName"></h4>
-                        <div class="flex">
-                            <span class="text-yellow-400"></span>
-                        </div>
+        <!-- Team Section -->
+        <section class="team-section">
+            <div class="team-container">
+                <h2 class="section-title">Meet the Team</h2>
+                <div class="team-grid">
+                    <div class="team-member">
+                        <i class="fas fa-user-circle"></i>
+                        <h3>Parth Dande</h3>
+                        <p>Data Science and Machine Learning Expert</p>
+                    </div>
+                    <div class="team-member">
+                        <i class="fas fa-user-circle"></i>
+                        <h3>Pratik Bhatia</h3>
+                        <p>Design and Development Specialist</p>
+                    </div>
+                    <div class="team-member">
+                        <i class="fas fa-user-circle"></i>
+                        <h3>Shrinit Sandhan</h3>
+                        <p>Data Analysis Expert</p>
+                    </div>
+                    <div class="team-member">
+                        <i class="fas fa-user-circle"></i>
+                        <h3>Bhargav Joshi</h3>
+                        <p>Development and Innovation Lead</p>
                     </div>
                 </div>
-                <p class="text-gray-700 italic" id="reviewText"></p>
             </div>
-        </div>
-    </section>
+        </section>
+    </main>
 
     <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-8">
-        <div class="container mx-auto px-4 text-center">
-            <p>&copy; 2024 FakeCheck.AI. All rights reserved.</p>
-        </div>
+    <footer>
+        <p>&copy; 2024 FakeCheck.AI. All rights reserved.</p>
     </footer>
 
     <script>
-        // Scroll to section function
-        function scrollToSection(sectionId) {
-            const section = document.getElementById(sectionId);
-            section.scrollIntoView({ behavior: 'smooth' });
-        }
+        // Dark mode functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = themeToggle.querySelector('i');
+        
+        // Check for saved theme preference
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        updateThemeIcon(savedTheme);
 
-        // Reviews carousel
-        const reviews = [
-            { name: "Parth Dande", text: "Hi I am Parth Dande and I love data science and machine learning." },
-            { name: "Pratik Bhatia", text: "Hi I am Pratik Bhatia and I love to design and develop new things." },
-            { name: "Shrinit Sandhan", text: "Hi I am Shrinit Sandhan and I like to analyze and evaluate data." },
-            { name: "Bhargav Joshi", text: "Hi I am Bhargav Joshi and I love to develop and learn new things." },
-        ];
-
-        let currentReview = 0;
-        const reviewName = document.getElementById('reviewName');
-        const reviewText = document.getElementById('reviewText');
-
-        function updateReview() {
-            reviewName.textContent = reviews[currentReview].name;
-            reviewText.textContent = '"' + reviews[currentReview].text + '"';
-            currentReview = (currentReview + 1) % reviews.length;
-        }
-
-        updateReview();
-        setInterval(updateReview, 5000);
-
-        // Mobile menu toggle
-        document.getElementById('menu-toggle').addEventListener('click', function() {
-            const mobileMenu = document.getElementById('mobile-menu');
-            mobileMenu.classList.toggle('hidden');
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon(newTheme);
         });
+
+        function updateThemeIcon(theme) {
+            if (theme === 'dark') {
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+            } else {
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+            }
+        }
+            function initializeTheme() {
+        // Check if user has a saved preference
+        const savedTheme = localStorage.getItem('theme');
+        
+        // If no saved preference, check system preference
+        if (!savedTheme) {
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+            localStorage.setItem('theme', prefersDark ? 'dark' : 'light');
+        } else {
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        }
+    }
+
+    function toggleTheme() {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+    }
+
+    // Initialize theme when page loads
+    document.addEventListener('DOMContentLoaded', initializeTheme);
     </script>
 </body>
 </html>

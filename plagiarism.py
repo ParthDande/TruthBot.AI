@@ -15,13 +15,6 @@ model = joblib.load('plagiarism.pkl')
 vectorizer  = joblib.load('plagiarism_vectorizer.pkl')
 
 # Input text to classify
-text = """
-Kejriwal was released from Delhi’s Tihar Jail on September 13 after being granted bail by the Supreme Court in connection with a Central Bureau of Investigation (CBI) case related to the alleged excise policy scam. He had spent five months in jail.
-
-Speaking at a rally in Badshahpur, Kejriwal took a swipe at Prime Minister Narendra Modi, alleging that the BJP targeted him because of his political success in Delhi and Punjab.
-
-"PM Modi thought Kejriwal formed a government in Delhi and Punjab. Now, he feared that I would form a government in Haryana," Kejriwal said.
-"""
 class PlagiarismDetection:
     def __init__(self):
         self.model = joblib.load('plagiarism.pkl')
@@ -49,5 +42,3 @@ class PlagiarismDetection:
         
         return prediction, human_written_prob, ai_generated_prob
 
-obj = PlagiarismDetection()
-print(obj.ai_plagiarism(text))
