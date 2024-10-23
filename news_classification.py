@@ -67,11 +67,3 @@ class FakeNewsClassifier:
         
         return prediction, human_written_prob, ai_generated_prob
     
-#Testing the model
-obj = FakeNewsClassifier()
-text_to_classify ="Angelina Jolie is going to be the next president of the United States"
-domain = "www.cnn.com"
-vectorized_text = obj.preprocess_custom_input(text_to_classify, domain)
-prediction, confidence = obj.fake_news_classifier(vectorized_text)
-print(prediction)
-print(obj.ai_plagiarism(text_to_classify)[0])
