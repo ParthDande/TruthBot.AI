@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional News Feed</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1a5f7a;
+            --secondary-color: #159895;
+            --accent-red: #9cf0a0;
+            --accent-green: #57cc99;
+            --background-color: #f0f0f0;
+            --text-color: #333333;
+            --card-background: #ffffff;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 10px 20px;
+        }
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.5rem 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        .marquee {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 0.5rem 0;
+            overflow: hidden;
+        }
+        .marquee-content {
+            display: inline-block;
+            white-space: nowrap;
+            padding-left: 100%;
+            animation: marquee 60s linear infinite;
+        }
+        @keyframes marquee {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(-100%, 0); }
+        }
+        .news-feed {
+            overflow: hidden;
+            position: relative;
+            height: 500px;
+            margin-top: 1rem;
+        }
+        .news-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            transition: transform 0.5s ease;
+        }
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 1rem;
+            height: 500px;
+        }
+        .news-item {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            border-top: 3px solid var(--accent-green);
+        }
+        .news-item:nth-child(even) {
+            border-top-color: var(--accent-red);
+        }
+        .news-item h2 {
+            margin-top: 0;
+            font-size: 1rem;
+            color: var(--primary-color);
+        }
+        .news-item p {
+            margin-bottom: 0.5rem;
+            font-size: 0.8rem;
+            flex-grow: 1;
+            overflow: hidden;
+        }
+        .news-item a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-weight: 700;
+            display: inline-block;
+            font-size: 0.8rem;
+        }
+        .news-item a:hover {
+            text-decoration: underline;
+        }
+        .news-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            color: #7f8c8d;
+            margin-top: auto;
+            border-top: 1px solid #ecf0f1;
+            padding-top: 0.5rem;
+        }
+        .no-news {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #7f8c8d;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <h1> News Feed</h1>
+        </div>
+    </header>
+    <div class="marquee">
+        <div class="marquee-content">
+            {% for item in news_items %}
+                {{ item.title }} &bull; 
+            {% endfor %}
+        </div>
+    </div>
+    <main class="container">
+        {% if news_items %}
+            <div class="news-feed">
+                <div class="news-container">
+                    {% for i in range(0, news_items|length, 4) %}
+                    <div class="news-grid">
+                        {% for item in news_items[i:i+4] %}
+                        <article class="news-item">
+                            <h2>{{ item.title }}</h2>
+                            <p>{{ item.description }}</p>
+                            <a href="{{ item.url }}" target="_blank" rel="noopener noreferrer">Read full article</a>
+                            <div class="news-meta">
+                                <span class="source">{{ item.source }}</span>
+                                <time datetime="{{ item.publishedAt }}">{{ item.publishedAt }}</time>
+                            </div>
+                        </article>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% else %}
+            <p class="no-news">No news items available at the moment. Please check back later.</p>
+        {% endif %}
+    </main>
+    <script>
+        const newsContainer = document.querySelector('.news-container');
+        const newsGrids = document.querySelectorAll('.news-grid');
+        let currentIndex = 0;
+
+        function moveNews() {
+            currentIndex = (currentIndex + 1) % newsGrids.length;
+            newsContainer.style.transform = `translateY(-${currentIndex * 500}px)`;
+        }
+
+        setInterval(moveNews, 10000); // Change news every 10 seconds
+    </script>
+</body>
+</html>

@@ -3,217 +3,285 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FakeCheck.AI</title>
+    <title>TruthBot.AI - Enhanced</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="/static/js/theme.js"></script>
     <style>
         :root {
-            --primary-color: #fffefe;
-            --secondary-color: #00BFA5;
-            --background-color: #257fd9;
-            --text-color: #000000;
-            --card-bg: rgba(255, 255, 255, 0.9);
-            --team-bg: #f8fafc;
+            --primary-color: #FFFFFF;
+            --secondary-color: #007BFF;
+            --background-color: linear-gradient(135deg, #e9dff3 0%, #2575fc 100%);
+            --text-color: #333333;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --team-bg: rgba(248, 249, 250, 0.9);
+            --positive-color: #4CAF50;
+            --negative-color: #ff4d4d;
+            --neutral-color: #FF5733;
+            --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            --hover-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
         }
 
         [data-theme="dark"] {
-            --primary-color: #1a1a1a;
-            --secondary-color: #00BFA5;
-            --background-color: #121212;
-            --text-color: #ffffff;
-            --card-bg: rgba(40, 40, 40, 0.9);
-            --team-bg: #1a1a1a;
+            --primary-color: #1A1A1A;
+            --secondary-color: #3399FF;
+            --background-color: linear-gradient(135deg, #1c1c1c 0%, #506dee 100%);
+            --text-color: #EAEAEA;
+            --card-bg: rgba(40, 40, 40, 0.95);
+            --team-bg: rgba(26, 26, 26, 0.9);
+            --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --hover-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
         }
 
         body {
-            margin: 0;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: var(--background-color);
-            transition: background-color 0.3s ease;
+            background: var(--background-color);
+            min-height: 100cvh;
+            color: var(--text-color);
         }
 
-        /* Navbar Styling */
         header {
-            background-color: var(--primary-color);
-            padding: 0.75rem 0;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            transition: background-color 0.3s ease;
+            padding: 1rem 0;
+            backdrop-filter: blur(10px);
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.9);
         }
+
         nav {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        width: 100%; /* Make the nav bar full width */
-        max-width: 1200px;
-        margin: 0 auto; /* Center the nav in the container */
-        padding: 0; /* Remove padding to ensure it touches the edge */
-    }
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
 
         .logo img {
             height: 50px;
             width: auto;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
         }
 
-        /* Dark Mode Toggle */
         .theme-toggle {
             background: none;
             border: none;
             font-size: 1.5rem;
             cursor: pointer;
             color: var(--text-color);
-            padding: 0.5rem;
+            width: 48px;
+            height: 48px;
             border-radius: 50%;
-            transition: background-color 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--card-bg);
+            box-shadow: var(--card-shadow);
         }
 
-        .theme-toggle:hover {
-            background-color: rgba(128, 128, 128, 0.1);
+        main {
+            padding-top: 50px;
         }
 
-        /* Tool Grid Styling */
+        .hero-section {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 3rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, var(--secondary-color), #00bfff);
+            -webkit-background-clip: text; /* Existing code */
+            background-clip: text; /* {{ edit_1 }} Added standard property for compatibility */
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
         .tool-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 2rem;
-            max-width: 1000px;
-            margin: 3rem auto;
-            padding: 0 1rem;
+            padding: 2rem;
         }
 
         .tool-button {
             background: var(--card-bg);
-            border-radius: 1rem;
-            padding: 2rem;
-            text-align: center;
-            transition: all 0.3s ease;
-            cursor: pointer;
+            border-radius: 1rem; 
+            padding: 1.5rem; 
+            text-decoration: none;
+            box-shadow: var(--card-shadow);
+            position: relative;
+            overflow: hidden;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             min-height: 200px;
-            text-decoration: none;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .tool-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s;
+        }
+
+        .tool-button:hover::before {
+            transform: translateX(100%);
         }
 
         .tool-button:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+            box-shadow: var(--hover-shadow);
         }
 
         .tool-button i {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
             color: var(--secondary-color);
         }
 
         .tool-button h3 {
-            font-size: 1.5rem;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-            color: var(--text-color);
-        }
+        font-size: 1.5rem; /* {{ edit_5 }} Reduced heading size */
+        margin-bottom: 0.5rem;
+        color: var(--text-color);
+    }
 
         .tool-button p {
             color: var(--text-color);
             opacity: 0.8;
-            font-size: 1rem;
-            line-height: 1.5;
-            margin: 0;
+            text-align: center;
+            line-height: 1.6;
+            font-size: 1 rem;
         }
 
-        /* Team Section Styling */
         .team-section {
-            background-color: var(--team-bg);
-            padding: 4rem 0;
-            transition: background-color 0.3s ease;
+            background: var(--team-bg);
+            padding: 6rem 2rem;
+            backdrop-filter: blur(10px);
         }
 
         .team-container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 0 2rem;
         }
 
         .team-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 2rem;
-            margin-top: 3rem;
+            padding: 2rem;
         }
 
         .team-member {
             background: var(--card-bg);
-            border-radius: 1rem;
-            padding: 2rem;
+            border-radius: 1.5rem;
+            padding: 2.5rem;
             text-align: center;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
+            box-shadow: var(--card-shadow);
         }
 
         .team-member:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+            box-shadow: var(--hover-shadow);
         }
 
         .team-member i {
-            font-size: 3rem;
+            font-size: 4rem;
             color: var(--secondary-color);
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
         }
 
         .team-member h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
             color: var(--text-color);
-            margin: 1rem 0;
         }
 
         .team-member p {
             color: var(--text-color);
             opacity: 0.8;
+            font-size: 1.1rem;
         }
 
-        /* Section Headers */
-        .section-title {
-            color: var(--text-color);
-            text-align: center;
-            font-size: 2.5rem;
-            font-weight: bold;
-            margin-bottom: 2rem;
-        }
-
-        /* Footer Styling */
         footer {
-            background-color: var(--primary-color);
-            color: var(--text-color);
-            padding: 2rem 0;
+            background: var(--card-bg);
+            padding: 2rem;
             text-align: center;
-            transition: background-color 0.3s ease;
+            backdrop-filter: blur(10px);
         }
 
-        /* Mobile Responsiveness */
         @media (max-width: 768px) {
+            .section-title {
+                font-size: 2.5rem;
+            }
+            
             .tool-grid {
-                grid-template-columns: 1fr;
+                padding: 1rem;
+                gap: 1.5rem;
             }
 
             .team-grid {
-                grid-template-columns: repeat(2, 1fr);
+                padding: 1rem;
+                gap: 1.5rem;
+            }
+
+            .tool-button {
+                min-height: 250px;
+                padding: 2rem;
             }
         }
 
         @media (max-width: 480px) {
-            .team-grid {
-                grid-template-columns: 1fr;
+            nav {
+                padding: 0 1rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .hero-section {
+                padding: 2rem 1rem;
+            }
+        }
+        footer a:hover {
+            opacity: 1 !important;
+        }
+        
+        footer .fab:hover {
+            transform: translateY(-3px);
+        }
+        
+        @media (max-width: 768px) {
+            footer .bottom-footer {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Navbar -->
     <header>
         <nav>
             <a href="/" class="logo">
-                <img src="static/images/truthbot-high-resolution-logo-transparent.png" alt="TruthBot.AI Logo">
+               <img src="static/images/truthbot-high-resolution-logo-transparent.png" alt="TruthBot.AI Logo">
             </a>
             <button id="theme-toggle" class="theme-toggle">
                 <i class="fas fa-moon"></i>
@@ -221,38 +289,119 @@
         </nav>
     </header>
 
-    <!-- Main Content -->
     <main>
-        <!-- Tools Section -->
         <section class="hero-section">
-            <div class="container">
-                <h2 class="section-title">Choose Your Tool</h2>
-                <div class="tool-grid">
-                    <a href="/analyze" class="tool-button">
-                        <i class="fas fa-search"></i>
-                        <h3>Fake Detection</h3>
-                        <p>Verify the authenticity of content using advanced AI analysis</p>
-                    </a>
-                    <a href="/summarization" class="tool-button">
-                        <i class="fas fa-file-alt"></i>
-                        <h3>Text Summarizer</h3>
-                        <p>Generate concise summaries of long text documents</p>
-                    </a>
-                    <a href="/sentiment" class="tool-button">
-                        <i class="fas fa-chart-bar"></i>
-                        <h3>Sentiment Analysis</h3>
-                        <p>Analyze the emotional tone and sentiment of text</p>
-                    </a>
-                    <a href="/plagiarism" class="tool-button">
-                        <i class="fas fa-check-circle"></i>
-                        <h3>Plagiarism Check</h3>
-                        <p>Check content originality and detect potential plagiarism</p>
-                    </a>
+            <h2 class="section-title">What are you working on today?</h2>
+            <div class="tool-grid">
+                <a href="/analyze" class="tool-button">
+                    <i class="fas fa-search"></i>
+                    <h3>Fake Detection</h3>
+                    <p>Verify content authenticity using advanced AI analysis</p>
+                </a>
+                <a href="/summarization" class="tool-button">
+                    <i class="fas fa-file-alt"></i>
+                    <h3>Text Summarizer</h3>
+                    <p>Generate concise summaries of long text documents</p>
+                </a>
+                <a href="/sentiment" class="tool-button">
+                    <i class="fas fa-chart-bar"></i>
+                    <h3>Sentiment Analysis</h3>
+                    <p>Analyze emotional tone and sentiment in text</p>
+                </a>
+                <a href="/plagiarism" class="tool-button">
+                    <i class="fas fa-check-circle"></i>
+                    <h3>Plagiarism Check</h3>
+                    <p>Check content originality and detect potential plagiarism</p>
+                </a>
+                
+                <a href="/report" class="tool-button">
+                    <i class="fas fa-clipboard"></i>
+                    <h3>News Report Check</h3>
+                    <p>Generate Comprehensive News Report</p>
+                </a>
+                <a href="/plagiarism" class="tool-button">
+                    <i class="fas fa-bullhorn"></i>
+                    <h3>ClickBait Tool</h3>
+                    <p>Check news for possible ClickBait</p>
+                </a>
+            </div>
+        </section>
+        <section class="about-section" style="background: var(--card-bg); padding: 10rem 2rem;">
+            <div style="max-width: 1400px; margin: 0 auto;">
+                <h2 class="section-title">Empowering Truth in the Digital Age</h2>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; padding: 2rem;">
+                    <div style="display: flex; flex-direction: column; gap: 2rem;">
+                        <div style="background: var(--team-bg); padding: 2rem; border-radius: 1.5rem; box-shadow: var(--card-shadow);">
+                            <h3 style="font-size: 1.8rem; margin-bottom: 1rem; color: var(--text-color);">
+                                <i class="fas fa-robot" style="color: var(--secondary-color); margin-right: 1rem;"></i>
+                                Advanced AI Technology
+                            </h3>
+                            <p style="color: var(--text-color); opacity: 0.8; line-height: 1.6; font-size: 1.1rem;">
+                                TruthBot.AI leverages cutting-edge machine learning and natural language processing to analyze news content with unprecedented accuracy. Our algorithms are trained on vast datasets to detect patterns of misinformation and bias.
+                            </p>
+                        </div>
+                        
+                        <div style="background: var(--team-bg); padding: 2rem; border-radius: 1.5rem; box-shadow: var(--card-shadow);">
+                            <h3 style="font-size: 1.8rem; margin-bottom: 1rem; color: var(--text-color);">
+                                <i class="fas fa-brain" style="color: var(--secondary-color); margin-right: 1rem;"></i>
+                                Comprehensive Analysis
+                            </h3>
+                            <p style="color: var(--text-color); opacity: 0.8; line-height: 1.6; font-size: 1.1rem;">
+                                Our platform performs multi-layered analysis, examining content for factual accuracy, source credibility, emotional manipulation, and contextual relevance. We help users make informed decisions about the information they consume.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: center; align-items: center;">
+                        <svg viewBox="0 0 400 400" width="100%" height="auto" style="max-width: 500px;">
+                            <!-- Abstract brain network illustration -->
+                            <circle cx="200" cy="200" r="150" fill="none" stroke="var(--secondary-color)" stroke-width="2"/>
+                            <g style="opacity: 0.8;">
+                                <!-- Neural network nodes -->
+                                <circle cx="150" cy="150" r="10" fill="var(--secondary-color)"/>
+                                <circle cx="250" cy="150" r="10" fill="var(--secondary-color)"/>
+                                <circle cx="200" cy="250" r="10" fill="var(--secondary-color)"/>
+                                <circle cx="150" cy="250" r="10" fill="var(--secondary-color)"/>
+                                <circle cx="250" cy="250" r="10" fill="var(--secondary-color)"/>
+                                
+                                <!-- Connecting lines -->
+                                <line x1="150" y1="150" x2="250" y2="150" stroke="var(--secondary-color)" stroke-width="2"/>
+                                <line x1="150" y1="150" x2="200" y2="250" stroke="var(--secondary-color)" stroke-width="2"/>
+                                <line x1="250" y1="150" x2="200" y2="250" stroke="var(--secondary-color)" stroke-width="2"/>
+                                <line x1="150" y1="250" x2="250" y2="250" stroke="var(--secondary-color)" stroke-width="2"/>
+                                
+                                <!-- Animated pulse circles -->
+                                <circle cx="200" cy="200" r="100" fill="none" stroke="var(--secondary-color)" stroke-width="1">
+                                    <animate attributeName="r" values="80;120;80" dur="4s" repeatCount="indefinite"/>
+                                    <animate attributeName="opacity" values="0.1;0.3;0.1" dur="4s" repeatCount="indefinite"/>
+                                </circle>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 4rem; padding: 2rem; background: var(--team-bg); border-radius: 1.5rem; box-shadow: var(--card-shadow);">
+                    <div style="display: flex; justify-content: space-around; text-align: center;">
+                        <div>
+                            <i class="fas fa-newspaper" style="font-size: 2.5rem; color: var(--secondary-color); margin-bottom: 1rem;"></i>
+                            <h4 style="color: var(--text-color); font-size: 1.2rem; margin-bottom: 0.5rem;">News Analyzed</h4>
+                            <p style="color: var(--text-color); font-size: 2rem; font-weight: bold;">10k +</p>
+                        </div>
+                        <div>
+                            <i class="fas fa-users" style="font-size: 2.5rem; color: var(--secondary-color); margin-bottom: 1rem;"></i>
+                            <h4 style="color: var(--text-color); font-size: 1.2rem; margin-bottom: 0.5rem;">Active Users</h4>
+                            <p style="color: var(--text-color); font-size: 2rem; font-weight: bold;">10+</p>
+                        </div>
+                        <div>
+                            <i class="fas fa-check-circle" style="font-size: 2.5rem; color: var(--secondary-color); margin-bottom: 1rem;"></i>
+                            <h4 style="color: var(--text-color); font-size: 1.2rem; margin-bottom: 0.5rem;">Accuracy Rate</h4>
+                            <p style="color: var(--text-color); font-size: 2rem; font-weight: bold;">95%</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
-
-        <!-- Team Section -->
         <section class="team-section">
             <div class="team-container">
                 <h2 class="section-title">Meet the Team</h2>
@@ -280,22 +429,120 @@
                 </div>
             </div>
         </section>
+        
     </main>
 
-    <!-- Footer -->
-    <footer>
-        <p>&copy; 2024 FakeCheck.AI. All rights reserved.</p>
+    <footer style="background: var(--card-bg); padding: 4rem 2rem 2rem 2rem;">
+        <div style="max-width: 1400px; margin: 0 auto;">
+            <!-- Footer Grid -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 3rem; margin-bottom: 3rem;">
+                <!-- Company Info -->
+                <div>
+                    <img src="static/images/truthbot-high-resolution-logo-transparent.png" alt="TruthBot.AI Logo" style="height: 50px; margin-bottom: 1rem;">
+                    <p style="color: var(--text-color); opacity: 0.8; line-height: 1.6; margin-bottom: 1rem;">
+                        Empowering users with AI-driven tools to combat misinformation and promote digital literacy.
+                    </p>
+                    <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                        <a href="#" style="color: var(--secondary-color); font-size: 1.5rem; transition: transform 0.3s ease;">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" style="color: var(--secondary-color); font-size: 1.5rem; transition: transform 0.3s ease;">
+                            <i class="fab fa-linkedin"></i>
+                        </a>
+                        <a href="#" style="color: var(--secondary-color); font-size: 1.5rem; transition: transform 0.3s ease;">
+                            <i class="fab fa-github"></i>
+                        </a>
+                    </div>
+                </div>
+    
+                <!-- Quick Links -->
+                <div>
+                    <h3 style="color: var(--text-color); font-size: 1.2rem; margin-bottom: 1.5rem; font-weight: 600;">Quick Links</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: 0.8rem;">
+                            <a href="/analyze" style="color: var(--text-color); text-decoration: none; opacity: 0.8; transition: opacity 0.3s ease;">Fake Detection</a>
+                        </li>
+                        <li style="margin-bottom: 0.8rem;">
+                            <a href="/summarization" style="color: var(--text-color); text-decoration: none; opacity: 0.8; transition: opacity 0.3s ease;">Text Summarizer</a>
+                        </li>
+                        <li style="margin-bottom: 0.8rem;">
+                            <a href="/sentiment" style="color: var(--text-color); text-decoration: none; opacity: 0.8; transition: opacity 0.3s ease;">Sentiment Analysis</a>
+                        </li>
+                        <li style="margin-bottom: 0.8rem;">
+                            <a href="/plagiarism" style="color: var(--text-color); text-decoration: none; opacity: 0.8; transition: opacity 0.3s ease;">Plagiarism Check</a>
+                        </li>
+                    </ul>
+                </div>
+    
+                <!-- Resources -->
+                <div>
+                    <h3 style="color: var(--text-color); font-size: 1.2rem; margin-bottom: 1.5rem; font-weight: 600;">Resources</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: 0.8rem;">
+                            <a href="/blog" style="color: var(--text-color); text-decoration: none; opacity: 0.8; transition: opacity 0.3s ease;">Blog</a>
+                        </li>
+                        <li style="margin-bottom: 0.8rem;">
+                            <a href="/documentation" style="color: var(--text-color); text-decoration: none; opacity: 0.8; transition: opacity 0.3s ease;">Documentation</a>
+                        </li>
+                        <li style="margin-bottom: 0.8rem;">
+                            <a href="/research" style="color: var(--text-color); text-decoration: none; opacity: 0.8; transition: opacity 0.3s ease;">Research</a>
+                        </li>
+                        <li style="margin-bottom: 0.8rem;">
+                            <a href="/case-studies" style="color: var(--text-color); text-decoration: none; opacity: 0.8; transition: opacity 0.3s ease;">Case Studies</a>
+                        </li>
+                    </ul>
+                </div>
+    
+                <!-- Contact Info -->
+                <div>
+                    <h3 style="color: var(--text-color); font-size: 1.2rem; margin-bottom: 1.5rem; font-weight: 600;">Contact Us</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: 0.8rem; color: var(--text-color); opacity: 0.8;">
+                            <i class="fas fa-envelope" style="margin-right: 0.5rem; color: var(--secondary-color);"></i>
+                            contact@truthbot.in
+                        </li>
+                        <li style="margin-bottom: 0.8rem; color: var(--text-color); opacity: 0.8;">
+                            <i class="fas fa-phone" style="margin-right: 0.5rem; color: var(--secondary-color);"></i>
+                            +91 7709110377
+                        </li>
+                        <li style="margin-bottom: 0.8rem; color: var(--text-color); opacity: 0.8;">
+                            <i class="fas fa-map-marker-alt" style="margin-right: 0.5rem; color: var(--secondary-color);"></i>
+                            Nashik, Maharashtra, India
+                        </li>
+                    </ul>
+                </div>
+            </div>
+    
+            <!-- Divider -->
+            <hr style="border: none; height: 1px; background-color: var(--text-color); opacity: 0.1; margin: 2rem 0;">
+    
+            <!-- Bottom Footer -->
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                <p style="color: var(--text-color); opacity: 0.8;">&copy; 2024 TruthBot.AI. All rights reserved.</p>
+                <div style="display: flex; gap: 2rem;">
+                    <a href="/privacy" style="color: var(--text-color); text-decoration: none; opacity: 0.8; transition: opacity 0.3s ease;">Privacy Policy</a>
+                    <a href="/terms" style="color: var(--text-color); text-decoration: none; opacity: 0.8; transition: opacity 0.3s ease;">Terms of Service</a>
+                    <a href="/cookies" style="color: var(--text-color); text-decoration: none; opacity: 0.8; transition: opacity 0.3s ease;">Cookie Policy</a>
+                </div>
+            </div>
+        </div>
     </footer>
+    
 
     <script>
-        // Dark mode functionality
         const themeToggle = document.getElementById('theme-toggle');
         const themeIcon = themeToggle.querySelector('i');
         
-        // Check for saved theme preference
-        const savedTheme = localStorage.getItem('theme') || 'light';
-        document.documentElement.setAttribute('data-theme', savedTheme);
-        updateThemeIcon(savedTheme);
+        function initializeTheme() {
+            const savedTheme = localStorage.getItem('theme') || 
+                (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            updateThemeIcon(savedTheme);
+        }
+
+        function updateThemeIcon(theme) {
+            themeIcon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        }
 
         themeToggle.addEventListener('click', () => {
             const currentTheme = document.documentElement.getAttribute('data-theme');
@@ -306,39 +553,17 @@
             updateThemeIcon(newTheme);
         });
 
-        function updateThemeIcon(theme) {
-            if (theme === 'dark') {
-                themeIcon.classList.remove('fa-moon');
-                themeIcon.classList.add('fa-sun');
-            } else {
-                themeIcon.classList.remove('fa-sun');
-                themeIcon.classList.add('fa-moon');
-            }
-        }
-            function initializeTheme() {
-        // Check if user has a saved preference
-        const savedTheme = localStorage.getItem('theme');
-        
-        // If no saved preference, check system preference
-        if (!savedTheme) {
-            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
-            localStorage.setItem('theme', prefersDark ? 'dark' : 'light');
-        } else {
-            document.documentElement.setAttribute('data-theme', savedTheme);
-        }
-    }
+        document.addEventListener('DOMContentLoaded', initializeTheme);
 
-    function toggleTheme() {
-        const currentTheme = document.documentElement.getAttribute('data-theme');
-        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-        
-        document.documentElement.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
-    }
-
-    // Initialize theme when page loads
-    document.addEventListener('DOMContentLoaded', initializeTheme);
+        // Add smooth scroll behavior
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
     </script>
 </body>
 </html>

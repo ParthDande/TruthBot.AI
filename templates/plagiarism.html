@@ -3,27 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TruthBot.AI</title>
+    <link rel="icon" type="image/png" href="static\images\truth-bot-high-resolution-logo-transparent.png"> <!-- For PNG -->
+    <title>News Plagiarism Detector</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <script src="/static/js/theme.js"></script>
     <style>
       :root {
-            --primary-color: #fffefe;
-            --secondary-color: #00BFA5;
-            --background-color: #257fd9;
-            --text-color: #000000;
-            --card-bg: rgba(255, 255, 255, 0.9);
-            --team-bg: #f8fafc;
+            --primary-color: #FFFFFF;
+            --secondary-color: #007BFF;
+            --background-color: linear-gradient(135deg, #e9dff3 0%, #2575fc 100%);
+            --text-color: #333333;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --team-bg: rgba(248, 249, 250, 0.9);
+            --positive-color: #4CAF50;
+            --negative-color: #ff4d4d;
+            --neutral-color: #FF5733;
+            --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            --hover-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
         }
 
         [data-theme="dark"] {
-            --primary-color: #1a1a1a;
-            --secondary-color: #00BFA5;
-            --background-color: #121212;
-            --text-color: #ffffff;
-            --card-bg: rgba(40, 40, 40, 0.9);
-            --team-bg: #1a1a1a;
+            --primary-color: #1A1A1A;
+            --secondary-color: #3399FF;
+            --background-color: linear-gradient(135deg, #1c1c1c 0%, #506dee 100%);
+            --text-color: #EAEAEA;
+            --card-bg: rgba(40, 40, 40, 0.95);
+            --team-bg: rgba(26, 26, 26, 0.9);
+            --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --hover-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
         }
+
+
         * {
             margin: 0;
             padding: 0;
@@ -32,11 +42,11 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--background-color);
+            background :var(--background-color);
+            min-height: 100vh;
             color: var(--text-color);
             line-height: 1.6;
         }
-
         .container {
             width: 90%;
             max-width: 1200px;
@@ -147,10 +157,11 @@
             border-bottom: 4px solid var(--secondary-color);
             color: var(--text-color);
         }
-        .tab.active:hover{
-            color:var(--primary-color);
+        .tab:hover {
+            color:var(--text-color);
+            background-color: var(--secondary-color);
         }
-
+        
         .icon-button {
             background: none;
             border: none;
@@ -172,7 +183,6 @@
 
         .tab-content.active {
             display: block;
-            
         }
 
         #textInput, #fileInput {
@@ -207,7 +217,6 @@
         }
 
         button:hover {
-            color:var(--primary-color);
             background-color: var(--text-color);
         }
 
@@ -301,6 +310,12 @@
         }
 
         #result {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background-color: #EEF2FF;
+            border-radius: 4px;
+            border-left: 4px solid var(--primary-color);
+            display: none;
             flex-grow: 1;
             display: flex;
             align-items: flex-start;
@@ -365,6 +380,35 @@
         #textInput:not(:placeholder-shown)::before {
             opacity: 0;
         }
+        @keyframes randomFluctuation {
+    0% { width: 40%; }
+    25% { width: 60%; }
+    50% { width: 45%; }
+    75% { width: 55%; }
+    100% { width: 50%; }
+}
+
+/* Styles for the animated bars */
+.human-bar, 
+.ai-bar {
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    height: 100%;
+    will-change: width;
+}
+
+.human-bar {
+    background-color: #4CAF50;
+}
+
+.ai-bar {
+    background-color: #ff4d4d;
+}
+
+/* Optional: Add some subtle hover effects */
+.bar-container:hover .human-bar,
+.bar-container:hover .ai-bar {
+    filter: brightness(1.1);
+}
     </style>
 </head>
 <body>
@@ -420,177 +464,214 @@
         
 
     <script>
-        // Existing tab switching code remains unchanged
-        function switchTab(tabName) {
-            const tabs = document.querySelectorAll('.tab');
-            const tabContents = document.querySelectorAll('.tab-content');
-
-            tabs.forEach(tab => tab.classList.remove('active'));
-            tabContents.forEach(content => content.classList.remove('active'));
-
-            const activeTab = document.querySelector(`[data-tab="${tabName}"]`);
-            const activeContent = document.getElementById(`${tabName}Tab`);
-
-            activeTab.classList.add('active');
-            activeContent.classList.add('active');
+        // Add file selection handling
+        function handleFileSelect(event) {
+            const fileInput = event.target;
+            const fileNameDisplay = document.getElementById('fileNameDisplay');
+            
+            if (fileInput.files.length > 0) {
+                const fileName = fileInput.files[0].name;
+                fileNameDisplay.textContent = `Selected file: ${fileName}`;
+            } else {
+                fileNameDisplay.textContent = '';
+            }
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.addEventListener('click', function() {
-                    switchTab(this.getAttribute('data-tab'));
-                });
+        // Add tab switching functionality
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Remove active class from all tabs
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                // Add active class to clicked tab
+                this.classList.add('active');
+
+                // Hide all tab contents
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                
+                // Show the selected tab content
+                const tabId = this.getAttribute('data-tab');
+                document.getElementById(`${tabId}Tab`).classList.add('active');
             });
         });
 
-        function analyzePlagiarism() {
-            let activeTab = document.querySelector('.tab.active').getAttribute('data-tab');
-            let input;
-            let resultElement = document.getElementById('result');
+        // Add delete text functionality
+        document.getElementById('deleteText').addEventListener('click', function() {
+            document.getElementById('textInput').value = '';
+            document.getElementById('wordCount').textContent = '0';
+        });
 
-            if (activeTab === 'text') {
-                input = document.getElementById('textInput').value;
-                if (!input.trim()) {
-                    alert("Please enter text to check for plagiarism.");
-                    return;
-                }
-                const wordCount = input.trim().split(/\s+/).length;
-                if (wordCount > 400) {
-                    alert("Please reduce your text to 400 words or less.");
-                    return;
-                }
-            } else {
-                input = document.getElementById('fileInput').files[0];
-                if (!input) {
-                    alert("Please select a file to check for plagiarism.");
-                    return;
-                }
+        // Add word count tracking
+        document.getElementById('textInput').addEventListener('input', function() {
+            const wordCount = this.value.trim().split(/\s+/).filter(word => word.length > 0).length;
+            document.getElementById('wordCount').textContent = wordCount;
+        });
+       // Function to animate the bars with randomization
+function animatePlagiarismBars(humanFinalPercentage, aiFinalPercentage) {
+    const humanBarElement = document.querySelector('.human-bar');
+    const aiBarElement = document.querySelector('.ai-bar');
+    const humanPercentDisplay = document.querySelector('.human-percent');
+    const aiPercentDisplay = document.querySelector('.ai-percent');
+
+    // Animation parameters
+    const animationDuration = 2000; // Total animation duration in ms
+    const randomizationDuration = 1500; // Duration of random fluctuations
+    const finalSettleDuration = 500; // Duration to settle to final value
+
+    // Tracking variables
+    let startTime = null;
+    let currentHumanPercent = 0;
+    let currentAiPercent = 0;
+
+    function updateBars(timestamp) {
+        // First run, set start time
+        if (!startTime) startTime = timestamp;
+        const elapsed = timestamp - startTime;
+
+        // During randomization phase (first 1.5 seconds)
+        if (elapsed < randomizationDuration) {
+            // Generate random percentages that look dynamic
+            currentHumanPercent = Math.sin(elapsed * 0.01) * 50 + 50;
+            currentAiPercent = Math.cos(elapsed * 0.01) * 50 + 50;
+
+            // Ensure percentages always total 100
+            if (currentHumanPercent + currentAiPercent > 100) {
+                currentAiPercent = 100 - currentHumanPercent;
             }
 
-            resultElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing for plagiarism...';
+            humanBarElement.style.width = `${currentHumanPercent}%`;
+            aiBarElement.style.width = `${currentAiPercent}%`;
+            humanPercentDisplay.textContent = `${Math.round(currentHumanPercent)}%`;
+            aiPercentDisplay.textContent = `${Math.round(currentAiPercent)}%`;
 
-            let formData = new FormData();
-            if (activeTab === 'text') {
-                formData.append('text', input);
-            } else {
-                formData.append('file', input);
-            }
+            // Continue animation
+            requestAnimationFrame(updateBars);
+        } 
+        // Settling phase (last 0.5 seconds)
+        else if (elapsed < animationDuration) {
+            // Smooth interpolation to final values
+            const settleProgress = (elapsed - randomizationDuration) / finalSettleDuration;
+            const easedProgress = 1 - Math.pow(1 - settleProgress, 4); // Ease out quart
 
-            fetch('/plagiarism', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                let output = data.output;
-                let humanPercentage = Math.round(data.human);
-                let aiPercentage = Math.round(data.ai);
-                let plagiarismStatus = output.trim().toLowerCase() === 'human_written' ? 'Low' : 'High';
-                let statusColor = plagiarismStatus === 'Low' ? '#4CAF50' : '#ff4d4d';
+            currentHumanPercent = currentHumanPercent + 
+                (humanFinalPercentage - currentHumanPercent) * easedProgress;
+            currentAiPercent = currentAiPercent + 
+                (aiFinalPercentage - currentAiPercent) * easedProgress;
 
-                let resultHTML = `
-                    <div style="width: 100%; padding: 20px;">
-                        <h3 style="color: var(--text-color); margin-bottom: 15px;">
-                            <i class="fas fa-check-circle" style="color: #4CAF50;"></i> Plagiarism Check Complete
-                        </h3>
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                            <span style="font-size: 18px; font-weight: bold;">Plagiarism Status:</span>
-                            <span style="font-size: 18px; font-weight: bold; color: ${statusColor};">${plagiarismStatus}</span>
-                        </div>
-                        <div style="margin-bottom: 15px;">
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                                <span>Human Written</span>
-                                <span>${humanPercentage}%</span>
-                            </div>
-                            <div style="background-color: var(--background-color); height: 20px; border-radius: 10px; overflow: hidden;">
-                                <div style="width: ${humanPercentage}%; background-color: #4CAF50; height: 100%;"></div>
-                            </div>
-                        </div>
-                        <div style="margin-bottom: 15px;">
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                                <span>AI Written</span>
-                                <span>${aiPercentage}%</span>
-                            </div>
-                            <div style="background-color: var(--background-color); height: 20px; border-radius: 10px; overflow: hidden;">
-                                <div style="width: ${aiPercentage}%; background-color: #ff4d4d; height: 100%;"></div>
-                            </div>
-                        </div>
-                        <div style="margin-top: 20px;">
-                            <h4 style="color: var(--text-color); margin-bottom: 10px;">Analysis Output:</h4>
-                            <div style="background-color: var(--primary-color); border: 1px solid var(--text-color); border-radius: 5px; padding: 15px; white-space: pre-wrap; font-family: monospace;">${output}</div>
-                        </div>
+            humanBarElement.style.width = `${currentHumanPercent}%`;
+            aiBarElement.style.width = `${currentAiPercent}%`;
+            humanPercentDisplay.textContent = `${Math.round(currentHumanPercent)}%`;
+            aiPercentDisplay.textContent = `${Math.round(currentAiPercent)}%`;
+
+            // Continue animation
+            requestAnimationFrame(updateBars);
+        }
+        // Final state
+        else {
+            humanBarElement.style.width = `${humanFinalPercentage}%`;
+            aiBarElement.style.width = `${aiFinalPercentage}%`;
+            humanPercentDisplay.textContent = `${humanFinalPercentage}%`;
+            aiPercentDisplay.textContent = `${aiFinalPercentage}%`;
+        }
+    }
+
+    // Start the animation
+    requestAnimationFrame(updateBars);
+}
+
+// Modify the existing analyzePlagiarism function to use the animation
+function analyzePlagiarism() {
+    let activeTab = document.querySelector('.tab.active').getAttribute('data-tab');
+    let input;
+    let resultElement = document.getElementById('result');
+
+    if (activeTab === 'text') {
+        input = document.getElementById('textInput').value;
+        if (!input.trim()) {
+            alert("Please enter text to check for plagiarism.");
+            return;
+        }
+        const wordCount = input.trim().split(/\s+/).length;
+        if (wordCount > 400) {
+            alert("Please reduce your text to 400 words or less.");
+            return;
+        }
+    } else {
+        input = document.getElementById('fileInput').files[0];
+        if (!input) {
+            alert("Please select a file to check for plagiarism.");
+            return;
+        }
+    }
+
+    resultElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing for plagiarism...';
+
+    let formData = new FormData();
+    if (activeTab === 'text') {
+        formData.append('text', input);
+    } else {
+        formData.append('file', input);
+    }
+
+    fetch('/plagiarism', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        let output = data.output;
+        let humanPercentage = Math.round(data.human);
+        let aiPercentage = Math.round(data.ai);
+        let plagiarismStatus = output.trim().toLowerCase() === 'human_written' ? 'Low' : 'High';
+        let statusColor = plagiarismStatus === 'Low' ? '#4CAF50' : '#ff4d4d';
+
+        let resultHTML = `
+            <div style="width: 100%; padding: 20px;">
+                <h3 style="color: var(--text-color); margin-bottom: 15px;">
+                    <i class="fas fa-check-circle" style="color: #4CAF50;"></i> Plagiarism Check Complete
+                </h3>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <span style="font-size: 18px; font-weight: bold;">Plagiarism Status:</span>
+                    <span style="font-size: 18px; font-weight: bold; color: ${statusColor};">${plagiarismStatus}</span>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <span>Human Written</span>
+                        <span class="human-percent">0%</span>
                     </div>
-                `;
-                resultElement.innerHTML = resultHTML;
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                resultElement.innerHTML = '<p style="color: #ff4d4d;">Error occurred while analyzing. Please try again.</p>';
-            });
-        }
+                    <div style="background-color: var(--background-color); height: 20px; border-radius: 10px; overflow: hidden;">
+                        <div class="human-bar" style="width: 0%; background-color: #4CAF50; height: 100%;"></div>
+                    </div>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <span>AI Written</span>
+                        <span class="ai-percent">0%</span>
+                    </div>
+                    <div style="background-color: var(--background-color); height: 20px; border-radius: 10px; overflow: hidden;">
+                        <div class="ai-bar" style="width: 0%; background-color: #ff4d4d; height: 100%;"></div>
+                    </div>
+                </div>
+                <div style="margin-top: 20px;">
+                    <h4 style="color: var(--text-color); margin-bottom: 10px;">Analysis Output:</h4>
+                    <div style="background-color: var(--primary-color); border: 1px solid var(--text-color); border-radius: 5px; padding: 15px; white-space: pre-wrap; font-family: monospace;">${output}</div>
+                </div>
+            </div>
+        `;
+        resultElement.innerHTML = resultHTML;
 
-        document.addEventListener('DOMContentLoaded', function() {
-            const textInput = document.getElementById('textInput');
-            const deleteButton = document.getElementById('deleteText');
-            const tabs = document.querySelectorAll('.tab');
-            const wordCount = document.getElementById('wordCount');
-            const wordLimitMessage = document.getElementById('wordLimitMessage');
-            const submitButton = document.querySelector('button[onclick="analyzePlagiarism()"]');
-
-            deleteButton.addEventListener('click', function() {
-                textInput.value = '';
-                textInput.focus();
-            });
-
-            textInput.addEventListener('input', function() {
-                if (this.value) {
-                    this.classList.add('has-content');
-                } else {
-                    this.classList.remove('has-content');
-                }
-            });
-
-            textInput.addEventListener('paste', function() {
-                setTimeout(() => {
-                    if (this.value) {
-                        this.classList.add('has-content');
-                    }
-                }, 0);
-            });
-
-            tabs.forEach(tab => {
-                tab.addEventListener('click', function() {
-                    tabs.forEach(t => t.classList.remove('active'));
-                    this.classList.add('active');
-                    const isTextTab = this.getAttribute('data-tab') === 'text';
-                    deleteButton.style.display = isTextTab ? 'block' : 'none';
-                });
-            });
-
-            function updateWordCount() {
-                const text = textInput.value.trim();
-                const words = text ? text.split(/\s+/) : [];
-                const count = words.length;
-
-                wordCount.textContent = count;
-
-                if (count > 400) {
-                    wordLimitMessage.textContent = "Word limit exceeded. Please reduce your text to 400 words or less.";
-                    submitButton.disabled = true;
-                } else {
-                    wordLimitMessage.textContent = "";
-                    submitButton.disabled = false;
-                }
-            }
-
-            textInput.addEventListener('input', updateWordCount);
-            updateWordCount(); // Initial count
-        });
+        // Trigger the animation with final percentages
+        animatePlagiarismBars(humanPercentage, aiPercentage);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        resultElement.innerHTML = '<p style="color: #ff4d4d;">Error occurred while analyzing. Please try again.</p>';
+    });
+}
     </script>
 </body>
 </html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enter your password</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        html, body { 
+            height: 100%; 
+            margin: 0; 
+            font-family: 'Roboto', sans-serif;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .header {
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .logo {
+            width: 100px;
+            height: auto;
+        }
+        .content {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        form { 
+            width: 300px; 
+            padding: 20px; 
+            border: 1px solid #ccc; 
+            border-radius: 5px; 
+        }
+        input, button { 
+            width: 100%; 
+            padding: 10px; 
+            margin: 10px 0; 
+            box-sizing: border-box; 
+            font-family: 'Roboto', sans-serif;
+        }
+        button { 
+            background-color: #0056b3; 
+            color: white; 
+            border: none; 
+            cursor: pointer; 
+            font-weight: 700;
+        }
+        .google-btn { 
+            background-color: white; 
+            color: #757575; 
+            border: 1px solid #ccc; 
+        }
+        footer {
+            text-align: center;
+            padding: 10px;
+            background-color: #f8f9fa;
+            width: 100%;
+        }
+        h2{
+            margin-left:24px;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <img src="path/to/your/logo.png" alt="Company Logo" class="logo">
+        <h1>FakeCheckAI</h1>
+    </header>
+    <div class="content">
+        <form>
+            <h2> Sign in to your account</h2>
+            <input type="email" placeholder="Email address*" required>
+            <input type="password" placeholder="Password*" required>
+            <a href="#">Forget password?</a>
+            <button type="submit">Continue</button>
+            <p>Don't have an account? <a href="signup.html">Sign up</a></p>
+            <hr>
+            <p>OR</p>
+            <button type="button" class="google-btn">Continue with Google</button>
+        </form>
+    </div>
+    <footer>
+        <p><a href="#">Terms of Use</a> | <a href="#">Privacy Policy</a></p>
+    </footer>
+</body>
+</html>
