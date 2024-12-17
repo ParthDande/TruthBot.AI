@@ -8,7 +8,8 @@ from plagiarism import PlagiarismDetection
 app = Flask(__name__)
 import PyPDF2
 from newspaper import Article
-
+from TextExtractor import TextExtractor
+#the TextExtractor is a custom class made extract text from url, text messages, pdf etc using a single library
 API_URL = "https://api-inference.huggingface.co/models/facebook/bart-large-cnn"
 headers = {"Authorization": "Bearer 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"}
 @app.route("/", methods=["GET"])
@@ -48,9 +49,9 @@ def analyze():
 @app.route('/sentiment', methods=['GET', 'POST'])
 def news_sentiment_analysis():
     if request.method == 'POST':
-        text = request.form['text']
-        sentiment, confidence = obj.analyze_sentiment(text)
-        # Simulate processing time
+        input_source = request.form["text"]
+        text = input_text.extract_text(input_source)
+        sentiment, confidence = obj.analyze_sentiment(text[:1000])#this only takes first  1000 characters
         time.sleep(random.uniform(1, 2))
         
         return jsonify({
@@ -69,22 +70,9 @@ def index():
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.5735.110 Safari/537.36'
     }
     if request.method == "POST":
-        # Check if input is from URL or direct text
-        if request.form.get("url"):
-            # URL input processing
-            try:
-                url = request.form["url"]
-                # Create Article object
-                article = Article(url, browser_user_agent=headers['User-Agent'])
-                article.download()
-                article.parse()
-                text = article.text
-            except Exception as e:
-                return jsonify({'error': f'Error fetching article: {str(e)}'}), 400
-        else:
-            # Text input processing
-            text = request.form["text"]
-
+        input_source = request.form["text"]
+        text = input_text.extract_text(input_source)
+        
         # Validate input length
         input_length = len(text)
         min_length = max(1, int(input_length * 0.05))
@@ -113,18 +101,10 @@ def index():
 @app.route('/plagiarism', methods=['GET', 'POST'])
 def news_plagiarism_check():
     if request.method == 'POST':
-        if 'text' in request.form:
-            text = request.form['text']
-        elif 'file' in request.files:
-            file = request.files['file']
-            if file.filename.endswith('.pdf'):
-                from PyPDF2 import PdfReader  # Import PDF reader
-                reader = PdfReader(file)
-                text = ""
-                for page in reader.pages:
-                    text += page.extract_text()  # Convert PDF to text
-            else:
-                text = file.read().decode('utf-8')
+        input_source = request.form["text"]
+        text = input_text.extract_text(input_source)
+        if text:
+            pass
         else:
             return jsonify({"error": "No text or file provided"}), 400
 
@@ -187,7 +167,8 @@ def get_report_data(text):
 @app.route('/report', methods=['GET', 'POST'])
 def comprehensive_report():
     if request.method == "POST":
-        text = request.form.get("text")
+        input_source = request.form["text"]
+        text = input_text.extract_text(input_source)
         if not text:
             return jsonify({"error": "Text is required"}), 400
 
@@ -203,6 +184,7 @@ def comprehensive_report():
 
 if __name__ == '__main__':
     news_detection = FakeNewsClassifier()
-    obj = TextAnalysis()
+    obj = TextAnalysis()#the text analysis class object is for sentiment analysis
+    input_text = TextExtractor(max_words=400)#Creating object of the TextExtractor class this class has all the extraction functions
     app.run(host='0.0.0.0', port=5000, debug=True)
 
