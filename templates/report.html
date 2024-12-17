@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="static\images\truth-bot-high-resolution-logo-transparent.png"> <!-- For PNG -->
+    <title>News Report</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <script src="/static/js/theme.js"></script>
+    <style>
+   :root {
+            --primary-color: #FFFFFF;
+            --secondary-color: #007BFF;
+            --background-color: linear-gradient(135deg, #e9dff3 0%, #2575fc 100%);
+            --text-color: #333333;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --team-bg: rgba(248, 249, 250, 0.9);
+            --positive-color: #4CAF50;
+            --negative-color: #ff4d4d;
+            --neutral-color: #f6ef1d;
+            --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            --hover-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        [data-theme="dark"] {
+            --primary-color: #1A1A1A;
+            --secondary-color: #3399FF;
+            --background-color: linear-gradient(135deg, #1c1c1c 0%, #506dee 100%);
+            --text-color: #EAEAEA;
+            --card-bg: rgba(40, 40, 40, 0.95);
+            --team-bg: rgba(26, 26, 26, 0.9);
+            --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --hover-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background :var(--background-color);
+            min-height: 100vh;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        .container {
+            width: 95%;
+            max-width: auto;
+            margin: 2rem auto;
+            margin-left:50px;
+            display: flex;
+            gap: 4rem;
+        }
+      
+        .input-container {
+            flex: 1;
+            background-color: var(--card-bg);
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .output-container {
+            flex: 2;
+            background-color: var(--background-color);
+            padding: 1em;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: auto;
+            max-height:100%;
+        }
+        header {
+            background-color: var(--primary-color);
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%; /* Make the nav bar full width */
+        max-width: 1200px;
+        margin: 0 auto; /* Center the nav in the container */
+        padding: 0; /* Remove padding to ensure it touches the edge */
+    }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            color: white;
+            text-decoration: none;
+        }
+        .logo i {
+            margin-right: 0.5rem;
+        }
+        .logo img {
+            height: 50px; 
+            width: auto;  
+            margin-left: 0; 
+        }
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        .nav-links a:hover {
+            color: var(--secondary-color);
+        }
+        h1, h2 {
+            color: var(--text-color);
+            margin-bottom: 1rem;
+        }
+        form {
+            margin-bottom: 2rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+            font-weight: bold;
+        }
+        textarea {
+            width: 100%;
+            height: 300px;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--text-color);
+            border-radius: 4px;
+            font-size: 1rem;
+            resize: vertical;
+        }
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        input[type="submit"] {
+            margin-left:20px;
+            width:500px;
+            background-color: var(--secondary-color);
+            color: var(--primary-color);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        input[type="submit"]:hover {
+            background-color: var(--text-color);
+        }
+        .loading-bar {
+            width: 100%;
+            height: 4px;
+            background-color:var(--primary-color);
+            overflow: hidden;
+            display: none;
+            margin-bottom: 1rem;
+        }
+        .loading-bar-progress {
+            width: 0;
+            height: 100%;
+            background-color: var(--secondary-color);
+            animation: loading 2s infinite ease-in-out;
+        }
+        @keyframes loading {
+            0% { width: 0; }
+            50% { width: 100%; }
+            100% { width: 0; }
+        }
+        #summary-text {
+            list-style-type: none;
+            padding: 0;
+        }
+        #summary-text li {
+            margin-bottom: 0.5rem;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+        #summary-text li::before {
+            content: "\2022";
+            color: var(--text-color);
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            .nav-links {
+                display: none;
+            }
+        }
+        .pre-analysis-guide {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            gap: 10px;
+        }
+        .guide-item {
+            flex: 1;
+            background-color: var(--background-color);
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        .guide-item i {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            opacity: 0.7;
+            transition: all 0.3s ease;
+        }
+        .guide-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        .guide-item:hover i {
+            opacity: 1;
+            color: var(--secondary-color);
+        }
+        .report-card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 2rem;
+            margin-top: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            max-width: 500px;
+            max-height: auto;
+
+        }
+        .report-card.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .card-plagiarism_result {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            opacity: 0;
+            transform: scale(0.9);
+            transition: opacity 0.5s ease 0.2s, transform 0.5s ease 0.2s;
+        }
+        .report-card.show .sentiment-plagiarism_result {
+            opacity: 1;
+            transform: scale(1);
+        }
+        .sentiment-meter {
+            width: 100%;
+            height: 20px;
+            background-color: var(--primary-color);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+            border: 2px solid var(--text-color);
+            opacity: 0;
+            transform: scaleX(0.9);
+            transition: opacity 0.5s ease 0.4s, transform 0.5s ease 0.4s;
+        }
+        .report-card.show .sentiment-meter {
+            opacity: 1;
+            transform: scaleX(1);
+        }
+        .sentiment-value {
+            height: 100%;
+            width: 0;
+            background-color: var(--positive-color);
+            transition: width 1s ease 0.6s;
+        }
+        .confidence {
+            opacity: 0;
+            transition: opacity 0.5s ease 0.8s;
+        }
+        .report-card.show .confidence {
+            opacity: 1;
+        }
+        #user_input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            resize: none;
+            padding: 0.75rem;
+            background-color: var(--primary-color);
+            border: 1px solid var(--text-color);
+            border-radius: 5px;
+            color: var(--text-color);
+            font-size: 0.9rem;
+        }
+        .output-loading {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        flex-direction: column;
+    }
+    .loading-spinner {
+        border: 4px solid var(--primary-color);
+        border-top: 4px solid var(--secondary-color);
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+        margin-bottom: 1rem;
+    }
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    .loading-text {
+        color: var(--text-color);
+        font-size: 1rem;
+        opacity: 0.7;
+    }
+    #plagiarism_result {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: #EEF2FF;
+            border-radius: 4px;
+            border-left: 4px solid var(--primary-color);
+            display: none;
+            flex-grow: 1;
+            display: flex;
+            align-items: flex-start;
+            justify-content: flex-start;
+            color: var(--text-color);
+            overflow-y: auto;
+            background-color: var(--card-bg);
+            border-left: 4px solid var(--secondary-color);
+            margin-top: 0;
+            max-height: 200px;
+            font-size: 14px;
+            padding: 0.5rem;
+            margin: 0.5rem;
+        }
+
+        /* Update the styles for the content inside the plagiarism_result div */
+        #plagiarism_result h3,
+        #plagiarism_result h4,
+        #plagiarism_result span,
+        #plagiarism_result div {
+            color: var(--text-color);
+        }
+    #result {
+    display: none;
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 20px;
+    text-align: center;
+}
+
+#result.real {
+    
+    border: 1px solid #52c41a;
+}
+
+#result.fake {
+    border: 1px solid #f5222d;
+}
+
+.result-icon {
+    font-size: 48px;
+    margin-bottom: 15px;
+}
+
+.result-text {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.confidence {
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.result-details {
+    color: #333;
+}
+
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="/" class="logo">
+                <img src="static/images/truthbot-high-resolution-logo-transparent.png" alt="TruthBot.AI Logo">
+            
+            </a>
+            <div class="nav-links">
+                <a href="/analyze"><i class="fas fa-file-alt"></i> Fake News Detector</a>
+                <a href="/sentiment"><i class="fas fa-chart-bar"></i> Sentiment Analysis</a>
+                <a href="/plagiarism"><i class="fas fa-check-circle"></i> Plagiarism Check</a>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="input-container">
+            <h1>Comprehensive News Report</h1>
+            <p style="color:var(--text-color); margin-bottom: 1.5rem;">Enter a news article to generate report</p>
+            <form method="POST" id="summarize-form" onsubmit="return validateInput();">
+                <label for="text">Enter your text:</label>
+                <textarea name="text" id="text" required></textarea>
+                <div class="word-count">Words: <span id="wordCount">0</span>/400</div>
+                <div id="wordLimitMessage" style="color: red;"></div>
+                <input type="submit" value="Analyze">
+            </form>
+            <!-- Pre-Analysis Guide remains the same -->
+            <div class="pre-analysis-guide">
+                <div class="guide-item">
+                    <i class="fas fa-brain"></i>
+                    <h4>Domain Detection</h4>
+                    <p>AI identifies content type</p>
+                </div>
+                <div class="guide-item">
+                    <i class="fas fa-chart-line"></i>
+                    <h4>Sentiment</h4>
+                    <p>Emotional tone analysis</p>
+                </div>
+                <div class="guide-item">
+                    <i class="fas fa-check-circle"></i>
+                    <h4>Credibility</h4>
+                    <p>Fake news detection</p>
+                </div>
+                <div class="guide-item">
+                    <i class="fas fa-file-alt"></i>
+                    <h4>Summary</h4>
+                    <p>Key points extraction</p>
+                </div>
+            </div>
+        </div>
+        <div class="output-container">
+            <!-- Default state -->
+            <h2>Your Generated Report Will Appear Here</h2>
+            
+            <!-- Loading state (initially hidden) -->
+            <div id="output-loading" class="output-loading" style="display: none;">
+                <div class="loading-spinner"></div>
+                <div class="loading-text">Analyzing your text...</div>
+            </div>
+            
+            <!-- Results containers -->
+            <div class="report-card" style="height: 400px;width:600px;">
+                <h3 id="summary-heading">Summary :</h3>
+                <ul id="summary-text"></ul>
+            </div>
+            <div id="plagiarism-result" class ="report-card" style="position:fixed;margin-left: 600px;margin-top:-400px;width:100%;height:400px;">
+            </div>
+            <div id="result" class="report-card" style="max-width:500px;margin-top:49px;">
+                <i class="result-icon fas fa-question-circle"></i>
+                <h3 class="result-text">Analysis Result</h3>
+                <p class="confidence"></p>
+                <p class="result-details"></p>
+            </div>
+            <div class="report-card" style="margin-left: 600px;margin-top: -300px;">
+                    <h2>Sentiment Analysis Report</h2>
+                    <p><strong>Sentiment:</strong> <span id="sentiment-result"></span></p>
+                    <div class="sentiment-meter">
+                        <div class="sentiment-value"></div>
+                    </div>
+                    <p><strong>Confidence:</strong> <span id="confidence"></span></p>
+                </div> 
+        </div>
+    </div>
+</main>
+
+    <script>
+      $(document).ready(function() {
+    function validateInput() {
+        
+        const textInput = document.getElementById('text').value;
+        const wordCount = textInput.trim().split(/\s+/).length;
+
+        // Check if the word count exceeds 400
+        if (wordCount > 400) {
+            alert("Input text exceeds the 400-word limit. Please shorten your text.");
+            return false;
+        }
+        return true;
+    }
+    // Update word count display
+    const textArea = document.getElementById('text');
+    const wordCountDisplay = document.getElementById('wordCount');
+    const wordLimitMessage = document.getElementById('wordLimitMessage');
+
+    textArea.addEventListener('input', function() {
+        const text = this.value.trim();
+        const words = text ? text.split(/\s+/) : [];
+        const count = words.length;
+
+        wordCountDisplay.textContent = count;
+
+        if (count > 400) {
+            wordLimitMessage.textContent = "Word limit exceeded. Please reduce your text to 400 words or less.";
+        } else {
+            wordLimitMessage.textContent = "";
+        }
+    });
+
+    $('#summarize-form').on('submit', function(e) {
+        e.preventDefault();
+        
+        // Reset previous results
+        $('.loading-bar').show();
+        $('#summary-text').empty();
+        $('.report-card').removeClass('show').hide();
+        
+        // Show loading animation in output container
+        $('.output-container h2').hide(); // Hide default text
+        $('#output-loading').show(); // Show loading spinner
+        
+        // Trim input to 400 words
+        const text = $('#text').val().trim();
+        const words = text.split(/\s+/).slice(0, 400);
+        const limitedText = words.join(' ');
+
+        // Prepare data for summary, sentiment, and plagiarism
+        const formData = new FormData(this);
+        formData.set('text', limitedText);
+
+        // Animate loading bar
+        let progress = 0;
+        const loadingInterval = setInterval(function() {
+            progress += 5;
+            $('.loading-bar-progress').css('width', progress + '%');
+            if (progress >= 100) {
+                clearInterval(loadingInterval);
+            }
+        }, 50);
+
+        // Send AJAX request for summary
+        $.ajax({
+            url: '/summarization',
+            method: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(summaryResponse) {
+                $('.loading-bar').hide();
+                
+                // Display summary
+                const summaryPoints = summaryResponse.summary.split('. ');
+                summaryPoints.forEach(point => {
+                    if (point.trim() !== '') {
+                        $('#summary-text').append(`<li>${point}.</li>`);
+                    }
+                });
+
+                // Send sentiment analysis request
+                $.ajax({
+                    url: '/sentiment',
+                    method: 'POST',
+                    data: { text: limitedText },
+                    success: function(sentimentResponse) {
+                        // Sentiment logic remains the same
+                        let sentimentColor, sentimentLabel;
+                        switch(sentimentResponse.sentiment.toLowerCase()) {
+                            case 'positive':
+                                sentimentColor = 'var(--positive-color)';
+                                sentimentLabel = 'Positive';
+                                break;
+                            case 'negative':
+                                sentimentColor = 'var(--negative-color)';
+                                sentimentLabel = 'Negative';
+                                break;
+                            case 'neutral':
+                                sentimentColor = 'var(--neutral-color)';
+                                sentimentLabel = 'Neutral';
+                                break;
+                            default:
+                                sentimentColor = 'var(--neutral-color)';
+                                sentimentLabel = 'Unknown';
+                        }
+                        
+                        // Update sentiment display
+                        $('#sentiment-result').text(sentimentLabel);
+                        $('.sentiment-value').css({
+                            'background-color': sentimentColor,
+                            'width': '0%'
+                        });
+                        $('#confidence').text(sentimentResponse.confidence + '%');
+                        
+                        // Show sentiment report card
+                        $('.report-card').show();
+                        setTimeout(() => {
+                            $('.report-card').addClass('show');
+                            setTimeout(() => {
+                                $('.sentiment-value').css('width', sentimentResponse.confidence + '%');
+                            }, 100);
+                        }, 50);
+
+                        // Send plagiarism check request
+                        $.ajax({
+                            url: '/plagiarism',
+                            method: 'POST',
+                            data: { text: limitedText },
+                            success: function(plagiarismResponse) {
+                                // Process plagiarism results
+                                let humanPercentage = Math.round(plagiarismResponse.human);
+                                let aiPercentage = Math.round(plagiarismResponse.ai);
+                                let plagiarismStatus = plagiarismResponse.output.trim().toLowerCase() === 'human_written' ? 'Low' : 'High';
+                                let statusColor = plagiarismStatus === 'Low' ? '#4CAF50' : '#ff4d4d';
+
+                                let plagiarismResultHTML = `
+                                    <div style="width: 100%; padding: 20px;">
+                                        <h3 style="color: var(--text-color); margin-bottom: 15px;">Plagiarism Analysis</h3>
+                                        <div style="margin-bottom: 15px;">
+                                            <span>Plagiarism Status: <span style="color: ${statusColor};">${plagiarismStatus}</span></span>
+                                        </div>
+                                        <div style="margin-bottom: 15px;">
+                                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                                <span>Human Written</span>
+                                                <span>${humanPercentage}%</span>
+                                            </div>
+                                            <div style="background-color: var(--background-color); height: 10px; border-radius: 5px; overflow: hidden;">
+                                                <div style="width: ${humanPercentage}%; background-color: #4CAF50; height: 100%;"></div>
+                                            </div>
+                                        </div>
+                                        <div style="margin-bottom: 15px;">
+                                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                                <span>AI Written</span>
+                                                <span>${aiPercentage}%</span>
+                                            </div>
+                                            <div style="background-color: var(--background-color); height: 10px; border-radius: 5px; overflow: hidden;">
+                                                <div style="width: ${aiPercentage}%; background-color: #ff4d4d; height: 100%;"></div>
+                                            </div>
+                                        </div>
+                                        <div style="margin-top: 20px;">
+                                            <h4 style="color: var(--text-color); margin-bottom: 10px;">Analysis Output:</h4>
+                                            <div style="background-color: var(--primary-color); border: 1px solid var(--text-color); border-radius: 5px; padding: 10px; white-space: pre-wrap; font-family: monospace;">${plagiarismResponse.output}</div>
+                                        </div>
+                                    </div>
+                                `;
+                                $('#plagiarism-result').html(plagiarismResultHTML);
+
+                                // Send additional analysis request
+                                $.ajax({
+                                    url: '/analyze',
+                                    method: 'POST',
+                                    contentType: 'application/json',
+                                    data: JSON.stringify({ 
+                                        text: limitedText, 
+                                        domain: $('#domain').val() || 'general' 
+                                    }),
+                                    success: function(data) {
+                                        // Hide loading spinner
+                                        $('#output-loading').hide();
+
+                                        // Get result elements
+                                        let resultElement = $('#result');
+                                        let iconElement = resultElement.find('.result-icon');
+                                        let textElement = resultElement.find('.result-text');
+                                        let confidenceElement = resultElement.find('.confidence');
+                                        let detailsElement = resultElement.find('.result-details');
+
+                                        // Reset classes
+                                        resultElement.removeClass('real fake');
+
+                                        // Set result based on prediction
+                                        if (data.prediction !== undefined && data.confidence !== undefined) {
+                                            if (data.prediction.toLowerCase() === 'real') {
+                                                resultElement.addClass('real');
+                                                iconElement.removeClass().addClass('result-icon fas fa-check-circle');
+                                                textElement.text('Verified: Real News');
+                                                iconElement.css('color', '#52c41a');
+                                            } else if (data.prediction.toLowerCase() === 'fake') {
+                                                resultElement.addClass('fake');
+                                                iconElement.removeClass().addClass('result-icon fas fa-exclamation-triangle');
+                                                textElement.text('Alert: Potential Fake News');
+                                                iconElement.css('color', '#f5222d');
+                                            } else {
+                                                iconElement.removeClass().addClass('result-icon fas fa-question-circle');
+                                                textElement.text('Inconclusive Analysis');
+                                                iconElement.css('color', '#faad14');
+                                            }
+                                            confidenceElement.text(`Confidence Level: ${data.confidence}%`);
+                                            detailsElement.text(`Our AI-powered analysis suggests this content is ${data.prediction.toLowerCase()} with ${data.confidence}% confidence. Always verify information from multiple reliable sources.`);
+                                        } else if (data.error) {
+                                            iconElement.removeClass().addClass('result-icon fas fa-exclamation-circle');
+                                            textElement.text('Analysis Error');
+                                            confidenceElement.text('');
+                                            detailsElement.text(data.error);
+                                            iconElement.css('color', '#ff4d4f');
+                                        } else {
+                                            iconElement.removeClass().addClass('result-icon fas fa-question-circle');
+                                            textElement.text('Unexpected Response');
+                                            confidenceElement.text('');
+                                            detailsElement.text('Please try again or contact support if the issue persists.');
+                                            iconElement.css('color', '#faad14');
+                                        }
+                                    },
+                                    error: function() {
+                                        $('#output-loading').hide();
+                                        $('.output-container h2').show();
+                                        console.error('Analysis failed');
+                                        
+                                        // Get result elements
+                                        let resultElement = $('#result');
+                                        let iconElement = resultElement.find('.result-icon');
+                                        let textElement = resultElement.find('.result-text');
+                                        let confidenceElement = resultElement.find('.confidence');
+                                        let detailsElement = resultElement.find('.result-details');
+
+                                        // Set error state
+                                        resultElement.removeClass('real fake');
+                                        iconElement.removeClass().addClass('result-icon fas fa-exclamation-circle');
+                                        textElement.text('Error');
+                                        confidenceElement.text('');
+                                        detailsElement.text('An error occurred during analysis. Please try again later.');
+                                        iconElement.css('color', '#ff4d4f');
+                                    }
+                                });
+                            },
+                            error: function() {
+                                $('#output-loading').hide();
+                                $('.output-container h2').show();
+                                console.error('Plagiarism analysis failed');
+                                $('#plagiarism-result').html('<p style="color: #ff4d4f;">Error occurred while analyzing plagiarism. Please try again.</p>');
+                            }
+                        });
+                    },
+                    error: function() {
+                        $('#output-loading').hide();
+                        $('.output-container h2').show();
+                        console.error('Sentiment analysis failed');
+                        alert('An error occurred during sentiment analysis.');
+                    }
+                });
+            },
+            error: function() {
+                $('.loading-bar').hide();
+                $('#output-loading').hide();
+                $('.output-container h2').show();
+                alert('An error occurred while processing the text.');
+            }
+        });
+    });
+});
+
+    // Toggle input container functionality
+    document.addEventListener('DOMContentLoaded', () => {
+        const container = document.querySelector('.container');
+        const toggleBtn = document.getElementById('toggleInputBtn');
+        
+        toggleBtn.addEventListener('click', () => {
+            container.classList.toggle('input-hidden');
+            
+            if (container.classList.contains('input-hidden')) {
+                toggleBtn.innerHTML = '<i class="fas fa-chevron-right"></i> Show Input';
+            } else {
+                toggleBtn.innerHTML = '<i class="fas fa-chevron-left"></i> Hide Input';
+            }
+        });
+
+        // Show toggle button after page load
+        toggleBtn.style.display = 'block';
+    });
+    </script>
+</body>
+</html>

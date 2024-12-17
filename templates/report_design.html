@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Text Analysis App</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+        :root {
+            --primary-color: #FFFFFF;
+            --secondary-color: #3B82F6;
+            --background-color: linear-gradient(135deg, #e9dff3 0%, #2575fc 100%);
+            --text-color: #1F2937;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --accent-blue: #60A5FA;
+            --positive-color: #4CAF50;
+            --neutral-color: #FFC107;
+            --negative-color: #FF6B6B;
+            --ai-color: #6366F1;
+            --card-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--background-color);
+            min-height: 100vh;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        
+        /* Responsive Container */
+        .container {
+            height:80vh;
+            width: 100%;
+            max-width: 1800px;
+            margin: 0 auto;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        /* Responsive Header and Navigation */
+        header {
+            background-color: var(--primary-color);
+            padding: 1rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        nav {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .logo img {
+            max-height: 50px;
+            width: auto;
+        }
+        .nav-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        /* Input and Report Sections */
+        .input-section, .report-section {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: var(--card-shadow);
+            backdrop-filter: blur(10px);
+        }
+        .input-section textarea {
+            width: 100%;
+            height: 250px;
+            resize: none;
+            border: 2px solid var(--accent-blue);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        /* Responsive Report Grid */
+        .report-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        .report-item {
+            background-color: rgba(255,255,255,0.9);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Sentiment Animations and Colors */
+        .sentiment-positive {
+            background: linear-gradient(135deg, #4CAF50 0%, #81C784 100%);
+            color: white;
+        }
+        .sentiment-neutral {
+            background: linear-gradient(135deg, #FFC107 0%, #FFD54F 100%);
+            color: #333;
+        }
+        .sentiment-negative {
+            background: linear-gradient(135deg, #FF6B6B 0%, #FF8A80 100%);
+            color: white;
+        }
+
+        /* Virality Score Animation */
+        @keyframes viralityPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .virality-high {
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4, #45B7D1);
+            background-size: 200% 200%;
+            height:max-content;
+        }
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Fake News Detection Pulse */
+        @keyframes fakePulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,107,107,0.4); }
+            50% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(255,107,107,0); }
+        }
+        .fake-news-alert {
+            background: linear-gradient(135deg, #FF6B6B 0%, #FF8A80 100%);
+            color: white;
+            animation: fakePulse 1.5s infinite;
+            height:150px;
+        }
+
+        /* Hover Effect */
+        .report-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        /* Media Queries for Different Screen Sizes */
+        /* Laptop and Smaller Screens */
+        @media (max-width: 1024px) {
+            .container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                padding: 10px;
+            }
+
+            .report-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+
+            .input-section textarea {
+                height: 200px;
+            }
+
+            .report-item {
+                padding: 12px;
+            }
+
+            /* Scale down font sizes */
+            .report-item h3 {
+                font-size: 0.9rem;
+            }
+            .report-item p {
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Smaller Laptops and Tablets */
+        @media (max-width: 768px) {
+            .report-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-links {
+                flex-direction: column;
+                align-items: center;
+                width: 100%;
+            }
+
+            .input-section textarea {
+                height: 150px;
+            }
+        }
+
+        /* Mobile Devices */
+        @media (max-width: 480px) {
+            .container {
+                padding: 5px;
+            }
+
+            .input-section, .report-section {
+                padding: 15px;
+            }
+
+            .input-section textarea {
+                height: 120px;
+                font-size: 14px;
+            }
+
+            .report-item {
+                padding: 10px;
+            }
+
+            .report-item h3 {
+                font-size: 0.8rem;
+            }
+            .report-item p {
+                font-size: 0.8rem;
+            }
+
+            /* Adjust the height of report items */
+            .report-item {
+                height: auto;
+            }
+        }
+
+        /* Common Responsive Elements */
+        .analyze-btn {
+            width: 100%;
+            padding: 12px;
+            margin-top:200px;
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            position: relative;
+        }
+
+        .analyze-btn:hover {
+            background-color: #2563EB;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .report-section {
+            display: none;
+        }
+
+        .report-section.active {
+            display: block;
+        }
+
+        /* Additional Responsive Tweaks */
+        img, video {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Typography Adjustments */
+        h1, h2 {
+            font-size: 1.5rem;
+        }
+
+        @media (max-width: 480px) {
+            h1, h2 {
+                font-size: 1.2rem;
+            }
+        }
+
+        /* Confidence Indicator */
+        .confidence-indicator {
+            position: absolute;
+            top: 10px;
+            right: 1px;
+            background-color: rgba(0,0,0,0.1);
+            padding: 2px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        /* Pre-Analysis Guide Styles */
+        .pre-analysis-guide {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            gap: 10px;
+        }
+        .guide-item {
+            flex: 1;
+            background-color: rgba(255,255,255,0.9);
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        .guide-item i {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            opacity: 0.7;
+            transition: all 0.3s ease;
+        }
+        .guide-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        .guide-item:hover i {
+            opacity: 1;
+            color: var(--secondary-color);
+        }
+
+        /* Loading Animation Styles */
+        .loading-container {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            background: rgba(255,255,255,0.9);
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 10;
+        }
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--secondary-color);
+            border-top: 5px solid var(--accent-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive adjustments for pre-analysis guide */
+        @media (max-width: 768px) {
+            .pre-analysis-guide {
+                flex-direction: column;
+            }
+            .guide-item {
+                margin-bottom: 10px;
+            }
+            .guide-item i {
+                font-size: 1.2rem;
+            }
+        }
+        #summary-text {
+            list-style-type: none;
+            padding: 0;
+        }
+        #summary-text li {
+            margin-bottom: 0.5rem;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+        #summary-text li::before {
+            content: "\2022";
+            color: var(--text-color);
+            font-weight: bold;
+            position: absolute;
+            left: 0;}
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="/" class="logo">
+                <img src="static/images/truthbot-high-resolution-logo-transparent.png" alt="TruthBot.AI Logo">
+            </a>
+            <div class="nav-links">
+                <a href="/analyze"><i class="fas fa-file-alt"></i> Fake News Detector</a>
+                <a href="/sentiment"><i class="fas fa-chart-bar"></i> Sentiment Analysis</a>
+                <a href="/plagiarism"><i class="fas fa-check-circle"></i> Plagiarism Check</a>
+            </div>
+        </nav>
+    </header>
+    
+    <div class="container">
+        <div class="input-section">
+            <h2>Text Input</h2>
+            <textarea id="text-input" placeholder="Enter text here (max 400 words)"></textarea>
+            <div id="word-count">Word Count: 0/400</div>
+            
+            <!-- Pre-Analysis Guide -->
+            <div class="pre-analysis-guide">
+                <div class="guide-item">
+                    <i class="fas fa-brain"></i>
+                    <h4>Domain Detection</h4>
+                    <p>AI identifies content type</p>
+                </div>
+                <div class="guide-item">
+                    <i class="fas fa-chart-line"></i>
+                    <h4>Sentiment</h4>
+                    <p>Emotional tone analysis</p>
+                </div>
+                <div class="guide-item">
+                    <i class="fas fa-check-circle"></i>
+                    <h4>Credibility</h4>
+                    <p>Fake news detection</p>
+                </div>
+                <div class="guide-item">
+                    <i class="fas fa-file-alt"></i>
+                    <h4>Summary</h4>
+                    <p>Key points extraction</p>
+                </div>
+            </div>
+            
+            <button class="analyze-btn" onclick="analyzeText()">Analyze Text</button>
+        </div>
+        
+        <div id="report-section" class="report-section">
+            <!-- Loading Overlay -->
+            <div id="loading-container" class="loading-container">
+                <div class="loading-spinner"></div>
+            </div>
+            
+            <h2>Comprehensive Text Analysis</h2>
+            <div class="report-grid">
+                <div class="report-item">
+                    <h3>Domain Detection</h3>
+                    <p id="domain-result">SPORTS</p>
+                    <span class="ai-tag">AI Powered</span>
+                </div>
+                <div class="report-item" id="sentiment-container">
+                    <h3>Sentiment Analysis</h3>
+                    <p id="sentiment-result">POSITIVE</p>
+                </div>
+                <div class="report-item" style="grid-column: 2; grid-row: span 5;background-color:var(--accent-blue);">
+                    <h3>Content Summary</h3>
+                    <p id="summary-result" style="height: 100%;">A comprehensive overview highlighting key points and primary narrative themes.</p>
+                </div>
+                <div class="report-item">
+                    <h3>Content Origin</h3>
+                    <p id="plagiarism-result">100% AI-Generated Content</p>
+                    <span class="ai-tag">Machine Learning</span>
+                </div>
+                <div class="report-item fake-news-alert">
+                    <h3>Credibility Alert</h3>
+                    <p id="fake-news-result">POTENTIAL FAKE NEWS</p>
+                </div>
+                <div class="report-item virality-high">
+                    <h3>Virality Potential</h3>
+                    <p id="virality-result" style="font-size: 2rem;">VIRAL SCORE: 85</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const textInput = document.getElementById('text-input');
+        const wordCountDisplay = document.getElementById('word-count');
+        const reportSection = document.getElementById('report-section');
+        const sentimentContainer = document.getElementById('sentiment-container');
+
+        textInput.addEventListener('input', function() {
+            const words = this.value.trim().split(/\s+/);
+            const wordCount = words.length;
+
+            if (wordCount > 400) {
+                this.value = words.slice(0, 400).join(' ');
+                wordCountDisplay.textContent = `Word Count: 400/400`;
+            } else {
+                wordCountDisplay.textContent = `Word Count: ${wordCount}/400`;
+            }
+        });
+
+        function analyzeText() {
+            const inputText = textInput.value.trim();
+            const loadingContainer = document.getElementById('loading-container');
+            const summaryResult = document.getElementById('summary-result');
+            
+            if (inputText) {
+                // Show loading spinner
+                loadingContainer.style.display = 'flex';
+                reportSection.classList.remove('active');
+
+                // Actual AJAX request for analysis
+                fetch('/analyze', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: `text=${encodeURIComponent(inputText)}`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Hide loading spinner
+                    loadingContainer.style.display = 'none';
+                    reportSection.classList.add('active');
+                    
+                    // Update summary
+                    if (data.summary) {
+                        summaryResult.textContent = data.summary;
+                    }
+                    
+                    // Update other report items (you'll need to pass these from backend)
+                    const sentimentResult = document.getElementById('sentiment-result');
+                    if (data.sentiment) {
+                        sentimentResult.textContent = data.sentiment.toUpperCase();
+                        // Dynamic sentiment coloring
+                        sentimentContainer.classList.remove('sentiment-positive', 'sentiment-neutral', 'sentiment-negative');
+                        if (data.sentiment.toUpperCase() === 'POSITIVE') {
+                            sentimentContainer.classList.add('sentiment-positive');
+                        } else if (data.sentiment.toUpperCase() === 'NEUTRAL') {
+                            sentimentContainer.classList.add('sentiment-neutral');
+                        } else if (data.sentiment.toUpperCase() === 'NEGATIVE') {
+                            sentimentContainer.classList.add('sentiment-negative');
+                        }
+                    }
+                    
+                    // Add similar updates for other report items
+                    if (data.domain) {
+                        document.getElementById('domain-result').textContent = data.domain.toUpperCase();
+                    }
+                    if (data.plagiarism) {
+                        document.getElementById('plagiarism-result').textContent = data.plagiarism;
+                    }
+                    if (data.fake_news) {
+                        document.getElementById('fake-news-result').textContent = data.fake_news;
+                    }
+                    if (data.virality) {
+                        document.getElementById('virality-result').textContent = `VIRAL SCORE: ${data.virality}`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    loadingContainer.style.display = 'none';
+                    summaryResult.textContent = 'Error processing text. Please try again.';
+                });
+            } else {
+                reportSection.classList.remove('active');
+            }
+        }
+    </script>
+</body>
+</html>
