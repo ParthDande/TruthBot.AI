@@ -11,14 +11,13 @@ from nltk import word_tokenize
 from nltk.corpus import stopwords
 
 # Load the model and vectorizer
-model = joblib.load('plagiarism.pkl')
-vectorizer  = joblib.load('plagiarism_vectorizer.pkl')
+model = joblib.load('Models/plagiarism.pkl')
+vectorizer  = joblib.load('vectorizers/plagiarism_vectorizer.pkl')
 
-# Input text to classify
 class PlagiarismDetection:
     def __init__(self):
-        self.model = joblib.load('plagiarism.pkl')
-        self.vectorizer = joblib.load('plagiarism_vectorizer.pkl')
+        self.model = joblib.load('Models/plagiarism.pkl')
+        self.vectorizer = joblib.load('vectorizers/plagiarism_vectorizer.pkl')
         self.stopwords = set(stopwords.words('english'))
 
     def ai_plagiarism(self, text):
