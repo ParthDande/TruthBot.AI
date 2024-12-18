@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="static\images\truth-bot-high-resolution-logo-transparent.png">
     <title>News Summarizer</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>/*this is required by default for ajax requests */ 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <script src="/static/js/theme.js"></script>
     <style>
@@ -339,6 +339,42 @@
                 opacity: 0;
             }
         }
+    .delete-btn {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        cursor: pointer;
+        color: var(--text-color);
+        font-size: 1.5rem;
+        transition: color 0.3s ease;
+    }
+    
+    .delete-btn:hover {
+        color: var(--negative-color);
+    }
+    
+    .input-options {
+        position: relative;
+        margin-bottom: 10px;
+    }
+    
+    .file-paste-icons {
+        position: absolute;
+        top: -30px;
+        right: 0;
+        display: flex;
+        gap: 15px;
+    }
+    
+    .file-paste-icons i {
+        cursor: pointer;
+        color: var(--text-color);
+        transition: color 0.3s ease;
+    }
+    
+    .file-paste-icons i:hover {
+        color: var(--secondary-color);
+    }
     </style>
 </head>
 <body>
@@ -357,43 +393,40 @@
 
     <main>
         <div class="container">
-            <div class="input-container"style="position: relative;">
-                <h1>News Summarizer</h1>
-                <p style="color:var(--text-color); margin-bottom: 1.5rem;">Enter a news article to summarize</p>
-                
-                <div class="input-type-toggle">
-                    <div class="toggle-switch" id="input-type-toggle">
-                        <div class="toggle-switch-inner">
-                            <div class="toggle-switch-label">Text</div>
-                            <div class="toggle-switch-label">URL</div>
-                        </div>
-                        <div class="toggle-switch-slider"></div>
-                    </div>
-                </div>
 
-                <form method="POST" id="summarize-form" onsubmit="return validateInput();">
-                    <input type="hidden" name="input-type" id="input-type" value="text">
-                    <div id="text-input">
-                        <label for="text">Enter your text:</label>
-                        <textarea name="text" id="text" required></textarea>
-                        <div class="word-count">Words: <span id="wordCount">0</span>/400</div>
-                        <div id="wordLimitMessage" style="color: red;"></div>
+                <div class="input-container" style="position: relative;">
+                    <div class="delete-btn" style="position: absolute; top: 20px; right: 20px; cursor: pointer;">
+                        <i class="fas fa-trash-alt"></i>
                     </div>
+                    <h1>News Summarizer</h1>
+                    <p style="color:var(--text-color); margin-bottom: 1.5rem;">Generate Quick News Summaries for faster read.</p>
                     
-                    <div id="url-input">
-                        <label for="url">Enter news article URL:</label>
-                        <input type="url" name="url" id="url" placeholder="https://example.com/news-article">
+                    <form method="POST" id="summarize-form" onsubmit="return validateInput();">
+                        <input type="hidden" name="input-type" id="input-type" value="text">
+                        <div class="input-options" style="display: flex; justify-content: center; margin-bottom: 10px;">
+                            <input type="file" id="file-upload" accept=".txt,.doc,.docx" style="display:none;">
+                            <div style="display: flex; gap: 20px;">
+                                <i class="fas fa-file-upload" id="file-upload-icon" style="cursor: pointer; font-size: 1.5rem; position: absolute; left:0%;" title="Upload File"></i>
+                                <i class="fas fa-paste" id="paste-icon" style="cursor: pointer; font-size: 1.5rem;position: absolute,left;" title="Paste Text"></i>
+                            </div>
+                        </div>
+                        <div id="text-input">
+                            <label for="text">Enter the news article or  paste the link:</label>
+                            <textarea name="text" id="text" required></textarea>
+                            <div class="word-count">Words: <span id="wordCount">0</span>/400</div>
+                            <div id="wordLimitMessage" style="color: red;"></div>
+                        </div>
+                        
+                        <input type="submit" value="Summarize">
+                    </form>
+                    <div class="loading-bar">
+                        <div class="loading-bar-progress"></div>
                     </div>
-                    
-                    <input type="submit" value="Summarize">
-                </form>
-                <div class="loading-bar">
-                    <div class="loading-bar-progress"></div>
                 </div>
-            </div>
-            <div class="output-container">
-                <h2>Summary</h2>
-                <ul id="summary-text"></ul>
+                <div class="output-container">
+                    <h2>Summary</h2>
+                    <ul id="summary-text"></ul>
+                </div>
             </div>
         </div>
     </main>
@@ -406,33 +439,40 @@
         const $inputTypeHidden = $('#input-type');
         const $text = $('#text');
         const $url = $('#url');
+         // Delete button functionality
+    $('.delete-btn').on('click', function() {
+        $('#text').val(''); // Clear textarea
+        $('#wordCount').text('0'); // Reset word count
+        $('#wordLimitMessage').text(''); // Clear any word limit message
+    });
 
-        // Toggle between text and URL input
-        $toggleSwitch.on('click', function() {
-            $(this).toggleClass('active');
-            
-            if ($(this).hasClass('active')) {
-                // Switch to URL
-                $textInput.css('opacity', 0);
-                $urlInput.css('opacity', 1);
-                $text.prop('required', false);
-                $url.prop('required', true);
-                $inputTypeHidden.val('url');
-            } else {
-                // Switch to Text
-                $textInput.css('opacity', 1);
-                $urlInput.css('opacity', 0);
-                $text.prop('required', true);
-                $url.prop('required', false);
-                $inputTypeHidden.val('text');
-            }
+    // File upload icon click handler
+    $('#file-upload-icon').on('click', function() {
+        $('#file-upload').click();
+    });
 
-            // Slight delay to create a smoother transition effect
-            setTimeout(() => {
-                $textInput.css('pointer-events', !$toggleSwitch.hasClass('active') ? 'auto' : 'none');
-                $urlInput.css('pointer-events', $toggleSwitch.hasClass('active') ? 'auto' : 'none');
-            }, 300);
+    // File upload change handler
+    $('#file-upload').on('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                $('#text').val(e.target.result);
+                validateWordCount(); // Update word count after file upload
+            };
+            reader.readAsText(file);
+        }
+    });
+
+    // Paste icon click handler
+    $('#paste-icon').on('click', function() {
+        navigator.clipboard.readText().then(function(clipText) {
+            $('#text').val(clipText);
+            validateWordCount(); // Update word count after pasting
+        }).catch(function(err) {
+            alert('Failed to read clipboard: ' + err);
         });
+    });
 
         // Word count validation function
         function validateWordCount() {

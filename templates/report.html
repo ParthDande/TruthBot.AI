@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="icon" type="image/png" href="static\images\truth-bot-high-resolution-logo-transparent.png"> <!-- For PNG -->
     <title>News Report</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -46,6 +46,7 @@
             min-height: 100vh;
             color: var(--text-color);
             line-height: 1.6;
+            max-height: fit-content;
         }
         .container {
             width: 95%;
@@ -71,6 +72,7 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             max-width: auto;
             max-height:100%;
+            position: relative;
         }
         header {
             background-color: var(--primary-color);
@@ -241,7 +243,7 @@
             opacity: 0;
             transform: translateY(20px);
             transition: opacity 0.5s ease, transform 0.5s ease;
-            max-width: 500px;
+            max-width: auto;
             max-height: auto;
 
         }
@@ -365,6 +367,7 @@
     border-radius: 8px;
     margin-top: 20px;
     text-align: center;
+    color:var(--secondary-color);
 }
 
 #result.real {
@@ -392,9 +395,130 @@
 }
 
 .result-details {
-    color: #333;
+    color: var(--text-color);
+}
+/* Responsive Adjustments */
+@media (max-width: 1200px) {
+    .container {
+        width: 95%;
+        margin: 2rem auto;
+        flex-direction: column;
+        gap: 2rem;
+        margin-left: auto;
+    }
+
+    .input-container, .output-container {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .output-container {
+        position: relative;
+        height: auto;
+        min-height: 600px;
+    }
+
+    .report-card {
+        position: static !important;
+        width: 100% !important;
+        margin: 1rem 0;
+        height: auto !important;
+    }
 }
 
+@media (max-width: 768px) {
+    body {
+        font-size: 14px;
+    }
+
+    header {
+        padding: 0.5rem;
+    }
+
+    nav {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .logo img {
+        height: 40px;
+    }
+
+    .nav-links {
+        width: 100%;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 1rem;
+    }
+
+    .nav-links a {
+        margin: 0.5rem 0;
+    }
+
+    .input-container, .output-container {
+        padding: 1rem;
+    }
+
+    textarea {
+        height: 200px;
+    }
+
+    input[type="submit"] {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .pre-analysis-guide {
+        flex-direction: column;
+    }
+
+    .guide-item {
+        margin-bottom: 1rem;
+    }
+
+    .word-count {
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        font-size: 12px;
+    }
+
+    .container {
+        margin: 1rem 0.5rem;
+        width: calc(100% - 1rem);
+    }
+
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    h2 {
+        font-size: 1.2rem;
+    }
+
+    .report-card h3 {
+        font-size: 1rem;
+    }
+
+    .result-icon {
+        font-size: 32px;
+    }
+
+    .result-text {
+        font-size: 18px;
+    }
+}
+
+/* Additional responsive tweaks */
+@media (max-width: 1024px) {
+    .loading-spinner {
+        width: 40px;
+        height: 40px;
+    }
+}
     </style>
 </head>
 <body>
@@ -458,19 +582,14 @@
             </div>
             
             <!-- Results containers -->
-            <div class="report-card" style="height: 400px;width:600px;">
+            <div class="report-card" style="position:absolute;top:0%; height: 70%;width:48%; overflow-y: scroll;">
                 <h3 id="summary-heading">Summary :</h3>
                 <ul id="summary-text"></ul>
             </div>
-            <div id="plagiarism-result" class ="report-card" style="position:fixed;margin-left: 600px;margin-top:-400px;width:100%;height:400px;">
+            <div id="plagiarism-result" class ="report-card" style="position:absolute;top: 0%;right:2%;width:46%;height:48%">
             </div>
-            <div id="result" class="report-card" style="max-width:500px;margin-top:49px;">
-                <i class="result-icon fas fa-question-circle"></i>
-                <h3 class="result-text">Analysis Result</h3>
-                <p class="confidence"></p>
-                <p class="result-details"></p>
-            </div>
-            <div class="report-card" style="margin-left: 600px;margin-top: -300px;">
+            
+            <div class="report-card" style="position:absolute;bottom:0% ;width:48%;">
                     <h2>Sentiment Analysis Report</h2>
                     <p><strong>Sentiment:</strong> <span id="sentiment-result"></span></p>
                     <div class="sentiment-meter">
@@ -478,6 +597,12 @@
                     </div>
                     <p><strong>Confidence:</strong> <span id="confidence"></span></p>
                 </div> 
+                <div id="result" class="report-card" style="position:absolute;bottom:2%;right:2%;width:46%;height:40%;">
+                    <i class="result-icon fas fa-question-circle"></i>
+                    <h3 class="result-text">Analysis Result</h3>
+                    <p class="confidence"></p>
+                    <p class="result-details"></p>
+                </div>
         </div>
     </div>
 </main>
@@ -651,83 +776,75 @@
                                 `;
                                 $('#plagiarism-result').html(plagiarismResultHTML);
 
-                                // Send additional analysis request
                                 $.ajax({
-                                    url: '/analyze',
-                                    method: 'POST',
-                                    contentType: 'application/json',
-                                    data: JSON.stringify({ 
-                                        text: limitedText, 
-                                        domain: $('#domain').val() || 'general' 
-                                    }),
-                                    success: function(data) {
-                                        // Hide loading spinner
-                                        $('#output-loading').hide();
+                        url: '/analyze',
+                        method: 'POST',
+                        data: { text: limitedText },
+                        success: function(response) {
+                            // Hide loading spinner
+                            $('#output-loading').hide();
 
-                                        // Get result elements
-                                        let resultElement = $('#result');
-                                        let iconElement = resultElement.find('.result-icon');
-                                        let textElement = resultElement.find('.result-text');
-                                        let confidenceElement = resultElement.find('.confidence');
-                                        let detailsElement = resultElement.find('.result-details');
+                            // Get result elements
+                            let resultElement = $('#result');
+                            let iconElement = resultElement.find('.result-icon');
+                            let textElement = resultElement.find('.result-text');
+                            let confidenceElement = resultElement.find('.confidence');
+                            let detailsElement = resultElement.find('.result-details');
 
-                                        // Reset classes
-                                        resultElement.removeClass('real fake');
+                            // Reset result card
+                            resultElement.removeClass('result-real result-fake');
+                            
+                            // Determine result
+                            const prediction = (response.prediction || '').toLowerCase();
 
-                                        // Set result based on prediction
-                                        if (data.prediction !== undefined && data.confidence !== undefined) {
-                                            if (data.prediction.toLowerCase() === 'real') {
-                                                resultElement.addClass('real');
-                                                iconElement.removeClass().addClass('result-icon fas fa-check-circle');
-                                                textElement.text('Verified: Real News');
-                                                iconElement.css('color', '#52c41a');
-                                            } else if (data.prediction.toLowerCase() === 'fake') {
-                                                resultElement.addClass('fake');
-                                                iconElement.removeClass().addClass('result-icon fas fa-exclamation-triangle');
-                                                textElement.text('Alert: Potential Fake News');
-                                                iconElement.css('color', '#f5222d');
-                                            } else {
-                                                iconElement.removeClass().addClass('result-icon fas fa-question-circle');
-                                                textElement.text('Inconclusive Analysis');
-                                                iconElement.css('color', '#faad14');
-                                            }
-                                            confidenceElement.text(`Confidence Level: ${data.confidence}%`);
-                                            detailsElement.text(`Our AI-powered analysis suggests this content is ${data.prediction.toLowerCase()} with ${data.confidence}% confidence. Always verify information from multiple reliable sources.`);
-                                        } else if (data.error) {
-                                            iconElement.removeClass().addClass('result-icon fas fa-exclamation-circle');
-                                            textElement.text('Analysis Error');
-                                            confidenceElement.text('');
-                                            detailsElement.text(data.error);
-                                            iconElement.css('color', '#ff4d4f');
-                                        } else {
-                                            iconElement.removeClass().addClass('result-icon fas fa-question-circle');
-                                            textElement.text('Unexpected Response');
-                                            confidenceElement.text('');
-                                            detailsElement.text('Please try again or contact support if the issue persists.');
-                                            iconElement.css('color', '#faad14');
-                                        }
-                                    },
-                                    error: function() {
-                                        $('#output-loading').hide();
-                                        $('.output-container h2').show();
-                                        console.error('Analysis failed');
-                                        
-                                        // Get result elements
-                                        let resultElement = $('#result');
-                                        let iconElement = resultElement.find('.result-icon');
-                                        let textElement = resultElement.find('.result-text');
-                                        let confidenceElement = resultElement.find('.confidence');
-                                        let detailsElement = resultElement.find('.result-details');
+                            if (prediction === 'real') {
+                                resultElement.addClass('result-real');
+                                iconElement.removeClass().addClass('result-icon fas fa-check-circle');
+                                textElement.text('Verified: Real News');
+                            } else if (prediction === 'fake') {
+                                resultElement.addClass('result-fake');
+                                iconElement.removeClass().addClass('result-icon fas fa-exclamation-triangle');
+                                textElement.text('Alert: Potential Fake News');
+                            } else {
+                                iconElement.removeClass().addClass('result-icon fas fa-question-circle');
+                                textElement.text('Inconclusive Analysis');
+                            }
 
-                                        // Set error state
-                                        resultElement.removeClass('real fake');
-                                        iconElement.removeClass().addClass('result-icon fas fa-exclamation-circle');
-                                        textElement.text('Error');
-                                        confidenceElement.text('');
-                                        detailsElement.text('An error occurred during analysis. Please try again later.');
-                                        iconElement.css('color', '#ff4d4f');
-                                    }
-                                });
+                            // Set confidence and details
+                            confidenceElement.text(`Confidence Level: ${response.confidence || 0}%`);
+                            detailsElement.text(`Our AI-powered analysis suggests this content is ${prediction} with ${response.confidence || 0}% confidence. Always verify information from multiple reliable sources.`);
+
+                            // Show result card with animation
+                            resultCard.show();
+                            setTimeout(() => {
+                                resultCard.addClass('show');
+                                resultCard[0].scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+                                // Hide the loading spinner after showing the result
+                                $('.loading').hide();
+                                $('#output-loading').hide();
+                            }, 30);
+                        },
+                        error: function(xhr, status, error) {
+                            // Error handling
+                            $('.loading').hide();
+                            let resultElement = $('#result');
+                            let iconElement = resultElement.find('.result-icon');
+                            let textElement = resultElement.find('.result-text');
+                            let confidenceElement = resultElement.find('.confidence');
+                            let detailsElement = resultElement.find('.result-details');
+
+                            resultElement.removeClass('result-real result-fake');
+                            iconElement.removeClass().addClass('result-icon fas fa-exclamation-circle');
+                            textElement.text('Analysis Error');
+                            confidenceElement.text('');
+                            detailsElement.text('An error occurred. Please try again or check your input.');
+
+                            resultCard.show().addClass('show');
+                            console.error('Verification error:', error);
+                        }
+                    });
+
                             },
                             error: function() {
                                 $('#output-loading').hide();
