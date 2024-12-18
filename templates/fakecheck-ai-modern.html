@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="static\images\truth-bot-high-resolution-logo-transparent.png"> <!-- For PNG -->
-    <title> Fake News Verification</title>
+    <link rel="icon" type="image/png" href="static\images\truth-bot-high-resolution-logo-transparent.png">
+    <title>Fake News Detector</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <script src="/static/js/theme.js"></script>
     <style>
-          :root {
+        :root {
             --primary-color: #FFFFFF;
             --secondary-color: #007BFF;
             --background-color: linear-gradient(135deg, #e9dff3 0%, #2575fc 100%);
@@ -17,7 +18,7 @@
             --team-bg: rgba(248, 249, 250, 0.9);
             --positive-color: #4CAF50;
             --negative-color: #ff4d4d;
-            --neutral-color: #FF5733;
+            --neutral-color: #f6ef1d;
             --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             --hover-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
         }
@@ -38,47 +39,44 @@
             padding: 0;
             box-sizing: border-box;
         }
-
+      
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: var(--background-color);
             min-height: 100vh;
             color: var(--text-color);
         }
-
         .container {
             width: 90%;
-            max-width: 1200px;
-            margin: 0 auto;
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
-        
-
         /* Header Styles */
         header {
             background-color: var(--primary-color);
-            color: white;
+            color: var(--text-color);
             padding: 1rem 0;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
-
         nav {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        width: 100%; /* Make the nav bar full width */
-        max-width: 1200px;
-        margin: 0 auto; /* Center the nav in the container */
-        padding: 0; /* Remove padding to ensure it touches the edge */
-    }
-
-
-        
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0;
+        }
         .logo {
             font-size: 1.5rem;
             font-weight: bold;
             display: flex;
             align-items: center;
-            color: white;
+            color: var(--secondary-color);
             text-decoration: none;
         }
         .logo i {
@@ -100,323 +98,126 @@
             transition: color 0.3s ease;
         }
         .nav-links a:hover {
-            color:var(--secondary-color);
+            color: var(--text-color);
         }
-
-        /* Main Content Styles */
-        main {
-            padding: 2rem 0;
-        }
-
-        .hero {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
         h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
             color: var(--text-color);
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 1rem;
         }
-
-        .hero p {
-            font-size: 1.1rem;
-            color:var(--text-color);
-            max-width: 600px;
-            margin: 0 auto;
+        .text-input-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 30%;
+            margin-bottom: 1rem;
         }
-
-        .analysis-card {
+        #text-input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            resize: none;
+            padding: 0.75rem;
+            background-color: var(--primary-color);
+            border: 1px solid var(--text-color);
+            border-radius: 5px;
+            color: var(--text-color);
+            font-size: 0.9rem;
+        }
+        .word-count {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
             background-color: var(--card-bg);
-            border-radius: 8px;
-            padding: 2rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            margin-bottom: 2rem;
+            padding: 3px 6px;
+            border-radius: 3px;
+            font-size: 0.7rem;
         }
-
-        .tabs {
-            display: flex;
-            margin-bottom: 1.5rem;
-            border-bottom: 2px solid #E5E7EB;
-        }
-
-        .tab {
-            padding: 0.75rem 1.5rem;
-            font-size: 1rem;
-            font-weight: 500;
-            color: var(--text-color);
-            background: none;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .tab.active {
-            border-bottom: 2px solid var(--primary-color);
-        }
-
-        .tab-content {
+        .loading {
             display: none;
+            text-align: center;
+            margin-top: 2rem;
         }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        #urlInput, #textInput {
-            width: 100%;
-            padding: 0.75rem;
-            margin-bottom: 1rem;
-            border: 2px solid var(--text-color);
-            border-radius: 4px;
-            font-size: 1rem;
-            transition: border-color 0.3s ease;
-        }
-
-        #textInput {
-            height: 150px;
-            resize: vertical;
-        }
-
-        #urlInput:focus, #textInput:focus {
-            outline: none;
-            border-color: var(--text-color);
-        }
-
-        #domainInput {
-            width: 100%;
-            padding: 0.75rem;
-            margin-bottom: 1rem;
-            border: 1px solid var(--text-color); /* Match existing input styles */
-            border-radius: 4px;
-            font-size: 1rem;
-            color:var(--text-color);
-            transition: border-color 0.3s ease;
-            background-color: var(--card-bg); /* Match card background */
-        }
-
-        #domainInput:focus {
-            outline: none;
-            border-color: var(--text-color); /* Highlight on focus */
-        }
-
-        button {
+        .loading-bar {
+            width: 0;
+            height: 4px;
             background-color: var(--secondary-color);
-            color: var(--primary-color);
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 4px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: width 0.5s;
         }
-
-        button:hover {
-            color:var(--primary-color);
-            background-color: var(--text-color);
-        }
-
-        #result {
-            margin-top: 1.5rem;
-            padding: 1.5rem;
-            border-radius: 8px;
+        .report-card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 2rem;
+            margin-top: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             display: none;
-            transition: all 0.3s ease;
-            text-align: center;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
         }
-
-        #result.real {
-            margin-top: 1.5rem;
-            padding: 1.5rem;
-            border-radius: 8px;
-            display: none;
-            transition: all 0.3s ease;
-            text-align: center;
+        .report-card.show {
+            opacity: 1;
+            transform: translateY(0);
         }
-
-        #result.fake {
-            background-color: #f8d7da;
-            border-color: #f5c6cb;
-            color: #721c24;
-        }
-
         .result-icon {
             font-size: 3rem;
+            text-align: center;
             margin-bottom: 1rem;
         }
-
+        .result-real .result-icon {
+            color: var(--positive-color);
+        }
+        .result-fake .result-icon {
+            color: var(--negative-color);
+        }
         .result-text {
             font-size: 1.5rem;
             font-weight: bold;
-            margin-bottom: 0.5rem;
+            text-align: center;
+            margin-bottom: 1rem;
         }
-
         .confidence {
-            font-size: 1.2rem;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-
-        .pulse {
-            animation: pulse 2s infinite;
-        }
-
-        .loader {
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid var(--primary-color);
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Features Section */
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-
-        .feature {
-            background-color: var(--card-bg);
-            padding: 1.5rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-        }
-
-        .feature:hover {
-            transform: translateY(-5px);
-        }
-
-        .feature i {
-            font-size: 2rem;
+            text-align: center;
             color: var(--text-color);
             margin-bottom: 1rem;
         }
-
-        .feature h3 {
-            font-size: 1.2rem;
-            margin-bottom: 0.5rem;
+        .result-details {
+            background-color: var(--primary-color);
+            padding: 1rem;
+            border-radius: 5px;
+            text-align: center;
         }
-
-        /* Responsive Design */
+        input[type="submit"] {
+            background-color: var(--secondary-color);
+            color: var(--primary-color);
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+        }
+        input[type="submit"]:hover {
+            background-color: var(--text-color);
+        }
+        .footer {
+            text-align: center;
+            margin-top: 2rem;
+            color: var(--text-color);
+        }
         @media (max-width: 768px) {
             .nav-links {
                 display: none;
             }
-
-            .hero h1 {
-                font-size: 2rem;
+            .container {
+                width: 95%;
+                padding: 1rem;
             }
-
-            .features {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .loading-bar {
-            width: 100%;
-            height: 5px;
-            background-color: #D1D5DB; /* Background color of the loading bar */
-            position: relative;
-            overflow: hidden;
-            display: none; /* Initially hidden */
-        }
-
-        .loading-bar .progress {
-            height: 100%;
-            background-color: var(--primary-color); /* Color of the loading progress */
-            width: 0; /* Start with 0 width */
-            animation: loading 2s linear infinite; /* Animation for loading effect */
-        }
-
-        @keyframes loading {
-            0% { width: 0; }
-            50% { width: 100%; }
-            100% { width: 0; }
-        }
-
-        /* New Loading Animation */
-        .loading-container {
-            display: none;
-            justify-content: center;
-            align-items: center;
-            margin-top: 2rem;
-        }
-
-        .loading-spinner {
-            width: 50px;
-            height: 50px;
-            border: 3px solid rgba(0, 140, 186, 0.3);
-            border-radius: 50%;
-            border-top-color: var(--primary-color);
-            animation: spin 1s ease-in-out infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Enhanced Result Styling */
-        #result {
-            margin-top: 2rem;
-            padding: 2rem;
-            border-radius: 12px;
-            display: none;
-            transition: all 0.3s ease;
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        #result.real {
-            background-color: #e6f7ff;
-            border: 2px solid #91d5ff;
-        }
-
-        #result.fake {
-            background-color: #fff1f0;
-            border: 2px solid #ffa39e;
-        }
-
-        .result-icon {
-            font-size: 4rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .result-text {
-            font-size: 2rem;
-            font-weight: bold;
-            margin-bottom: 1rem;
-        }
-
-        .confidence {
-            font-size: 1.2rem;
-            color: #666;
-        }
-
-        .result-details {
-            margin-top: 1.5rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid #e8e8e8;
-            font-size: 1rem;
-            color: #333;
-        }
-
-        /* Remove old loading bar styles */
-        .loading-bar, .loading-bar .progress {
-            display: none;
         }
     </style>
 </head>
@@ -426,123 +227,156 @@
             <a href="/" class="logo">
                 <img src="static/images/truthbot-high-resolution-logo-transparent.png" alt="TruthBot.AI Logo">
             </a>
-            </a>
             <div class="nav-links">
-                <a href="/sentiment"><i class="fas fa-shield-alt"></i>Sentiment Analysis</a>
-                <a href="/summarization"><i class="fas fa-file-alt"></i> Text Summarizer</a>
+                <a href="/analyze"><i class="fas fa-file-alt"></i> Fake News Detector</a>
+                <a href="/sentiment"><i class="fas fa-comment-dots"></i> Sentiment Analyzer</a>
                 <a href="/plagiarism"><i class="fas fa-check-circle"></i> Plagiarism Check</a>
             </div>
         </nav>
     </header>
 
-    <main class="container">
-        <section class="hero">
-            <h1>Advanced News Verification</h1>
-            <p>Use the power of AI to detect fake news, analyze sentiment, and verify credibility of online content.</p>
-        </section>
-
-        <div class="analysis-card">
-            
-
-            <div id="textTab" class="tab-content active">
-                <textarea id="textInput" name="textInput" placeholder="Paste text to analyze"></textarea>
-                <input type="text" id="domainInput" name="domainInput" placeholder="Enter domain (e.g., www.bbc.com)">
-                <button onclick="analyze()"><i class="fas fa-search"></i> Analyze Text</button>
+    <div class="container">
+        <h1>Fake News Detector</h1>
+        <form id="news-form">
+            <div class="text-input-container">
+                <textarea id="text-input" placeholder="Paste the text you want to verify... (max 300 words)" required></textarea>
+                <div class="word-count">Words: <span id="wordCount">0</span>/300</div>
             </div>
+            <input type="submit" value="Verify News">
+        </form>
 
-            <div class="loading-container">
-                <div class="loading-spinner"></div>
-            </div>
+        <div class="loading">
+            <p>Analyzing your text...</p>
+            <div class="loading-bar"></div>
+        </div>
 
-            <div id="result">
-                <i class="result-icon fas"></i>
-                <p class="result-text"></p>
-                <p class="confidence"></p>
-                <div class="result-details"></div>
+        <div class="report-card" id="result">
+            <div class="result-icon fas fa-question-circle"></div>
+            <div class="result-text">Awaiting Analysis</div>
+            <div class="confidence"></div>
+            <div class="result-details">
+                Enter text to begin verification
             </div>
         </div>
-    </main>
 
-        <script>
-            function analyze() {
-                let textInput = document.getElementById('textInput').value;
-                let domainInput = document.getElementById('domainInput').value;
+        <div class="footer">
+            <p>Powered by TruthBot.AI 2024</p>
+        </div>
+    </div>
 
-                let loadingContainer = document.querySelector('.loading-container');
-                let resultElement = document.getElementById('result');
+    <script>
+    $(document).ready(function() {
+        const textInput = $('#text-input');
+        const wordCount = $('#wordCount');
+        const submitButton = $('input[type="submit"]');
+        const resultCard = $('.report-card');
 
-                // Hide previous results and show loading animation
-                resultElement.style.display = 'none';
-                loadingContainer.style.display = 'flex';
+        function updateWordCount() {
+            const text = textInput.val().trim();
+            const words = text.split(/\s+/);
+            const count = words.length === 1 && words[0] === '' ? 0 : words.length;
 
-                fetch('/analyze', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ text: textInput, domain: domainInput })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    loadingContainer.style.display = 'none';
-                    resultElement.style.display = 'block';
-
-                    let iconElement = resultElement.querySelector('.result-icon');
-                    let textElement = resultElement.querySelector('.result-text');
-                    let confidenceElement = resultElement.querySelector('.confidence');
-                    let detailsElement = resultElement.querySelector('.result-details');
-
-                    if (data.prediction !== undefined && data.confidence !== undefined) {
-                        if (data.prediction.toLowerCase() === 'real') {
-                            resultElement.className = 'real';
-                            iconElement.className = 'result-icon fas fa-check-circle';
-                            textElement.textContent = 'Verified: Real News';
-                            iconElement.style.color = '#52c41a';
-                        } else if (data.prediction.toLowerCase() === 'fake') {
-                            resultElement.className = 'fake';
-                            iconElement.className = 'result-icon fas fa-exclamation-triangle';
-                            textElement.textContent = 'Alert: Potential Fake News';
-                            iconElement.style.color = '#f5222d';
-                        } else {
-                            resultElement.className = '';
-                            iconElement.className = 'result-icon fas fa-question-circle';
-                            textElement.textContent = 'Inconclusive Analysis';
-                            iconElement.style.color = '#faad14';
-                        }
-                        confidenceElement.textContent = `Confidence Level: ${data.confidence}%`;
-                        detailsElement.textContent = `Our AI-powered analysis suggests this content is ${data.prediction.toLowerCase()} with ${data.confidence}% confidence. Always verify information from multiple reliable sources.`;
-                    } else if (data.error) {
-                        resultElement.className = '';
-                        iconElement.className = 'result-icon fas fa-exclamation-circle';
-                        textElement.textContent = 'Analysis Error';
-                        confidenceElement.textContent = '';
-                        detailsElement.textContent = data.error;
-                        iconElement.style.color = '#ff4d4f';
-                    } else {
-                        resultElement.className = '';
-                        iconElement.className = 'result-icon fas fa-question-circle';
-                        textElement.textContent = 'Unexpected Response';
-                        confidenceElement.textContent = '';
-                        detailsElement.textContent = 'Please try again or contact support if the issue persists.';
-                        iconElement.style.color = '#faad14';
-                    }
-                })
-                .catch(error => {
-                    loadingContainer.style.display = 'none';
-                    resultElement.style.display = 'block';
-                    resultElement.className = '';
-                    let iconElement = resultElement.querySelector('.result-icon');
-                    let textElement = resultElement.querySelector('.result-text');
-                    let confidenceElement = resultElement.querySelector('.confidence');
-                    let detailsElement = resultElement.querySelector('.result-details');
-                    iconElement.className = 'result-icon fas fa-exclamation-circle';
-                    textElement.textContent = 'Error';
-                    confidenceElement.textContent = '';
-                    detailsElement.textContent = 'An error occurred during analysis. Please try again later.';
-                    iconElement.style.color = '#ff4d4f';
-                    console.error('Error:', error);
-                });
+            if (count > 300) {
+                textInput.val(words.slice(0, 300).join(' '));
+                wordCount.text(300);
+            } else {
+                wordCount.text(count);
             }
+        }
+
+        textInput.on('input', updateWordCount);
+        updateWordCount(); // Initial count
+
+        $('#news-form').on('submit', function(e) {
+            e.preventDefault();
+            const text = textInput.val().trim();
+            const words = text.split(/\s+/).slice(0, 300);
+            const limitedText = words.join(' ');
+
+            // Reset and prepare UI
+            resultCard.removeClass('show').hide();
+            $('.loading').show();
+            $('.loading-bar').css('width', '0%');
+            
+            // Simulate loading progress
+            var progress = 0;
+            var interval = setInterval(function() {
+                progress += 5;
+                $('.loading-bar').css('width', progress + '%');
+                if (progress >= 100) {
+                    clearInterval(interval);
+                }
+            }, 50);
+            
+            // AJAX call to verify news
+            $.ajax({
+                url: '/analyze',
+                method: 'POST',
+                data: { text: limitedText },
+                success: function(response) {
+                    setTimeout(function() {
+                        $('.loading').hide();
+                        
+                        // Determine result based on prediction
+                        const prediction = (response.prediction || '').toLowerCase();
+                        
+                        // Set up result card
+                        let resultElement = $('#result');
+                        let iconElement = resultElement.find('.result-icon');
+                        let textElement = resultElement.find('.result-text');
+                        let confidenceElement = resultElement.find('.confidence');
+                        let detailsElement = resultElement.find('.result-details');
+
+                        // Reset classes
+                        resultElement.removeClass('result-real result-fake');
+
+                        if (prediction === 'real') {
+                            resultElement.addClass('result-real');
+                            iconElement.removeClass().addClass('result-icon fas fa-check-circle');
+                            textElement.text('Verified: Real News');
+                        } else if (prediction === 'fake') {
+                            resultElement.addClass('result-fake');
+                            iconElement.removeClass().addClass('result-icon fas fa-exclamation-triangle');
+                            textElement.text('Alert: Potential Fake News');
+                        } else {
+                            iconElement.removeClass().addClass('result-icon fas fa-question-circle');
+                            textElement.text('Inconclusive Analysis');
+                        }
+
+                        // Set confidence and details
+                        confidenceElement.text(`Confidence Level: ${response.confidence || 0}%`);
+                        detailsElement.text(`Our AI-powered analysis suggests this content is ${prediction} with ${response.confidence || 0}% confidence. Always verify information from multiple reliable sources.`);
+                        
+                        // Show result with animation
+                        resultCard.show();
+                        setTimeout(() => {
+                            resultCard.addClass('show');
+                            resultCard[0].scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }, 50);
+                    }, 500);
+                },
+                error: function(xhr, status, error) {
+                    // Error handling
+                    $('.loading').hide();
+                    
+                    let resultElement = $('#result');
+                    let iconElement = resultElement.find('.result-icon');
+                    let textElement = resultElement.find('.result-text');
+                    let confidenceElement = resultElement.find('.confidence');
+                    let detailsElement = resultElement.find('.result-details');
+
+                    resultElement.removeClass('result-real result-fake');
+                    iconElement.removeClass().addClass('result-icon fas fa-exclamation-circle');
+                    textElement.text('Analysis Error');
+                    confidenceElement.text('');
+                    detailsElement.text('An error occurred. Please try again or check your input.');
+                    
+                    resultCard.show().addClass('show');
+                    console.error('Verification error:', error);
+                }
+            });
+        });
+    });
     </script>
 </body>
 </html>
