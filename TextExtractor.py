@@ -53,22 +53,24 @@ class TextExtractor:
         :param url: URL of the article
         :return: Extracted and truncated text
         """
+        headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.5735.110 Safari/537.36'
+        }
         try:
-            # Use newspaper3k to extract article text
-            article = Article(url)
+            article = Article(url, browser_user_agent=headers['User-Agent'])
             article.download()
             article.parse()
-            
-            return self._truncate_text(article.text)
+            complete_text = article.text+" "+article.title
+            return self._truncate_text(complete_text)
         except Exception as e:
             raise ValueError(f"Error extracting text from URL: {str(e)}")
+
     
     def _extract_from_pdf(self, pdf_path):
         """
         Extract text from a PDF file path.
         
-        :param pdf_path: Path to the PDF file
-        :return: Extracted and truncated text
+        :param pdf_path: Path to the PDF 
         """
         try:
             with open(pdf_path, 'rb') as file:

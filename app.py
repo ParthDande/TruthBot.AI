@@ -9,48 +9,70 @@ app = Flask(__name__)
 import PyPDF2
 from newspaper import Article
 from TextExtractor import TextExtractor
-#the TextExtractor is a custom class made extract text from url, text messages, pdf etc using a single library
 API_URL = "https://api-inference.huggingface.co/models/facebook/bart-large-cnn"
 headers = {"Authorization": "Bearer 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"}
 @app.route("/", methods=["GET"])
 def home():
     return render_template('index.html')
-import traceback
+
 
 @app.route("/analyze", methods=["GET", "POST"])
 def analyze():
+    # Render the HTML page for input and output
+    if request.method == "GET":
+        return render_template("fakecheck-ai-modern.html")
+    
+    # Handle the analysis when POST request is made
     if request.method == "POST":
-        if request.is_json:
-            data = request.get_json()
-        else:
-            data = request.form
+        input_source = request.form.get("text", "")
         
-        text = data.get("text")
-        domain = data.get("domain")
-        
-        if not text or not domain:
-            return jsonify({"error": "Missing text or domain"}), 400
+        # Validate input
+        if not input_source:
+            return jsonify({
+                "error": "No text provided",
+                "prediction": "inconclusive",
+                "confidence": 0
+            }), 400
         
         try:
-            text = news_detection.preprocess_custom_input(text, domain)
-            prediction, confidence = news_detection.fake_news_classifier(text)
+            # Extract and preprocess text
+            text = extractor.extract_text(input_source)
+            if not text:
+                return jsonify({
+                    "error": "Unable to extract meaningful text",
+                    "prediction": "inconclusive",
+                    "confidence": 0
+                }), 400
             
-            return jsonify({
-                "prediction": prediction,
-                "confidence": round(confidence * 100, 2)
-            })
+            # Preprocess the text
+            processed_text = news_detection.preprocess_custom_input(text)
+            
+            # Classify the text
+            prediction, confidence = news_detection.fake_news_classifier(processed_text)
+            
+            # Prepare response
+            response = {
+                "prediction": str(prediction),  # Ensure string conversion
+                "confidence": round(float(confidence) * 100, 2)  # Ensure float conversion
+            }
+            
+            return jsonify(response)
+        
         except Exception as e:
-            app.logger.error(f"Error in analysis: {str(e)}", exc_info=True)
-            return jsonify({"error": f"Error occurred: {str(e)}"}), 500
-    
-    return render_template('fakecheck-ai-modern.html')
-
-
+            # Log the full error for debugging
+            app.logger.error(f"News analysis error: {str(e)}")
+            
+            # Return a user-friendly error response
+            return jsonify({
+                "error": "An unexpected error occurred during analysis",
+                "prediction": "inconclusive",
+                "confidence": 0
+            }), 500
 @app.route('/sentiment', methods=['GET', 'POST'])
 def news_sentiment_analysis():
     if request.method == 'POST':
         input_source = request.form["text"]
-        text = input_text.extract_text(input_source)
+        text = extractor.extract_text(input_source)
         sentiment, confidence = obj.analyze_sentiment(text[:1000])#this only takes first  1000 characters
         time.sleep(random.uniform(1, 2))
         
@@ -71,7 +93,7 @@ def index():
     }
     if request.method == "POST":
         input_source = request.form["text"]
-        text = input_text.extract_text(input_source)
+        text = extractor.extract_text(input_source)
         
         # Validate input length
         input_length = len(text)
@@ -102,7 +124,7 @@ def index():
 def news_plagiarism_check():
     if request.method == 'POST':
         input_source = request.form["text"]
-        text = input_text.extract_text(input_source)
+        text = extractor.extract_text(input_source)
         if text:
             pass
         else:
@@ -168,7 +190,7 @@ def get_report_data(text):
 def comprehensive_report():
     if request.method == "POST":
         input_source = request.form["text"]
-        text = input_text.extract_text(input_source)
+        text = extractor.extract_text(input_source)
         if not text:
             return jsonify({"error": "Text is required"}), 400
 
@@ -184,7 +206,7 @@ def comprehensive_report():
 
 if __name__ == '__main__':
     news_detection = FakeNewsClassifier()
-    obj = TextAnalysis()#the text analysis class object is for sentiment analysis
-    input_text = TextExtractor(max_words=400)#Creating object of the TextExtractor class this class has all the extraction functions
+    obj = TextAnalysis()
+    extractor = TextExtractor(max_words=400)
     app.run(host='0.0.0.0', port=5000, debug=True)
 
