@@ -17,7 +17,7 @@ stop_words = set(stopwords.words('english'))
 #  TF-IDF vectorizer
 loaded_model = XGBClassifier()
 #loaded_model.load_model('fake_news_model.json')
-fake_news_model = joblib.load("Models/LGBMClassifier_Model.pkl")
+fake_news_model = joblib.load("Models/XGBClassifier_Model.pkl")
 tfidf = joblib.load('vectorizers/tfidf_vectorizer.pkl')
 model = joblib.load('Models/plagiarism.pkl')
 vectorizer  = joblib.load('vectorizers/plagiarism_vectorizer.pkl')
