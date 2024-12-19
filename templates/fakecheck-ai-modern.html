@@ -102,9 +102,6 @@
             text-decoration: none;
             transition: transform 0.3s ease;
         }
-        .logo:hover {
-            transform: scale(1.05) rotate(3deg);
-        }
         .logo img {
             height: 50px; 
             width: auto;  
@@ -120,12 +117,25 @@
             color: var(--secondary-color);
             transform: translateY(-3px);
         }
-        .input-section, .output-section {
+        .input-section{
             flex: 1;
             background-color: var(--card-bg);
             border-radius: 10px;
             padding: 2rem;
             box-shadow: var(--card-shadow);
+            transform-style: preserve-3d;
+            transform: rotateX(10deg) scale(0.95);
+            opacity: 0;
+            animation: fadeInSection 0.8s forwards ease-out;
+        }
+        .output-section {
+            flex: 1;
+            background-color: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: var(--card-shadow);
+            backdrop-filter: blur(10px);
             transform-style: preserve-3d;
             transform: rotateX(10deg) scale(0.95);
             opacity: 0;
@@ -176,7 +186,7 @@
             color: var(--paste-color);
         }
         .delete-btn:hover, .paste-btn:hover {
-            transform: scale(1.2) rotate(10deg);
+            transform: scale(1.2);
         }
         .loading {
             text-align: center;
@@ -234,6 +244,8 @@
             position: relative;
             overflow: hidden;
             transition: all 0.3s ease;
+            display: block;
+            margin: 1rem auto;
         }
         input[type="submit"]::before {
             content: '';
@@ -249,8 +261,12 @@
             left: 100%;
         }
         input[type="submit"]:hover {
-            transform: translateY(-3px);
+            transform: translateY(-1px);
             box-shadow: 0 7px 14px rgba(0, 0, 0, 0.1);
+        }
+
+        input[type="submit"] {
+            inline-size: 90%;
         }
     </style>
 </head>
@@ -305,11 +321,10 @@
         </div>
     </div>
 
-    <div class="footer">
+    <div class="footer" style="text-align: center; position: fixed; inset-block-end: 0; inline-size: 100%; background-color: var(--primary-color); padding: 1rem 0; box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);">
         <p>Powered by TruthBot.AI 2024</p>
     </div>
 
-    <!-- JavaScript remains exactly the same as the original -->
     <script>
         $(document).ready(function() {
             const textInput = $('#text-input');
@@ -391,23 +406,30 @@
                             let textElement = resultElement.find('.result-text');
                             let confidenceElement = resultElement.find('.confidence');
                             let detailsElement = resultElement.find('.result-details');
-    
+
                             // Reset classes
                             resultElement.removeClass('result-real result-fake');
-    
+
                             if (prediction === 'real') {
                                 resultElement.addClass('result-real');
-                                iconElement.removeClass().addClass('result-icon fas fa-check-circle');
-                                textElement.text('Verified: Real News');
+                                resultElement.css('background-color', 'var(--positive-color)');
+                                iconElement.removeClass().addClass('result-icon fas fa-check-circle').css('color', '#FFFFFF');
+                                textElement.text('Verified: Real News').css('color', '#FFFFFF');
+                                confidenceElement.css('color', '#FFFFFF');
+                                detailsElement.css('color', '#FFFFFF');
                             } else if (prediction === 'fake') {
                                 resultElement.addClass('result-fake');
-                                iconElement.removeClass().addClass('result-icon fas fa-exclamation-triangle');
-                                textElement.text('Alert: Potential Fake News');
+                                resultElement.css('background-color', 'var(--negative-color)');
+                                iconElement.removeClass().addClass('result-icon fas fa-exclamation-triangle').css('color', '#FFFF00');
+                                textElement.text('Alert: Potential Fake News').css('color', '#FFFF00');
+                                confidenceElement.css('color', '#FFFF00');
+                                detailsElement.css('color', '#FFFF00');
                             } else {
                                 iconElement.removeClass().addClass('result-icon fas fa-question-circle');
                                 textElement.text('Inconclusive Analysis');
+                                resultElement.css('background-color', 'var(--card-bg)');
                             }
-    
+
                             // Set confidence and details
                             confidenceElement.text(`Confidence Level: ${response.confidence || 0}%`);
                             detailsElement.text(`Our AI-powered analysis suggests this content is ${prediction} with ${response.confidence || 0}% confidence. Always verify information from multiple reliable sources.`);
