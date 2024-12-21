@@ -123,12 +123,18 @@ def index():
 @app.route('/plagiarism', methods=['GET', 'POST'])
 def news_plagiarism_check():
     if request.method == 'POST':
-        input_source = request.form["text"]
-        text = extractor.extract_text(input_source)
-        if text:
-            pass
-        else:
-            return jsonify({"error": "No text or file provided"}), 400
+        if 'text' in request.form:
+            text = request.form['text']
+        elif 'file' in request.files:
+            file = request.files['file']
+            if file.filename.endswith('.pdf'):
+                from PyPDF2 import PdfReader  # Import PDF reader
+                reader = PdfReader(file)
+                text = ""
+                for page in reader.pages:
+                    text += page.extract_text()  # Convert PDF to text
+            else:
+                text = file.read().decode('utf-8')
 
         output, human, ai = news_detection.ai_plagiarism(text)
         return jsonify({
