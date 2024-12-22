@@ -13,7 +13,7 @@ nltk.data.path.append('nltk_data/')
 
 # stopwords
 stop_words = set(stopwords.words('english'))
-models = ["XGBClassifier_Model.pkl", "LGBMClassifier_Model.pkl", "logistic_regression_model.pkl", "Random_forest_Model.pkl"]
+models = ["XGBClassifier_Model.pkl", "LGBMClassifier_Model.pkl", "logistic_regression_model.pkl", "Random_forest_Model.pkl","Support_Vector_Machine_Model.pkl"]
 #  TF-IDF vectorizer
 fake_news_model = joblib.load("Models/XGBClassifier_Model.pkl")
 tfidf = joblib.load('vectorizers/tfidf_vectorizer.pkl')
@@ -39,21 +39,25 @@ class FakeNewsClassifier:
         return vectorized_text
 
 
-    def fake_news_classifier(self,text):
+    def fake_news_classifier(self, text):
         prediction = []
         all_confidence_score = []
         for model in self.models:
             model = joblib.load(f"Models/{model}")
             self.fake_news_model = model
             # Get prediction and probabilities
-            probabilities = self.fake_news_model.predict_proba(text)
-            predicted_class = probabilities[0].argmax()  #  index of max probability
-            confidence_score = probabilities[0][predicted_class]  # Confidence for the predicted class
+            if hasattr(self.fake_news_model, "predict_proba"):
+                probabilities = self.fake_news_model.predict_proba(text)
+                predicted_class = probabilities[0].argmax()
+                confidence_score = probabilities[0][predicted_class]  # Confidence for the predicted class
+                all_confidence_score.append(confidence_score)
+            else:
+                predicted_class = self.fake_news_model.predict(text)[0]
             prediction.append(predicted_class)
-            all_confidence_score.append(confidence_score)
+            
         # Get the majority vote from the predictions
         predicted_class = max(set(prediction), key=prediction.count)
-        confidence_score = sum(all_confidence_score) / len(self.models)
+        confidence_score = sum(all_confidence_score) / len(all_confidence_score) if all_confidence_score else 0
         mapping = {1: "Real", 0: "Fake"}
         prediction = mapping[predicted_class]
         return prediction, confidence_score
