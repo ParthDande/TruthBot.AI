@@ -13,10 +13,8 @@ nltk.data.path.append('nltk_data/')
 
 # stopwords
 stop_words = set(stopwords.words('english'))
-
+models = ["XGBClassifier_Model.pkl", "LGBMClassifier_Model.pkl", "logistic_regression_model.pkl", "Random_forest_Model.pkl"]
 #  TF-IDF vectorizer
-loaded_model = XGBClassifier()
-#loaded_model.load_model('fake_news_model.json')
 fake_news_model = joblib.load("Models/XGBClassifier_Model.pkl")
 tfidf = joblib.load('vectorizers/tfidf_vectorizer.pkl')
 model = joblib.load('Models/plagiarism.pkl')
@@ -24,7 +22,7 @@ vectorizer  = joblib.load('vectorizers/plagiarism_vectorizer.pkl')
 
 class FakeNewsClassifier:
     def __init__(self):
-        self.fake_news_model = fake_news_model
+        self.models = models
         self.fake_news_vectorizer = tfidf
         self.plagiarism_model = model
         self.plagiarism_vectorizer = vectorizer
@@ -42,11 +40,20 @@ class FakeNewsClassifier:
 
 
     def fake_news_classifier(self,text):
-        # Get prediction and probabilities
-        probabilities = self.fake_news_model.predict_proba(text)
-        predicted_class = probabilities[0].argmax()  #  index of max probability
-        confidence_score = probabilities[0][predicted_class]  # Confidence for the predicted class
-        
+        prediction = []
+        all_confidence_score = []
+        for model in self.models:
+            model = joblib.load(f"Models/{model}")
+            self.fake_news_model = model
+            # Get prediction and probabilities
+            probabilities = self.fake_news_model.predict_proba(text)
+            predicted_class = probabilities[0].argmax()  #  index of max probability
+            confidence_score = probabilities[0][predicted_class]  # Confidence for the predicted class
+            prediction.append(predicted_class)
+            all_confidence_score.append(confidence_score)
+        # Get the majority vote from the predictions
+        predicted_class = max(set(prediction), key=prediction.count)
+        confidence_score = sum(all_confidence_score) / len(self.models)
         mapping = {1: "Real", 0: "Fake"}
         prediction = mapping[predicted_class]
         return prediction, confidence_score
