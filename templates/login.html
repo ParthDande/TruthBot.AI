@@ -1,91 +1,353 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enter your password</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
-    <style>
-        html, body { 
-            height: 100%; 
-            margin: 0; 
-            font-family: 'Roboto', sans-serif;
-        }
-        body {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-        .header {
-            padding: 20px;
-            background-color: #f8f9fa;
-        }
-        .logo {
-            width: 100px;
-            height: auto;
-        }
-        .content {
-            flex-grow: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        form { 
-            width: 300px; 
-            padding: 20px; 
-            border: 1px solid #ccc; 
-            border-radius: 5px; 
-        }
-        input, button { 
-            width: 100%; 
-            padding: 10px; 
-            margin: 10px 0; 
-            box-sizing: border-box; 
-            font-family: 'Roboto', sans-serif;
-        }
-        button { 
-            background-color: #0056b3; 
-            color: white; 
-            border: none; 
-            cursor: pointer; 
-            font-weight: 700;
-        }
-        .google-btn { 
-            background-color: white; 
-            color: #757575; 
-            border: 1px solid #ccc; 
-        }
-        footer {
-            text-align: center;
-            padding: 10px;
-            background-color: #f8f9fa;
-            width: 100%;
-        }
-        h2{
-            margin-left:24px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TruthBot.ai</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    /* Previous styles remain the same until animations */
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@400;500;700&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bone-white: #F5F5F1;
+      --sage-green: #4A5D4B;
+      --light-green: #789176;
+      --terra-cotta: #C06B4D;
+      --dark: #2D2D2A;
+    }
+
+    body {
+      background-color: var(--bone-white);
+      color: var(--dark);
+      font-family: 'DM Sans', sans-serif;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    nav {
+      padding: 2rem;
+      position: fixed;
+      width: 100%;
+      z-index: 100;
+      background: rgba(245, 245, 241, 0.95);
+      backdrop-filter: blur(10px);
+    }
+
+    .nav-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: var(--sage-green);
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--dark);
+      font-weight: 500;
+      margin-left: 3rem;
+      position: relative;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 1px;
+      bottom: -4px;
+      left: 0;
+      background: var(--terra-cotta);
+      transition: width 0.3s ease;
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      position: relative;
+    }
+
+    .hero-content {
+      max-width: 1400px;
+      width: 100%;
+      text-align: left;
+      padding-top: 4rem;
+    }
+
+    /* Updated Animation Styles */
+    .headline-word {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(50px);
+      transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .headline-word.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .headline {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 7vw;
+      line-height: 1.1;
+      font-weight: 500;
+      color: var(--sage-green);
+      margin-bottom: 2rem;
+    }
+
+    .accent {
+      color: var(--terra-cotta);
+    }
+
+    .subheadline {
+      font-size: 1.25rem;
+      max-width: 600px;
+      margin-bottom: 3rem;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.3s;
+    }
+
+    .subheadline.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .cta-button {
+      display: inline-block;
+      padding: 1rem 2rem;
+      background: transparent;
+      color: var(--sage-green);
+      text-decoration: none;
+      border: 1px solid var(--sage-green);
+      border-radius: 2px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.6s;
+    }
+
+    .cta-button.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .cta-button:hover {
+      background: var(--sage-green);
+      color: var(--bone-white);
+    }
+
+    .about {
+      padding: 8rem 2rem;
+      background: white;
+      overflow: hidden;
+    }
+
+    .about-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 6rem;
+      align-items: center;
+    }
+
+    .about-text {
+      opacity: 0;
+      transform: translateX(-50px);
+      transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .about-text.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .about-image {
+      opacity: 0;
+      transform: translateX(50px);
+      transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .about-image.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .about h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 3rem;
+      margin-bottom: 2rem;
+      color: var(--sage-green);
+    }
+
+    .contact {
+      padding: 8rem 2rem;
+      background: var(--sage-green);
+      color: var(--bone-white);
+    }
+
+    .contact-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      text-align: center;
+      opacity: 0;
+      transform: translateY(50px);
+      transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .contact-content.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .contact h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 3rem;
+      margin-bottom: 2rem;
+    }
+
+    .contact-info {
+      display: flex;
+      justify-content: center;
+      gap: 4rem;
+      margin-top: 3rem;
+    }
+
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+      }
+      
+      .headline {
+        font-size: 3rem;
+      }
+
+      .about-content {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+      }
+
+      .contact-info {
+        flex-direction: column;
+        gap: 2rem;
+      }
+    }
+  </style>
 </head>
 <body>
-    <header class="header">
-        <img src="path/to/your/logo.png" alt="Company Logo" class="logo">
-        <h1>FakeCheckAI</h1>
-    </header>
-    <div class="content">
-        <form>
-            <h2> Sign in to your account</h2>
-            <input type="email" placeholder="Email address*" required>
-            <input type="password" placeholder="Password*" required>
-            <a href="#">Forget password?</a>
-            <button type="submit">Continue</button>
-            <p>Don't have an account? <a href="signup.html">Sign up</a></p>
-            <hr>
-            <p>OR</p>
-            <button type="button" class="google-btn">Continue with Google</button>
-        </form>
+  <nav>
+    <div class="nav-content">
+      <div class="logo">TruthBot.ai</div>
+      <div class="nav-links">
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+      </div>
     </div>
-    <footer>
-        <p><a href="#">Terms of Use</a> | <a href="#">Privacy Policy</a></p>
-    </footer>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-content">
+      <h1 class="headline">
+        <span class="headline-word">Discover</span>
+        <span class="headline-word">truth</span>
+        <span class="headline-word">with</span>
+        <span class="headline-word accent">artificial</span>
+        <span class="headline-word">intelligence</span>
+      </h1>
+      <p class="subheadline">Advanced AI tools that detect and analyze misinformation in real-time, helping you stay ahead of false narratives with unparalleled accuracy.</p>
+      <a href="/home" class="cta-button">Try Now</a>
+    </div>
+  </section>
+
+  <section class="about" id="about">
+    <div class="about-content">
+      <div class="about-text">
+        <h2>Our Mission</h2>
+        <p>We're dedicated to maintaining information integrity in the digital age through cutting-edge AI technology and comprehensive fact-checking systems that evolve with every interaction.</p>
+      </div>
+      <div class="about-image">
+        <img src="/api/placeholder/600/400" alt="About Us">
+      </div>
+    </div>
+  </section>
+
+  <section class="contact" id="contact">
+    <div class="contact-content">
+      <h2>Get in Touch</h2>
+      <p>We're here to help you navigate the world of information verification.</p>
+      <div class="contact-info">
+        <div class="contact-item">
+          <i class="fas fa-envelope"></i>
+          <span>hello@truthbot.ai</span>
+        </div>
+        <div class="contact-item">
+          <i class="fas fa-phone"></i>
+          <span>+1 (555) 123-4567</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // Intersection Observer for scroll animations
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: "0px 0px -100px 0px"
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, observerOptions);
+
+    // Observe headline words
+    document.querySelectorAll('.headline-word').forEach(word => {
+      observer.observe(word);
+    });
+
+    // Observe other elements
+    observer.observe(document.querySelector('.subheadline'));
+    observer.observe(document.querySelector('.cta-button'));
+    observer.observe(document.querySelector('.about-text'));
+    observer.observe(document.querySelector('.about-image'));
+    observer.observe(document.querySelector('.contact-content'));
+
+    // Add stagger delay to headline words
+    document.querySelectorAll('.headline-word').forEach((word, index) => {
+      word.style.transitionDelay = `${index * 0.1}s`;
+    });
+  </script>
 </body>
 </html>
