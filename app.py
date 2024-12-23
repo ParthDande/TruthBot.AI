@@ -13,10 +13,10 @@ API_URL = "https://api-inference.huggingface.co/models/facebook/bart-large-cnn"
 headers = {"Authorization": "Bearer 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"}
 @app.route("/", methods=["GET"])
 def home():
-    return render_template('login.html')
+    return render_template('landing_page.html')
 @app.route("/home", methods=["GET"])
 def index():
-    return render_template('landing_page.html')
+    return render_template('index.html')
 
 @app.route("/analyze", methods=["GET", "POST"])
 def analyze():
