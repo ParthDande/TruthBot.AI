@@ -240,20 +240,21 @@
                 <div class="dynamic-text">validations</div>
             </div>
         </div>
-
         <div class="search-container">
-            <input type="url" class="search-input" placeholder="Enter URL to analyze..." id="url-input">
-            <div class="button-group">
-            <button class="action-button" onclick="handleAction('report')">
-                <i class="fas fa-search"></i> Analyze
-            </button>
-            <button class="action-button" onclick="handleAction('summarization')">
-                <i class="fas fa-file-alt"></i> Summarize
-            </button>
-            <button class="action-button" onclick="handleAction('plagiarism')">
-                <i class="fas fa-check-circle"></i> Check Plagiarism
-            </button>
-            </div>
+            <form id="analysis-form" method="POST">
+                <input type="url" class="search-input" placeholder="Enter URL to analyze..." id="url-input" name="text" required>
+                <div class="button-group">
+                    <button type="submit" class="action-button" data-action="report">
+                        <i class="fas fa-search"></i> Analyze
+                    </button>
+                    <button type="submit" class="action-button" data-action="summarization">
+                        <i class="fas fa-file-alt"></i> Summarize
+                    </button>
+                    <button type="submit" class="action-button" data-action="plagiarism">
+                        <i class="fas fa-check-circle"></i> Check Plagiarism
+                    </button>
+                </div>
+            </form>
         </div>
     </main>
 
@@ -312,6 +313,53 @@
         document.addEventListener('DOMContentLoaded', () => {
             updateThemeIcon('light');
         });
+        function isValidUrl(string) {
+    try {
+        new URL(string);
+        return true;
+    } catch (_) {
+        return false;
+    }
+}
+
+document.getElementById('analysis-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const urlInput = document.getElementById('url-input');
+    const url = urlInput.value.trim();
+    const action = e.submitter.getAttribute('data-action');
+    
+    if (!isValidUrl(url)) {
+        urlInput.classList.add('invalid');
+        alert('Please enter a valid URL');
+        return;
+    }
+    
+    urlInput.classList.remove('invalid');
+    
+    // Create form data
+    const formData = new FormData();
+    formData.append('text', url);
+    
+    // Submit the form
+    fetch(`/${action}`, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (response.redirected) {
+            window.location.href = response.url;
+        } else {
+            return response.text().then(html => {
+                document.documentElement.innerHTML = html;
+            });
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while processing your request');
+    });
+});
     </script>
 </body>
 </html>

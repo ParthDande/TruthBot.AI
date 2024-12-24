@@ -39,7 +39,7 @@ class FakeNewsClassifier:
         return vectorized_text
 
 
-    def fake_news_classifier(self, text):
+    def fake_news_classifier(self, text,text_type='general'):
         prediction = []
         all_confidence_score = []
         for model in self.models:
