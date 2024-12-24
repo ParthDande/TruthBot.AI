@@ -146,29 +146,17 @@ def news_plagiarism_check():
         })
 
     return render_template('plagiarism.html') # Render the template for GET requests
-def get_report_data(text):
-    """Generate report data based on the given text."""
-    report_results = {
-        'sentiment': {},
-        'fake_news': {},
-        'summarization': '',
-        'plagiarism': {},
-        'virality': {
-            'potential_views': random.randint(1000, 100000),
-            'trending_score': random.uniform(0.1, 0.9),
-            'engagement_prediction': random.choice(['Low', 'Medium', 'High'])
-        }
-    }
+def truncate_text(text, max_tokens=500):
+    tokens = text.split()
+    if len(tokens) > max_tokens:
+        return ' '.join(tokens[:max_tokens])
+    return text
 
-    # Sentiment Analysis
-    sentiment, sentiment_confidence = obj.analyze_sentiment(text)
-    report_results['sentiment'] = {
-        'sentiment': sentiment,
-        'confidence': round(sentiment_confidence * 100, 2)
-    }
+def get_report_data(text):
+    report_results = {}
 
     # Fake News Detection
-    processed_text = news_detection.preprocess_custom_input(text, 'general')
+    processed_text = news_detection.preprocess_custom_input(text)
     prediction, confidence = news_detection.fake_news_classifier(processed_text)
     report_results['fake_news'] = {
         'prediction': prediction,
@@ -179,7 +167,7 @@ def get_report_data(text):
     summary_response = requests.post(
         API_URL,
         headers=headers,
-        json={"inputs": text, "parameters": {"max_length": 50, "min_length": 10}}
+        json={"inputs": text, "parameters": {"max_length": 130, "min_length": 50}}
     )
     summary_result = summary_response.json()
     report_results['summarization'] = summary_result[0]['summary_text']
@@ -192,24 +180,36 @@ def get_report_data(text):
         'ai_score': ai
     }
 
+    sentiment, confidence = obj.analyze_sentiment(text[:1000])
+    report_results['sentiment'] = {
+        'prediction': sentiment,
+        'confidence': round(confidence * 100, 2)}
     return report_results
 
 @app.route('/report', methods=['GET', 'POST'])
 def comprehensive_report():
     if request.method == "POST":
         input_source = request.form["text"]
+        app.logger.info(f"Received input source: {input_source}")
+        
         text = extractor.extract_text(input_source)
+        app.logger.info(f"Extracted text: {text}")
+        
         if not text:
             return jsonify({"error": "Text is required"}), 400
 
         try:
-            report_results = get_report_data(text)
-            return render_template("report.html", report=report_results)
+            # Truncate the text to a maximum of 500 tokens
+            truncated_text = truncate_text(text)
+            app.logger.info(f"Truncated text: {truncated_text}")
+
+            report_results = get_report_data(truncated_text)
+            return render_template("result.html", report=report_results)
         except Exception as e:
             app.logger.error(f"Error in comprehensive report generation: {str(e)}", exc_info=True)
             return jsonify({"error": f"Error occurred: {str(e)}"}), 500
 
-    return render_template("report.html", report=None)
+    return render_template("result.html", report=None)
 
 
 if __name__ == '__main__':
