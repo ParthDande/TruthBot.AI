@@ -5,7 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Report Results</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="/static/js/theme.js"></script>
     <style>
+        
+        :root {
+            --background-color: #f8fafc; /* Pale Lavender */
+--primary-color: #5D3FD3;    /* Rich Indigo */
+--secondary-color: #9F7AEA;  /* Soft Amethyst */
+--accent-color: #ffffff;     /* Gentle Lavender Gray */
+--text-color: #292627;       /* Deep Onyx */
+
+        }
+
+        [data-theme="dark"] {
+            --primary-color: #E2E2E2;  /* Lighter neutral tone for a soft look */
+    --secondary-color: #9F7AEA;  /* Keep your secondary color */
+    --background-color: #000000;  /* Darker background for better contrast */
+    --text-color: #ffffff;  /* Lighter text for readability */
+    --accent-color: #000000;  /* Slightly lighter accent to avoid harsh contrast */
+            
+        }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
@@ -28,12 +47,12 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            background-color: #f8fafc;
+            background-color: var(--background-color);
             font-family: 'Segoe UI', Arial, sans-serif;
             margin: 0;
             padding: 20px;
             box-sizing: border-box;
-            color: #334155;
+            color: var(--text-color);
             min-height: 100vh;
         }
 
@@ -50,7 +69,7 @@
         .back-button {
             display: flex;
             align-items: center;
-            background-color: #ffffff;
+            background-color:  var(--background-color);
             color: #334155;
             text-decoration: none;
             padding: 12px 20px;
@@ -60,7 +79,7 @@
         }
 
         .back-button:hover {
-            background-color: #f1f5f9;
+            background-color: var(--secondary-color);
             transform: translateX(-5px);
         }
 
@@ -78,14 +97,15 @@
         }
 
         .box {
-            border: 2px solid #ffcdd2;
+            border: 4px solid var(--secondary-color);
             border-radius: 12px;
-            background-color: #ffffff;
+            background-color: var(--accent-color);
             padding: 24px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
             box-sizing: border-box;
             animation: fadeIn 0.5s ease-out forwards;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            ;
         }
 
         .box:hover {
@@ -110,14 +130,17 @@
         .summary-box {
             flex: 0.7;
             overflow-y: auto;
+            background-color: var(--accent-color);
         }
 
         .sentiment-box {
             flex: 0.3;
+            background-color: var(--accent-color);
         }
 
         .plagiarism-box {
             flex: 0.5;
+            background-color: var(--accent-color);
         }
 
         .fake-news-box {
@@ -156,7 +179,7 @@
             text-align: center;
             padding: 12px;
             border-radius: 8px;
-            background-color: #f8fafc;
+            background-color: var(--background-color);
             flex: 1;
         }
 
@@ -196,7 +219,7 @@
         .prediction {
             padding: 8px 16px;
             border-radius: 6px;
-            background-color: #f8fafc;
+            background-color: var(--background-color);
             margin-top: 12px;
             font-weight: 500;
         }
@@ -209,7 +232,7 @@
 
         .confidence-bar {
             height: 6px;
-            background-color: #e2e8f0;
+            background-color: var(--background-color);
             border-radius: 3px;
             margin-top: 8px;
             overflow: hidden;
