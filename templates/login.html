@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TruthBot.ai</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+ 
   <style>
     /* Previous styles remain the same until animations */
     @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@400;500;700&display=swap');
@@ -16,16 +17,20 @@
     }
 
     :root {
-      --bone-white: #F5F5F1;
-      --sage-green: #4A5D4B;
-      --light-green: #789176;
-      --terra-cotta: #C06B4D;
-      --dark: #2D2D2A;
+      --background-color: #F4F1F8; /* Pale Lavender */
+--primary-color: #5D3FD3;    /* Rich Indigo */
+--highlight-color: #9F7AEA;  /* Soft Amethyst */
+--accent-color: #E5DEF2;     /* Gentle Lavender Gray */
+--text-color: #292627;       /* Deep Onyx */
+
+
+
+
     }
 
     body {
-      background-color: var(--bone-white);
-      color: var(--dark);
+      background-color: var(--Background-color);
+      color: var(--text-color);
       font-family: 'DM Sans', sans-serif;
       line-height: 1.6;
       overflow-x: hidden;
@@ -36,7 +41,7 @@
       position: fixed;
       width: 100%;
       z-index: 100;
-      background: rgba(245, 245, 241, 0.95);
+      background: var(--Background-color);
       backdrop-filter: blur(10px);
     }
 
@@ -52,12 +57,12 @@
       font-family: 'Cormorant Garamond', serif;
       font-size: 1.8rem;
       font-weight: 600;
-      color: var(--sage-green);
+      color: var(--Primary-color);
     }
 
     .nav-links a {
       text-decoration: none;
-      color: var(--dark);
+      color: var(--text-color);
       font-weight: 500;
       margin-left: 3rem;
       position: relative;
@@ -70,7 +75,7 @@
       height: 1px;
       bottom: -4px;
       left: 0;
-      background: var(--terra-cotta);
+      background: var(--highlight-color);
       transition: width 0.3s ease;
     }
 
@@ -112,12 +117,14 @@
       font-size: 7vw;
       line-height: 1.1;
       font-weight: 500;
-      color: var(--sage-green);
+      color: var(--Primary-color);
       margin-bottom: 2rem;
+      
     }
 
     .accent {
-      color: var(--terra-cotta);
+      color: var(--highlight-color);
+      text-transform: capitalize;
     }
 
     .subheadline {
@@ -138,15 +145,15 @@
       display: inline-block;
       padding: 1rem 2rem;
       background: transparent;
-      color: var(--sage-green);
+      color: var(--text-color);
       text-decoration: none;
-      border: 1px solid var(--sage-green);
+      border: 1px solid var(--text-color);
       border-radius: 2px;
       font-weight: 500;
       transition: all 0.3s ease;
       opacity: 0;
       transform: translateY(30px);
-      transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.6s;
+      
     }
 
     .cta-button.visible {
@@ -155,13 +162,13 @@
     }
 
     .cta-button:hover {
-      background: var(--sage-green);
-      color: var(--bone-white);
+      background: var(--text-color);
+      color: var(--background-color);
     }
 
     .about {
       padding: 8rem 2rem;
-      background: white;
+      background: var(--accent-color);
       overflow: hidden;
     }
 
@@ -200,13 +207,13 @@
       font-family: 'Cormorant Garamond', serif;
       font-size: 3rem;
       margin-bottom: 2rem;
-      color: var(--sage-green);
+      color: var(--Primary-color);
     }
 
     .contact {
       padding: 8rem 2rem;
-      background: var(--sage-green);
-      color: var(--bone-white);
+      background: var(--text-color);
+      color: var(--background-color);
     }
 
     .contact-content {
