@@ -5,28 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TruthBot.AI</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@400;500;700&display=swap');
 
         :root {
-            --primary-color: #789176;
-            --secondary-color:  #4A5D4B;
-            --background-color: #F5F5F1;
-            --text-color:  #C06B4D;
-            --card-bg: rgba(255, 255, 255, 0.95);
-            --team-bg: rgba(248, 249, 250, 0.9);
-            --positive-color: #4CAF50;
-            --negative-color: #ff4d4d;
-            --neutral-color: #FF5733;
-            --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            --hover-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+            --background-color: #f8fafc; /* Pale Lavender */
+--primary-color: #5D3FD3;    /* Rich Indigo */
+--secondary-color: #9F7AEA;  /* Soft Amethyst */
+--accent-color: #E5DEF2;     /* Gentle Lavender Gray */
+--text-color: #292627;       /* Deep Onyx */
+
         }
 
         [data-theme="dark"] {
             --primary-color: #F5F5F1;
-            --secondary-color: #C06B4D;
+            --secondary-color: #9F7AEA;
             --background-color: #0b0b0a;
-            --text-color: #789176;
+            --text-color: #F4F1F8;
             --card-bg: rgba(40, 40, 40, 0.95);
             --team-bg: rgba(26, 26, 26, 0.9);
             --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
@@ -38,7 +34,61 @@
             padding: 0;
             box-sizing: border-box;
         }
+        .loader {
+            width: 100px;
+            height: 80px;
+            position: absolute;
+            top: 0;
+            right: 0;
+            left: 0;
+            bottom: 0;
+            margin: auto;
+        }
+        .loader .image {
+            width: 100px;
+            height: 160px;
+            font-size: 40px;
+            text-align: center;
+            transform-origin: bottom center;
+            animation: 3s rotate infinite;
+            opacity: 0;
+        }
+        .loader span {
+            display: block;
+            width: 100%;
+            text-align: center;
+            position: absolute;
+            bottom: 0;
+        }
 
+        @keyframes rotate {
+            0% {
+                transform: rotate(90deg);
+            }
+            10% {
+                opacity: 0;
+            }
+            35% {
+                transform: rotate(0deg);
+                opacity: 1;
+            }
+            65% {
+                transform: rotate(0deg);
+                opacity: 1;
+            }
+            80% {
+                opacity: 0;
+            }
+            100% {
+                transform: rotate(-90deg);
+            }
+        }
+
+        #content {
+            display: none; /* Hide content initially */
+            padding: 20px;
+            text-align: center;
+        }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Cormorant Garamond', serif;
             background: var(--background-color);
@@ -198,33 +248,77 @@
 }
 
         @media (max-width: 600px) {
-            .static-text, .dynamic-text {
-                font-size: 4vw;
-            }
-            
-            .dynamic-text-wrapper {
-                min-width: 200px;
-                height: 4vw;
-            }
-            
-            .search-container {
-                width: 90%;
-            }
-            
-            .button-group {
+            .main-content {
+        padding: 1rem;
+        height: calc(100vh - 50px);
+    }
+
+    .text-container {
         flex-direction: column;
-        width: 90%;
+        align-items: center;
+        justify-content: center; /* Center dynamically */
+        gap: 10px;
+        margin-top: 80px; /* Reset to center fully */
+        margin-bottom: 0;
     }
-            
-    .action-button {
+
+    .static-text {
+        font-size: 8vw; 
+    }
+
+    .dynamic-text-wrapper {
+        min-width: auto; /* Allow dynamic width */
+        height: 6vw; /* Match font size */
+        display: flex;
+        align-items: center;
+        justify-content: center; /* Center dynamic text */
+    }
+
+    .dynamic-text {
+        font-size: 8vw;
+    }
+
+    .search-container {
         width: 100%;
-        min-width: unset;
+        max-width: 100%; 
+        margin-top: 1.5rem;
     }
+
+    .search-input {
+        font-size: 1rem;
+        padding: 0.8rem;
+        border-radius: 6px;
+    }
+
+    .button-group {
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+
+    .action-button {
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
+        min-width: 120px;
+        gap: 0.4rem;
+    }
+
+    .action-button i {
+        font-size: 1rem; 
+    }
+           
         }
     </style>
 </head>
 <body>
-    <div class="header">
+    <div class="loader">
+        <div class="image">
+            <i class="fas fa-codepen"></i>
+        </div>
+        <span>0%</span>
+    </div>
+
+    <div id="content">
+    <div class="header" >
         <a href="/" class="logo" style="text-decoration: none;">TruthBot.ai</a>
         <button id="theme-toggle" class="theme-toggle">
             <i class="fas fa-moon"></i>
@@ -256,8 +350,55 @@
             </div>
         </div>
     </main>
-
+</div>
     <script>
+
+        $(document).ready(function () {
+            let counter = 0;
+
+            // Change images every 3 seconds
+            const imageInterval = setInterval(function () {
+                changeImage(counter);
+                counter++;
+                if (counter >= 6) counter = 0; // Reset counter if out of bounds
+            }, 3000);
+
+            // Start loading animation
+            loading(imageInterval);
+        })
+
+        function changeImage(counter) {
+            const images = [
+                '<i class="fas fa-search"></i>',
+                '<i class="fas fa-file-alt"></i>',
+                '<i class="fas fa-chart-bar"></i>',
+                '<i class="fas fa-check-circle"></i>',
+                '<i class="fas fa-clipboard"></i>',
+                '<i class="fas fa-bullhorn"></i>',
+            ];
+
+            $(".loader .image").html(images[counter]);
+        }
+
+        function loading(imageInterval) {
+            let num = 0;
+
+            const interval = setInterval(function () {
+                $('.loader span').html(`Loading... ${num}%`);
+                num++;
+
+                if (num > 100) {
+                    clearInterval(interval);
+                    clearInterval(imageInterval); // Stop image rotation
+
+                    // Show the new content
+                    $(".loader").fadeOut(function () {
+                        $("#content").fadeIn();
+                    });
+                }
+            }, 120);
+        }
+
         const words = document.querySelectorAll('.dynamic-text');
         let currentIndex = 0;
 
