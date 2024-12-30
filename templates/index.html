@@ -6,6 +6,7 @@
     <title>TruthBot.AI</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@400;500;700&display=swap');
 
@@ -34,6 +35,22 @@
             padding: 0;
             box-sizing: border-box;
         }
+
+        /* Loading Animation Container */
+        .loading-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(248, 250, 252, 0.95);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 9999;
+        }
+
         .loader {
             width: 100px;
             height: 80px;
@@ -208,6 +225,8 @@
     flex-wrap: wrap;
     justify-content: center;
     margin-top: 1.5rem;
+    
+
 }
 
 .action-button {
@@ -224,7 +243,7 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    min-width: 160px;
+    min-width: 200px;
     justify-content: center;
     backdrop-filter: blur(8px);
     box-shadow: var(--card-shadow);
@@ -319,6 +338,19 @@
         <span>0%</span>
     </div>
 
+    <!-- New Processing Animation -->
+    <div class="loading-container" id="loadingAnimation">
+        <dotlottie-player
+  src="https://lottie.host/2c1fe9e5-f828-473f-886e-0fe4355cdb6c/eHpQ8nn2Tz.lottie"
+  background="transparent"
+  speed="1"
+  style="width: 300px; height: 300px"
+  loop
+  autoplay
+></dotlottie-player>
+        <div class="loading-text">Processing your request...</div>
+    </div>
+
     <div id="content">
     <div class="header" >
         <a href="/" class="logo" style="text-decoration: none;">TruthBot.ai</a>
@@ -343,32 +375,28 @@
                     <button type="submit" class="action-button" data-action="report">
                         <i class="fas fa-search"></i> Analyze
                     </button>
-                    <button type="submit" class="action-button" data-action="summarization">
+                    <!--<button type="submit" class="action-button" data-action="summarization">
                         <i class="fas fa-file-alt"></i> Summarize
                     </button>
                     <button type="submit" class="action-button" data-action="plagiarism">
                         <i class="fas fa-check-circle"></i> Check Plagiarism
-                    </button>
+                    </button>-->
                 </div>
             </form>
         </div>
     </main>
 </div>
-    <script>
 
+<script>
         $(document).ready(function () {
             let counter = 0;
-
-            // Change images every 3 seconds
             const imageInterval = setInterval(function () {
                 changeImage(counter);
                 counter++;
-                if (counter >= 2) counter = 0; // Reset counter if out of bounds
+                if (counter >= 2) counter = 0;
             }, 1000);
-
-            // Start loading animation
             loading(imageInterval);
-        })
+        });
 
         function changeImage(counter) {
             const images = [
@@ -379,29 +407,25 @@
                 '<i class="fas fa-clipboard"></i>',
                 '<i class="fas fa-bullhorn"></i>',
             ];
-
             $(".loader .image").html(images[counter]);
         }
 
         function loading(imageInterval) {
             let num = 0;
-
             const interval = setInterval(function () {
                 $('.loader span').html(`Loading... ${num}%`);
                 num++;
-
                 if (num > 100) {
                     clearInterval(interval);
-                    clearInterval(imageInterval); // Stop image rotation
-
-                    // Show the new content
+                    clearInterval(imageInterval);
                     $(".loader").fadeOut(function () {
                         $("#content").fadeIn();
                     });
                 }
-            }, 50);
+            }, 10);
         }
 
+        // Dynamic text animation
         const words = document.querySelectorAll('.dynamic-text');
         let currentIndex = 0;
 
@@ -430,6 +454,7 @@
         words[0].classList.add('active');
         setInterval(showNextWord, 3000);
 
+        // Theme toggle
         const themeToggle = document.getElementById('theme-toggle');
         const themeIcon = themeToggle.querySelector('i');
         
@@ -444,65 +469,64 @@
             updateThemeIcon(newTheme);
         });
 
-        function handleAction(action) {
-            const url = document.getElementById('url-input').value;
-            if (!url) {
-                alert('Please enter a URL');
+        // URL validation
+        function isValidUrl(string) {
+            try {
+                new URL(string);
+                return true;
+            } catch (_) {
+                return false;
+            }
+        }
+
+        // Form submission with loading animation
+        document.getElementById('analysis-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const urlInput = document.getElementById('url-input');
+            const url = urlInput.value.trim();
+            const action = e.submitter.getAttribute('data-action');
+            
+            if (!isValidUrl(url)) {
+                urlInput.classList.add('invalid');
+                alert('Please enter a valid URL');
                 return;
             }
-            window.location.href = `/${action}?url=${encodeURIComponent(url)}`;
-        }
+            
+            urlInput.classList.remove('invalid');
+            
+            // Show loading animation
+            document.getElementById('loadingAnimation').style.display = 'flex';
+            
+            // Create form data
+            const formData = new FormData();
+            formData.append('text', url);
+            
+            // Submit the form
+            fetch(`/${action}`, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (response.redirected) {
+                    window.location.href = response.url;
+                } else {
+                    return response.text().then(html => {
+                        document.documentElement.innerHTML = html;
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while processing your request');
+                // Hide loading animation on error
+                document.getElementById('loadingAnimation').style.display = 'none';
+            });
+        });
 
         document.addEventListener('DOMContentLoaded', () => {
             updateThemeIcon('light');
         });
-        function isValidUrl(string) {
-    try {
-        new URL(string);
-        return true;
-    } catch (_) {
-        return false;
-    }
-}
-
-document.getElementById('analysis-form').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const urlInput = document.getElementById('url-input');
-    const url = urlInput.value.trim();
-    const action = e.submitter.getAttribute('data-action');
-    
-    if (!isValidUrl(url)) {
-        urlInput.classList.add('invalid');
-        alert('Please enter a valid URL');
-        return;
-    }
-    
-    urlInput.classList.remove('invalid');
-    
-    // Create form data
-    const formData = new FormData();
-    formData.append('text', url);
-    
-    // Submit the form
-    fetch(`/${action}`, {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => {
-        if (response.redirected) {
-            window.location.href = response.url;
-        } else {
-            return response.text().then(html => {
-                document.documentElement.innerHTML = html;
-            });
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('An error occurred while processing your request');
-    });
-});
     </script>
 </body>
 </html>
