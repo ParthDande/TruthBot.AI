@@ -95,23 +95,32 @@ def summarize():
     }
     if request.method == "POST":
         input_source = request.form["text"]
+        # Get mode and length from form
+        mode = request.form.get("mode", "paragraph")
+        length_percent = int(request.form.get("length", 50))
+        
         text = extractor.extract_text(input_source)
         
-        # Validate input length
-        input_length = len(text)
-        min_length = max(1, int(input_length * 0.05))
+        # Calculate lengths based on percentage
+        input_length = len(text.split())
+        target_length = max(1, int(input_length * (length_percent/100)))
         
         # Call Hugging Face API for summarization
         try:
             response = requests.post(API_URL, headers=headers, json={
                 "inputs": text,
                 "parameters": {
-                    "max_length": min_length,
-                    "min_length": min_length
+                    "max_length": target_length,
+                    "min_length": max(1, int(target_length * 0.8))
                 }
             })
             result = response.json()
             summary = result[0]['summary_text']
+
+            # Format based on mode
+            if mode == "bullet":
+                summary = summary.replace('. ', '.\n')
+                summary = ' ' + summary
 
             if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
                 return jsonify({'summary': summary})
