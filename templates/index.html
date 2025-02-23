@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
+      <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAgSURBVHgB7cExAQAAAMKg9U9tCF8gAAAAAAAAAAAAAAAAAADAvAk1IAABi4x5JgAAAABJRU5ErkJggg==">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@400;500;700&display=swap');
 
@@ -328,6 +329,89 @@
     }
            
         }
+
+        .header-controls {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    margin-left: auto; /* Push controls to the right */
+}
+
+/* Dropdown styles */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-toggle {
+    padding: 0.5rem 1rem !important;
+    min-width: auto !important;
+    font-size: 0.9rem !important;
+    background: var(--card-bg);
+    border: 2px solid var(--primary-color);
+    border-radius: 8px;
+    color: var(--text-color);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    backdrop-filter: blur(8px);
+    box-shadow: var(--card-shadow);
+    transition: all 0.3s ease;
+}
+
+.dropdown-toggle:hover {
+    background: var(--primary-color);
+    color: var(--background-color);
+    transform: translateY(-2px);
+    box-shadow: var(--hover-shadow);
+}
+
+.dropdown-content {
+    display: none; /* Hidden by default */
+    position: absolute;
+    right: 0;
+    background: var(--card-bg);
+    min-width: 200px;
+    border-radius: 8px;
+    box-shadow: var(--card-shadow);
+    backdrop-filter: blur(8px);
+    z-index: 1000;
+    padding: 0.5rem;
+    margin-top: 0.5rem; /* Add space between button and dropdown */
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    color: var(--text-color);
+    text-decoration: none;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.dropdown-item:hover {
+    background: var(--primary-color);
+    color: var(--background-color);
+}
+
+.dropdown-item i {
+    width: 20px;
+    text-align: center;
+}
+
+@media (max-width: 600px) {
+    .dropdown-toggle {
+        padding: 0.4rem 0.8rem !important;
+        font-size: 0.8rem !important;
+    }
+
+    .dropdown-content {
+        min-width: 180px;
+    }
+}
     </style>
 </head>
 <body>
@@ -352,12 +436,32 @@
     </div>
 
     <div id="content">
-    <div class="header" >
-        <a href="/" class="logo" style="text-decoration: none;">TruthBot.ai</a>
-        <button id="theme-toggle" class="theme-toggle">
-            <i class="fas fa-moon"></i>
-        </button>
-    </div>
+        <div class="header">
+            <a href="/" class="logo" style="text-decoration: none;">TruthBot.ai</a>
+            <div class="header-controls">
+                <!-- Dropdown Menu -->
+                <div class="dropdown">
+                    <button class="dropdown-toggle action-button">
+                        <i class="fas fa-tools"></i> Tools
+                    </button>
+                    <div class="dropdown-content">
+                        <a href="/plagiarism" class="dropdown-item">
+                            <i class="fas fa-check-circle"></i> Plagiarism Check
+                        </a>
+                        <a href="/summarization" class="dropdown-item">
+                            <i class="fas fa-file-alt"></i> Summarization
+                        </a>
+                        <a href="/analyze" class="dropdown-item">
+                            <i class="fas fa-exclamation-triangle"></i> Fake News Tool
+                        </a>
+                    </div>
+                </div>
+                <!-- Theme Toggle -->
+                <button id="theme-toggle" class="theme-toggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </div>
 
     <main class="main-content">
         <div class="text-container">
@@ -388,145 +492,169 @@
 </div>
 
 <script>
-        $(document).ready(function () {
-            let counter = 0;
-            const imageInterval = setInterval(function () {
-                changeImage(counter);
-                counter++;
-                if (counter >= 2) counter = 0;
-            }, 1000);
-            loading(imageInterval);
-        });
+     $(document).ready(function () {
+    let counter = 0;
+    const imageInterval = setInterval(function () {
+        changeImage(counter);
+        counter++;
+        if (counter >= 2) counter = 0;
+    }, 1000);
+    loading(imageInterval);
+});
 
-        function changeImage(counter) {
-            const images = [
-                '<i class="fas fa-search"></i>',
-                '<i class="fas fa-file-alt"></i>',
-                '<i class="fas fa-chart-bar"></i>',
-                '<i class="fas fa-check-circle"></i>',
-                '<i class="fas fa-clipboard"></i>',
-                '<i class="fas fa-bullhorn"></i>',
-            ];
-            $(".loader .image").html(images[counter]);
-        }
+function changeImage(counter) {
+    const images = [
+        '<i class="fas fa-search"></i>',
+        '<i class="fas fa-file-alt"></i>',
+        '<i class="fas fa-chart-bar"></i>',
+        '<i class="fas fa-check-circle"></i>',
+        '<i class="fas fa-clipboard"></i>',
+        '<i class="fas fa-bullhorn"></i>',
+    ];
+    $(".loader .image").html(images[counter]);
+}
 
-        function loading(imageInterval) {
-            let num = 0;
-            const interval = setInterval(function () {
-                $('.loader span').html(`Loading... ${num}%`);
-                num++;
-                if (num > 100) {
-                    clearInterval(interval);
-                    clearInterval(imageInterval);
-                    $(".loader").fadeOut(function () {
-                        $("#content").fadeIn();
-                    });
-                }
-            }, 10);
-        }
-
-        // Dynamic text animation
-        const words = document.querySelectorAll('.dynamic-text');
-        let currentIndex = 0;
-
-        function showNextWord() {
-            words.forEach((word, index) => {
-                if (index === currentIndex) {
-                    word.classList.remove('active');
-                    word.classList.add('fade-out');
-                } else {
-                    word.classList.remove('active', 'fade-out');
-                }
+function loading(imageInterval) {
+    let num = 0;
+    const interval = setInterval(function () {
+        $('.loader span').html(`Loading... ${num}%`);
+        num++;
+        if (num > 100) {
+            clearInterval(interval);
+            clearInterval(imageInterval);
+            $(".loader").fadeOut(function () {
+                $("#content").fadeIn();
             });
+        }
+    }, 10);
+}
 
-            currentIndex = (currentIndex + 1) % words.length;
+// Dynamic text animation
+const words = document.querySelectorAll('.dynamic-text');
+let currentIndex = 0;
 
-            setTimeout(() => {
-                words.forEach((word, index) => {
-                    word.classList.remove('fade-out');
-                    if (index === currentIndex) {
-                        word.classList.add('active');
-                    }
+function showNextWord() {
+    words.forEach((word, index) => {
+        if (index === currentIndex) {
+            word.classList.remove('active');
+            word.classList.add('fade-out');
+        } else {
+            word.classList.remove('active', 'fade-out');
+        }
+    });
+
+    currentIndex = (currentIndex + 1) % words.length;
+
+    setTimeout(() => {
+        words.forEach((word, index) => {
+            word.classList.remove('fade-out');
+            if (index === currentIndex) {
+                word.classList.add('active');
+            }
+        });
+    }, 500);
+}
+
+words[0].classList.add('active');
+setInterval(showNextWord, 3000);
+
+// Theme toggle
+const themeToggle = document.getElementById('theme-toggle');
+const themeIcon = themeToggle.querySelector('i');
+
+function updateThemeIcon(theme) {
+    themeIcon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+}
+
+themeToggle.addEventListener('click', () => {
+    const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', newTheme);
+    updateThemeIcon(newTheme);
+});
+
+// URL validation
+function isValidUrl(string) {
+    try {
+        new URL(string);
+        return true;
+    } catch (_) {
+        return false;
+    }
+}
+
+// Form submission with loading animation
+document.getElementById('analysis-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const urlInput = document.getElementById('url-input');
+    const url = urlInput.value.trim();
+    const action = e.submitter.getAttribute('data-action');
+
+    if (!isValidUrl(url)) {
+        urlInput.classList.add('invalid');
+        alert('Please enter a valid URL');
+        return;
+    }
+
+    urlInput.classList.remove('invalid');
+
+    // Show loading animation
+    document.getElementById('loadingAnimation').style.display = 'flex';
+
+    // Create form data
+    const formData = new FormData();
+    formData.append('text', url);
+
+    // Submit the form
+    fetch(`/${action}`, {
+        method: 'POST',
+        body: formData
+    })
+        .then(response => {
+            if (response.redirected) {
+                window.location.href = response.url;
+            } else {
+                return response.text().then(html => {
+                    document.documentElement.innerHTML = html;
                 });
-            }, 500);
-        }
-
-        words[0].classList.add('active');
-        setInterval(showNextWord, 3000);
-
-        // Theme toggle
-        const themeToggle = document.getElementById('theme-toggle');
-        const themeIcon = themeToggle.querySelector('i');
-        
-        function updateThemeIcon(theme) {
-            themeIcon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
-        }
-
-        themeToggle.addEventListener('click', () => {
-            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            document.documentElement.setAttribute('data-theme', newTheme);
-            updateThemeIcon(newTheme);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while processing your request');
+            // Hide loading animation on error
+            document.getElementById('loadingAnimation').style.display = 'none';
         });
+});
 
-        // URL validation
-        function isValidUrl(string) {
-            try {
-                new URL(string);
-                return true;
-            } catch (_) {
-                return false;
-            }
+// Dropdown functionality
+// Dropdown functionality
+document.addEventListener('DOMContentLoaded', () => {
+    const dropdownToggle = document.querySelector('.dropdown-toggle');
+    const dropdownContent = document.querySelector('.dropdown-content');
+
+    // Toggle dropdown visibility on button click
+    dropdownToggle.addEventListener('click', function (e) {
+        e.preventDefault(); // Prevent default button behavior
+        e.stopPropagation(); // Prevent event bubbling
+        dropdownContent.style.display = dropdownContent.style.display === 'block' ? 'none' : 'block';
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function (e) {
+        if (!dropdownToggle.contains(e.target) && !dropdownContent.contains(e.target)) {
+            dropdownContent.style.display = 'none';
         }
+    });
 
-        // Form submission with loading animation
-        document.getElementById('analysis-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const urlInput = document.getElementById('url-input');
-            const url = urlInput.value.trim();
-            const action = e.submitter.getAttribute('data-action');
-            
-            if (!isValidUrl(url)) {
-                urlInput.classList.add('invalid');
-                alert('Please enter a valid URL');
-                return;
-            }
-            
-            urlInput.classList.remove('invalid');
-            
-            // Show loading animation
+    // Add dropdown item interaction
+    document.querySelectorAll('.dropdown-item').forEach(item => {
+        item.addEventListener('click', function (e) {
             document.getElementById('loadingAnimation').style.display = 'flex';
-            
-            // Create form data
-            const formData = new FormData();
-            formData.append('text', url);
-            
-            // Submit the form
-            fetch(`/${action}`, {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => {
-                if (response.redirected) {
-                    window.location.href = response.url;
-                } else {
-                    return response.text().then(html => {
-                        document.documentElement.innerHTML = html;
-                    });
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while processing your request');
-                // Hide loading animation on error
-                document.getElementById('loadingAnimation').style.display = 'none';
-            });
         });
-
-        document.addEventListener('DOMContentLoaded', () => {
-            updateThemeIcon('light');
-        });
+    });
+});
     </script>
 </body>
 </html>
