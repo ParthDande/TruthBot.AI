@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="static\images\truth-bot-high-resolution-logo-transparent.png">
-    <title>News Summarizer</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <title>News Summarizer | TruthBot.AI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Cormorant+Garamond:wght@600&display=swap" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
+    <script src="/static/js/theme.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@400;500;700&display=swap');
-
         :root {
             --background-color: #f8fafc;
             --primary-color: #5D3FD3;
@@ -18,172 +18,192 @@
             --text-color: #292627;
             --card-bg: rgba(255, 255, 255, 0.95);
             --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            --hover-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+            --positive-color: #4CAF50;
+            --negative-color: #ff4d4d;
         }
 
         [data-theme="dark"] {
-            --primary-color: #9F7AEA;
-            --secondary-color: #0a0a0a;
+            --primary-color: #F5F5F1;
+            --secondary-color: #9F7AEA;
             --background-color: #0b0b0a;
-            --text-color: #dedce0;
+            --text-color: #F4F1F8;
             --card-bg: rgba(40, 40, 40, 0.95);
-            --team-bg: rgba(26, 26, 26, 0.9);
             --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            --hover-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'DM Sans', sans-serif;
         }
 
         body {
-            font-family: 'DM Sans', sans-serif;
             background: var(--background-color);
-            min-height: 100vh;
             color: var(--text-color);
-            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
         header {
-            background-color: var(--background-color);
-            padding: 1rem 0;
+            padding: 1rem 2rem;
+            background: var(--background-color);
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 1000;
+            position: relative;
         }
 
         nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
-        }
-
-        .logo {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: var(--text-color);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-        }
-
-        .logo img {
-            height: 50px;
-            width: auto;
         }
 
         .nav-links {
             display: flex;
             gap: 2rem;
+            align-items: center;
+            margin-left: auto;
+            margin-right: 2rem;
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
         }
 
         .nav-links a {
             color: var(--text-color);
             text-decoration: none;
             font-weight: 500;
-            transition: color 0.3s ease;
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            transition: all 0.3s ease;
         }
 
         .nav-links a:hover {
             color: var(--secondary-color);
+            transform: translateY(-2px);
         }
 
-        .container {
-            width: 95%;
-            max-width: 1200px;
-            margin: 7rem auto 2rem;
+        .logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text-color);
+            text-decoration: none;
+        }
+
+        .main-content {
+            flex: 1;
             display: flex;
             gap: 2rem;
+            width: 95%;
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 1rem;
         }
 
-        .input-container, .output-container {
-            background: var(--card-bg);
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: var(--card-shadow);
-            backdrop-filter: blur(8px);
-            transition: all 0.3s ease;
-        }
-
-        .input-container {
+        .input-section, .output-section {
             flex: 1;
-        }
-
-        .output-container {
-            flex: 2;
-        }
-
-        .input-container:hover, .output-container:hover {
-            box-shadow: var(--hover-shadow);
-        }
-
-        h1, h2 {
-            font-family: 'Cormorant Garamond', serif;
-            color: var(--text-color);
-            margin-bottom: 1.5rem;
-            font-size: 2.2rem;
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: var(--card-shadow);
+            min-height: 400px;
         }
 
         textarea {
             width: 100%;
-            padding: 1rem;
+            min-height: 200px;
+            padding: 1.5rem;
             border: 2px solid var(--primary-color);
             border-radius: 8px;
             background: transparent;
             color: var(--text-color);
             font-size: 1rem;
-            min-height: 200px;
             resize: vertical;
             margin-bottom: 1rem;
-            transition: border-color 0.3s ease;
         }
 
-        textarea:focus {
-            outline: none;
-            border-color: var(--secondary-color);
+        .action-button {
+            padding: 0.8rem 1.5rem;
+            border: 2px solid var(--primary-color);
+            border-radius: 8px;
+            background: var(--card-bg);
+            color: var(--text-color);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
         }
 
-        input[type="submit"] {
+        .action-button:hover {
             background: var(--primary-color);
             color: var(--background-color);
-            border: none;
-            padding: 0.8rem 1.5rem;
+        }
+
+        .controls-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            margin-top:20px;;
+            gap: 1rem;
+        }
+
+        .mode-toggle {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .mode-btn {
+            padding: 0.5rem 1rem;
             border-radius: 8px;
-            font-size: 1rem;
             cursor: pointer;
+            background: var(--background-color);
+            color: var(--text-color);
+            border: 2px solid var(--primary-color);
             transition: all 0.3s ease;
             font-weight: 500;
-            width: 100%;
         }
 
-        input[type="submit"]:hover {
-            background: var(--accent-color);
-            transform: translateY(-2px);
+        .mode-btn.active {
+            background: var(--primary-color);
+            color: var(--background-color);
         }
 
-        .loading-bar {
+        .length-slider {
+            flex: 1;
+            max-width: 300px;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
             width: 100%;
             height: 4px;
             background: var(--accent-color);
             border-radius: 2px;
-            overflow: hidden;
-            margin: 1rem 0;
         }
 
-        .loading-bar-progress {
-            height: 100%;
-            background: var(--secondary-color);
-            animation: loading 2s infinite ease-in-out;
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .word-count {
+            color: var(--text-color);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
         }
 
         #summary-text li {
@@ -207,385 +227,220 @@
             transform: translateY(0);
         }
 
-        .file-paste-icons {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .file-paste-icons i {
-            font-size: 1.2rem;
-            color: var(--background-color);
-            cursor: pointer;
-            transition: color 0.3s ease;
-        }
-
-        .file-paste-icons i:hover {
-            color: var(--secondary-color);
-        }
-
-        .word-count {
-            color: var(--text-color);
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                flex-direction: column;
-                margin-top: 5rem;
-            }
-
-            nav {
-                padding: 0 1rem;
-            }
-
-            .nav-links {
-                display: none;
-            }
-        }
-         /* Add these new styles under your existing styles */
-         .controls-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            gap: 1rem;
-        }
-
-        .mode-toggle {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .mode-btn {
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            cursor: pointer;
-            background: var(--background-color);
-            color: var(--text-color);
-            border: 2px solid var(--primary-color);
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
-
-        .mode-btn.active {
-            background: var(--primary-color);
-            color: var(--accent-color);
-            border-color: var(--primary-color);
-        }
-
-
-        .length-slider {
-            flex: 1;
-            max-width: 300px;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .slider-container {
-            flex: 1;
-            position: relative;
-        }
-
-        .slider-value {
-            min-width: 60px;
-            text-align: center;
-            font-weight: 500;
-        }
-
-        input[type="range"] {
-            -webkit-appearance: none;
+        .loading-bar {
             width: 100%;
             height: 4px;
             background: var(--accent-color);
             border-radius: 2px;
+            overflow: hidden;
+            margin: 1rem 0;
         }
 
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 16px;
-            height: 16px;
-            background: var(--primary-color);
-            border-radius: 50%;
-            cursor: pointer;
-            transition: background 0.3s ease;
-        }
-        .input-options {
-            display: flex;
-            justify-content: flex-end;
-            gap: 1rem;
-            margin-bottom: 1rem;
-            position: relative;
+        .loading-bar-progress {
+            height: 100%;
+            background: var(--secondary-color);
+            animation: loading 2s infinite ease-in-out;
         }
 
-        .paste-btn {
-            position: absolute;
-            display: flex;
-            margin:2px;
-            gap: 0.5rem;
-            left:0;
-            margin-bottom:10px;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            background: var(--background-color);
-            color: var(--text-color);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
+        @keyframes loading {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(200%); }
         }
 
-        .paste-btn:hover {
-            border-color: var(--primary-color);
-            background: var(--card-bg);
-        }
-
-        /* Remove dark mode override */
-        [data-theme="dark"] .mode-btn.active {
-            background: var(--primary-color);
-            color: var(--background-color);
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
-        <header>
-            <nav>
-                <a href="/" class="logo">
-                    Truthbot.ai
-                </a>
-                <div class="nav-links">
-                    <a href="/analyze"><i class="fas fa-file-alt"></i> Fake News Detector</a>
-                    <a href="/sentiment"><i class="fas fa-chart-bar"></i> Sentiment Analysis</a>
-                    <a href="/plagiarism"><i class="fas fa-check-circle"></i> Plagiarism Check</a>
+    <header>
+        <nav>
+            <a href="/home" class="logo">Truthbot.ai</a>
+            
+            <div class="nav-links">
+                <a href="/analyze"><i class="fas fa-file-alt"></i>Fake News</a>
+                <a href="/summarization"><i class="fas fa-newspaper"></i>Summarizer</a>
+                <a href="/plagiarism"><i class="fas fa-check-circle"></i>Plagiarism</a>
+                <a href="/sentiment"><i class="fas fa-chart-bar"></i>Sentiment</a>
+            </div>
+
+            <div class="header-controls">
+                <button id="theme-toggle" class="action-button">
+                    <i class="fas fa-moon"></i> Theme
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <div class="input-section">
+            <h1>News Summarizer</h1>
+            <div class="controls-container">
+                <div class="mode-toggle">
+                    <button type="button" class="mode-btn active" data-mode="paragraph">Paragraph</button>
+                    <button type="button" class="mode-btn" data-mode="bullet">Bullet Points</button>
                 </div>
-            </nav>
-        </header>
-    
-        <main>
-            <div class="container">
-                <div class="input-container" style="position: relative;">
-                    <div class="delete-btn" style="position: absolute; top: 20px; right: 20px; cursor: pointer;">
-                        <i class="fas fa-trash-alt"></i>
+                <div class="length-slider">
+                    <div class="slider-container">
+                        <input type="range" id="length-slider" min="10" max="100" value="50">
                     </div>
-                    <h1>News Summarizer</h1>
-                    
-                    <!-- Controls Section -->
-                    <div class="controls-container">
-                        <div class="mode-toggle">
-                            <button type="button" class="mode-btn active" data-mode="paragraph">Paragraph</button>
-                            <button type="button" class="mode-btn" data-mode="bullet">Bullet Points</button>
-                        </div>
-                        <div class="length-control">
-                            <div class="slider-container">
-                                <input type="range" id="length-slider" min="10" max="100" value="50">
-                            </div>
-                            <span class="slider-value" id="slider-value">50%</span>
-                        </div>
-                    </div>
-    
-                    <p style="color:var(--text-color); margin-bottom: 1.5rem;">Generate Quick News Summaries for faster read.</p>
-                    
-                    <form method="POST" id="summarize-form" onsubmit="return validateInput();">
-                        <input type="hidden" name="input-type" id="input-type" value="text">
-                        <input type="hidden" name="mode" id="mode-input" value="paragraph">
-                        <input type="hidden" name="length" id="length-input" value="50">
-                        
-                        <!-- Modified input options -->
-                        <div class="input-options">
-                            <div class="paste-btn" id="paste-icon">
-                                <i class="fas fa-paste"></i>
-                                <span>Paste Text</span>
-                            </div>
-                        </div>
-                        
-                        <div id="text-input"style="margin-top:50px;">
-                            <label for="text">Enter the news article or paste the link:</label>
-                            <textarea name="text" id="text" required></textarea>
-                            <div class="word-count">Words: <span id="wordCount">0</span>/400</div>
-                            <div id="wordLimitMessage" style="color: red;"></div>
-                        </div>
-                        
-                        <input type="submit" value="Summarize">
-                    </form>
-                    <div class="loading-bar">
-                        <div class="loading-bar-progress"></div>
-                    </div>
-                </div>
-                <div class="output-container">
-                    <h2>Summary</h2>
-                    <ul id="summary-text"></ul>
+                    <span class="slider-value" id="slider-value">50%</span>
                 </div>
             </div>
-        </main>
-        <script>
-            $(document).ready(function() {
-                // Delete button functionality
-                $('.delete-btn').on('click', function() {
-                    $('#text').val(''); // Clear textarea
-                    $('#wordCount').text('0'); // Reset word count
-                    $('#wordLimitMessage').text(''); // Clear any word limit message
-                });
-            
-                // File upload icon click handler
-                $('#file-upload-icon').on('click', function() {
-                    $('#file-upload').click();
-                });
-            
-                // File upload change handler
-                $('#file-upload').on('change', function(e) {
-                    const file = e.target.files[0];
-                    if (file) {
-                        const reader = new FileReader();
-                        reader.onload = function(e) {
-                            $('#text').val(e.target.result);
-                            validateWordCount(); // Update word count after file upload
-                        };
-                        reader.readAsText(file);
-                    }
-                });
-            
-                // Paste icon click handler
-                $('#paste-icon').on('click', function() {
-                    navigator.clipboard.readText().then(function(clipText) {
-                        $('#text').val(clipText);
-                        validateWordCount(); // Update word count after pasting
-                    }).catch(function(err) {
-                        alert('Failed to read clipboard: ' + err);
-                    });
-                });
-            
-                // Word count validation function
-                function validateWordCount() {
-                    const textArea = document.getElementById('text');
-                    const text = textArea.value.trim();
-                    const words = text ? text.split(/\s+/) : [];
-                    const count = words.length;
-                    const wordCountDisplay = document.getElementById('wordCount');
-                    const wordLimitMessage = document.getElementById('wordLimitMessage');
-            
-                    // Update word count display
-                    wordCountDisplay.textContent = count;
-            
-                    // Check word limit
-                    if (count > 400) {
-                        wordLimitMessage.textContent = "Word limit exceeded. Please reduce your text to 400 words or less.";
-                        return false;
-                    } else {
-                        wordLimitMessage.textContent = "";
-                        return true;
-                    }
-                }
-            
-                // Add word count listener to textarea
-                const textArea = document.getElementById('text');
-                if (textArea) {
-                    textArea.addEventListener('input', validateWordCount);
-                }
-            
-                // Function to create typing animation effect
-                function typeWriter(element, text, speed = 30) {
-                    return new Promise((resolve) => {
-                        element.text(''); // Clear existing text
-                        element.removeClass('completed');
-                        
-                        let i = 0;
-                        const typingInterval = setInterval(function() {
-                            if (i < text.length) {
-                                element.text(text.slice(0, i + 1));
-                                i++;
-                            } else {
-                                clearInterval(typingInterval);
-                                element.addClass('completed');
-                                resolve(); // Resolve the promise when typing is complete
-                            }
-                        }, speed);
-                    });
-                }
-            
-                // New functionality: Mode toggle handling
-                $('.mode-btn').click(function() {
-                    $('.mode-btn').removeClass('active');
-                    $(this).addClass('active');
-                    $('#mode-input').val($(this).data('mode'));
-                });
-            
-                // New functionality: Slider handling
-                const $slider = $('#length-slider');
-                const $sliderValue = $('#slider-value');
-                const $lengthInput = $('#length-input');
-            
-                if ($slider.length && $sliderValue.length && $lengthInput.length) {
-                    $slider.on('input', function() {
-                        const value = $(this).val();
-                        $sliderValue.text(value + '%');
-                        $lengthInput.val(value);
-                    });
-                }
-            
-                // Modified form submission
-                $('#summarize-form').on('submit', async function(e) {
-                    e.preventDefault();
-                    
-                    // Validate word count for text input
-                    if (!validateWordCount()) {
-                        return false;
-                    }
-            
-                    // Show loading bar if it exists
-                    if ($('.loading-bar').length) {
-                        $('.loading-bar').show();
-                    }
-            
-                    // Clear previous summary
-                    $('#summary-text').empty();
-                    
-                    try {
-                        const formData = $(this).serialize() + 
-                                       '&mode=' + $('#mode-input').val() +
-                                       '&length=' + $('#length-input').val();
-            
-                        const response = await $.ajax({
-                            url: '/summarization',
-                            method: 'POST',
-                            data: formData
-                        });
-            
-                        // Hide loading bar if it exists
-                        if ($('.loading-bar').length) {
-                            $('.loading-bar').hide();
-                        }
-            
-                        let summaryPoints = [];
-                        
-                        // Format summary based on mode
-                        if ($('#mode-input').val() === 'bullet') {
-                            summaryPoints = response.summary.split('\n').filter(point => point.trim() !== '');
-                        } else {
-                            summaryPoints = [response.summary];
-                        }
-            
-                        // Clear previous content
-                        $('#summary-text').empty();
-            
-                        // Sequentially type out each summary point
-                        for (const point of summaryPoints) {
-                            const $listItem = $('<li class="typing"></li>');
-                            $('#summary-text').append($listItem);
-                            await typeWriter($listItem, point.trim(), 30);
-                            await new Promise(resolve => setTimeout(resolve, 300));
-                        }
-                    } catch (error) {
-                        // Hide loading bar if it exists
-                        if ($('.loading-bar').length) {
-                            $('.loading-bar').hide();
-                        }
-            
-                        alert('An error occurred while summarizing the text.');
-                        console.error(error);
-                    }
+
+            <form id="summarize-form">
+                <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                    <button type="button" class="action-button" id="paste-btn">
+                        <i class="fas fa-paste"></i> Paste
+                    </button>
+                    <button type="button" class="action-button" id="clear-btn">
+                        <i class="fas fa-eraser"></i> Clear
+                    </button>
+                </div>
+                
+                <textarea 
+                    name="text" 
+                    id="text" 
+                    placeholder="Enter news article or paste the link..."
+                    required
+                ></textarea>
+                <div class="word-count">Words: <span id="wordCount">0</span>/400</div>
+                <div id="wordLimitMessage" style="color: var(--negative-color);"></div>
+                
+                <button type="submit" class="action-button" style="width: 100%; margin-top: 1rem;">
+                    <i class="fas fa-scroll"></i> Summarize
+                </button>
+            </form>
+            <div class="loading-bar">
+                <div class="loading-bar-progress"></div>
+            </div>
+        </div>
+
+        <div class="output-section">
+            <h2>Summary</h2>
+            <ul id="summary-text"></ul>
+        </div>
+    </main>
+
+    <script>
+        $(document).ready(function() {
+            // Theme toggle
+            $('#theme-toggle').on('click', function() {
+                const currentTheme = $('html').attr('data-theme') || 'light';
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                $('html').attr('data-theme', newTheme);
+                $(this).html(
+                    `<i class="fas fa-${newTheme === 'dark' ? 'sun' : 'moon'}"></i> Theme`
+                );
+            });
+
+            // Clear button
+            $('#clear-btn').on('click', function() {
+                $('#text').val('');
+                $('#wordCount').text('0');
+                $('#wordLimitMessage').text('');
+            });
+
+            // Paste button
+            $('#paste-btn').on('click', function() {
+                navigator.clipboard.readText().then(clipText => {
+                    $('#text').val(clipText);
+                    validateWordCount();
+                }).catch(err => {
+                    alert('Unable to paste. Please manually paste your text.');
                 });
             });
-            </script>
+
+            // Word count validation
+            function validateWordCount() {
+                const text = $('#text').val().trim();
+                const words = text ? text.split(/\s+/) : [];
+                const count = words.length;
+                $('#wordCount').text(count);
+
+                if(count > 400) {
+                    $('#wordLimitMessage').text("Word limit exceeded (max 400)");
+                    return false;
+                }
+                $('#wordLimitMessage').text('');
+                return true;
+            }
+
+            // Input handling
+            $('#text').on('input', validateWordCount);
+
+            // Mode toggle
+            $('.mode-btn').click(function() {
+                $('.mode-btn').removeClass('active');
+                $(this).addClass('active');
+                $('#mode-input').val($(this).data('mode'));
+            });
+
+            // Slider handling
+            $('#length-slider').on('input', function() {
+                const value = $(this).val();
+                $('#slider-value').text(value + '%');
+            });
+
+            // Form submission
+            $('#summarize-form').on('submit', async function(e) {
+                e.preventDefault();
+                if(!validateWordCount()) return;
+
+                $('.loading-bar').show();
+                $('#summary-text').empty();
+
+                try {
+                    const formData = $(this).serialize() + 
+                                   '&mode=' + $('.mode-btn.active').data('mode') +
+                                   '&length=' + $('#length-slider').val();
+
+                    const response = await $.ajax({
+                        url: '/summarization',
+                        method: 'POST',
+                        data: formData
+                    });
+
+                    let summaryPoints = [];
+                    if($('.mode-btn.active').data('mode') === 'bullet') {
+                        summaryPoints = response.summary.split('\n').filter(point => point.trim() !== '');
+                    } else {
+                        summaryPoints = [response.summary];
+                    }
+
+                    $('#summary-text').empty();
+
+                    for(const point of summaryPoints) {
+                        const $li = $('<li class="typing"></li>');
+                        $('#summary-text').append($li);
+                        await typeWriter($li, point.trim());
+                        await new Promise(resolve => setTimeout(resolve, 300));
+                    }
+                } catch(error) {
+                    alert('Error summarizing text');
+                    console.error(error);
+                } finally {
+                    $('.loading-bar').hide();
+                }
+            });
+
+            function typeWriter(element, text, speed = 30) {
+                return new Promise((resolve) => {
+                    let i = 0;
+                    const interval = setInterval(() => {
+                        if(i < text.length) {
+                            element.text(text.slice(0, i+1));
+                            i++;
+                        } else {
+                            clearInterval(interval);
+                            resolve();
+                        }
+                    }, speed);
+                });
+            }
+        });
+    </script>
 </body>
 </html>

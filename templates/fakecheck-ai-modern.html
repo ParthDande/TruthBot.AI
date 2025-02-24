@@ -3,359 +3,313 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="static/images/truth-bot-high-resolution-logo-transparent.png">
-    <title>Fake News Detector</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <title>Fake News Detection | TruthBot.AI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Cormorant+Garamond:wght@600&display=swap" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
     <script src="/static/js/theme.js"></script>
+    
     <style>
         :root {
-            --primary-color: #FFFFFF;
-            --secondary-color: #007BFF;
-            --background-color: linear-gradient(135deg, #e9dff3 0%, #2575fc 100%);
-            --text-color: #333333;
+            --background-color: #f8fafc;
+            --primary-color: #5D3FD3;
+            --secondary-color: #9F7AEA;
+            --accent-color: #E5DEF2;
+            --text-color: #292627;
             --card-bg: rgba(255, 255, 255, 0.95);
-            --team-bg: rgba(248, 249, 250, 0.9);
+            --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             --positive-color: #4CAF50;
             --negative-color: #ff4d4d;
-            --neutral-color: #f6ef1d;
-            --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            --hover-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-            --delete-color: #ff4d4d;
-            --paste-color: #4CAF50;
         }
-    
+
         [data-theme="dark"] {
-            --primary-color: #1A1A1A;
-            --secondary-color: #3399FF;
-            --background-color: linear-gradient(135deg, #1c1c1c 0%, #506dee 100%);
-            --text-color: #EAEAEA;
+            --primary-color: #F5F5F1;
+            --secondary-color: #9F7AEA;
+            --background-color: #0b0b0a;
+            --text-color: #F4F1F8;
             --card-bg: rgba(40, 40, 40, 0.95);
-            --team-bg: rgba(26, 26, 26, 0.9);
             --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            --hover-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
-            --delete-color: #ff4d4d;
-            --paste-color: #4CAF50;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            transition: all 0.3s ease;
+            font-family: 'DM Sans', sans-serif;
         }
-      
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: var(--background-color);
-            min-height: 100vh;
             color: var(--text-color);
-            perspective: 1000px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
-        .container {
+
+        header {
+            padding: 1rem 2rem;
+            background: var(--background-color);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-links {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    margin-left: auto; /* Pushes links to the right */
+    margin-right: 2rem; /* Space between links and theme toggle */
+}
+
+.header-controls {
+    display: flex;
+    align-items: center;
+}
+
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .nav-links a:hover {
+            color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        .nav-links a i {
+            font-size: 1.1rem;
+        }
+
+        
+        .logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .main-content {
+            flex: 1;
             display: flex;
             gap: 2rem;
             width: 95%;
             max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem 0;
+            margin: 2rem auto;
+            padding: 1rem;
         }
-        /* Header Styles */
-        header {
-            background-color: var(--primary-color);
-            color: var(--text-color);
-            padding: 1rem 0;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            position: relative;
-            overflow: hidden;
-        }
-        header::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
-            transform: rotate(-45deg);
-            animation: shine 3s infinite linear;
-        }
-        @keyframes shine {
-            0% { transform: rotate(-45deg) translateX(-100%); }
-            100% { transform: rotate(-45deg) translateX(100%); }
-        }
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1rem;
-        }
-        .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            color: var(--secondary-color);
-            text-decoration: none;
-            transition: transform 0.3s ease;
-        }
-        .logo img {
-            height: 50px; 
-            width: auto;  
-            margin-left: 0; 
-        }
-        .nav-links a {
-            margin-left: 1rem;
-            text-decoration: none;
-            color: var(--text-color);
-            transition: color 0.3s, transform 0.3s;
-        }
-        .nav-links a:hover {
-            color: var(--secondary-color);
-            transform: translateY(-3px);
-        }
-        .input-section{
+
+        .input-section, .output-section {
             flex: 1;
-            background-color: var(--card-bg);
-            border-radius: 10px;
+            background: var(--card-bg);
+            border-radius: 12px;
             padding: 2rem;
             box-shadow: var(--card-shadow);
-            transform-style: preserve-3d;
-            transform: rotateX(10deg) scale(0.95);
-            opacity: 0;
-            animation: fadeInSection 0.8s forwards ease-out;
+            min-height: 400px;
         }
-        .output-section {
-            flex: 1;
-            background-color: rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 10px;
-            padding: 2rem;
-            box-shadow: var(--card-shadow);
-            backdrop-filter: blur(10px);
-            transform-style: preserve-3d;
-            transform: rotateX(10deg) scale(0.95);
-            opacity: 0;
-            animation: fadeInSection 0.8s forwards ease-out;
-        }
-        @keyframes fadeInSection {
-            to {
-                transform: rotateX(0) scale(1);
-                opacity: 1;
-            }
-        }
-        .text-input-container {
-            position: relative;
-            width: 100%;
-            padding-bottom: 30%;
-            margin-bottom: 1rem;
-        }
+
         textarea {
             width: 100%;
             min-height: 200px;
-            border: 2px solid var(--secondary-color);
+            padding: 1.5rem;
+            border: 2px solid var(--primary-color);
             border-radius: 8px;
-            padding: 1rem;
+            background: transparent;
+            color: var(--text-color);
+            font-size: 1rem;
+            resize: vertical;
+            margin-bottom: 1rem;
+        }
+
+        .action-button {
+            padding: 0.8rem 1.5rem;
+            border: 2px solid var(--primary-color);
+            border-radius: 8px;
+            background: var(--card-bg);
+            color: var(--text-color);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
             transition: all 0.3s ease;
         }
-        textarea:focus {
-            outline: none;
-            box-shadow: 0 0 15px rgba(0, 123, 255, 0.3);
-            border-color: var(--secondary-color);
+
+        .action-button:hover {
+            background: var(--primary-color);
+            color: var(--background-color);
         }
-        .input-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 0.5rem;
-        }
-        .delete-btn, .paste-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 1.2rem;
-            transition: transform 0.2s ease, color 0.3s;
-        }
-        .delete-btn {
-            color: var(--delete-color);
-        }
-        .paste-btn {
-            color: var(--paste-color);
-        }
-        .delete-btn:hover, .paste-btn:hover {
-            transform: scale(1.2);
-        }
-        .loading {
-            text-align: center;
-            margin-top: 2rem;
-            position: relative;
-        }
-        .loading-bar {
-            width: 0;
-            height: 4px;
-            background: linear-gradient(to right, var(--secondary-color), var(--positive-color));
-            transition: width 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
-            position: absolute;
-            bottom: -10px;
-            left: 0;
-        }
+
         .report-card {
-            background-color: var(--card-bg);
-            border-radius: 10px;
+            background: var(--card-bg);
+            border-radius: 12px;
             padding: 2rem;
             margin-top: 2rem;
             box-shadow: var(--card-shadow);
-            display: none;
             opacity: 0;
-            transform: translateY(20px) rotate3d(1, 0, 0, 15deg);
-            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform: translateY(20px);
+            transition: all 0.4s ease;
         }
+
         .report-card.show {
             opacity: 1;
-            transform: translateY(0) rotate3d(1, 0, 0, 0);
+            transform: translateY(0);
         }
+
         .result-icon {
             font-size: 3rem;
             text-align: center;
             margin-bottom: 1rem;
-            animation: pulse 2s infinite;
         }
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
+
         .result-real .result-icon {
             color: var(--positive-color);
         }
+
         .result-fake .result-icon {
             color: var(--negative-color);
         }
-        input[type="submit"] {
-            background-color: var(--secondary-color);
-            color: var(--primary-color);
-            padding: 1rem 2rem;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1rem;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            display: block;
-            margin: 1rem auto;
-        }
-        input[type="submit"]::before {
-            content: '';
-            position: absolute;
+
+        .loading-container {
+            position: fixed;
             top: 0;
-            left: -100%;
+            left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(120deg, transparent, rgba(255,255,255,0.3), transparent);
-            transition: all 0.6s;
-        }
-        input[type="submit"]:hover::before {
-            left: 100%;
-        }
-        input[type="submit"]:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 7px 14px rgba(0, 0, 0, 0.1);
+            background: rgba(248, 250, 252, 0.95);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 9999;
         }
 
-        input[type="submit"] {
-            inline-size: 90%;
+        [data-theme="dark"] .loading-container {
+            background: rgba(11, 11, 10, 0.95);
+        }
+
+        .loading-text {
+            margin-top: 1rem;
+            font-size: 1.2rem;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Rest of the HTML remains exactly the same as the original, only the CSS has been enhanced -->
+    <!-- Loading Animation -->
+    <div class="loading-container" id="loadingAnimation">
+        <dotlottie-player
+            src="https://lottie.host/2c1fe9e5-f828-473f-886e-0fe4355cdb6c/eHpQ8nn2Tz.lottie"
+            background="transparent"
+            speed="1"
+            style="width: 200px; height: 200px;"
+            loop
+            autoplay>
+        </dotlottie-player>
+        <div class="loading-text">Analyzing Content...</div>
+    </div>
+
     <header>
         <nav>
-            <a href="/" class="logo">
-                <img src="static/images/truthbot-high-resolution-logo-transparent.png" alt="TruthBot.AI Logo">
-            </a>
+            <a href="/home" class="logo">Truthbot.ai</a>
+            
             <div class="nav-links">
-                <a href="/analyze"><i class="fas fa-file-alt"></i> Fake News Detector</a>
-                <a href="/sentiment"><i class="fas fa-comment-dots"></i> Sentiment Analyzer</a>
-                <a href="/plagiarism"><i class="fas fa-check-circle"></i> Plagiarism Check</a>
+                <a href="/analyze"><i class="fas fa-file-alt"></i>Fake News</a>
+                <a href="/summarization"><i class="fas fa-newspaper"></i>Summarizer</a>
+                <a href="/plagiarism"><i class="fas fa-check-circle"></i>Plagiarism</a>
+                <a href="/sentiment"><i class="fas fa-chart-bar"></i>Sentiment</a>
+            </div>
+
+            <div class="header-controls">
+                <button id="theme-toggle" class="action-button">
+                    <i class="fas fa-moon"></i> Theme
+                </button>
             </div>
         </nav>
     </header>
-
-    <div class="container">
+    <main class="main-content">
         <div class="input-section">
             <h1>Fake News Detector</h1>
             <form id="news-form">
-                <div class="text-input-container">
-                    <textarea id="text-input" placeholder="Paste the text you want to verify... (max 300 words)" required></textarea>
-                    <div class="word-count">Words: <span id="wordCount">0</span>/300</div>
-                </div>
-                <div class="input-actions">
-                    <button type="button" class="paste-btn" title="Paste Text">
-                        <i class="fas fa-paste"></i>
+                <textarea 
+                    id="text-input" 
+                    placeholder="Paste news content to verify..."
+                    required
+                ></textarea>
+                <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                    <button type="button" class="action-button" id="paste-btn">
+                        <i class="fas fa-paste"></i> Paste
                     </button>
-                    <button type="button" class="delete-btn" title="Clear Text">
-                        <i class="fas fa-trash-alt"></i>
+                    <button type="button" class="action-button" id="clear-btn">
+                        <i class="fas fa-eraser"></i> Clear
                     </button>
                 </div>
-                <input type="submit" value="Verify News">
+                <button type="submit" class="action-button" style="width: 100%">
+                    <i class="fas fa-search"></i> Analyze
+                </button>
             </form>
-            <div class="loading">
-               
-                <div class="loading-bar"></div>
-            </div>
         </div>
-        
+
         <div class="output-section">
+            <h2>Analysis Report</h2>
             <div class="report-card" id="result">
-                <div class="result-icon fas fa-question-circle"></div>
+                <div class="result-icon fas fa-search"></div>
                 <div class="result-text">Awaiting Analysis</div>
-                <div class="confidence"></div>
+                <div class="confidence">-</div>
                 <div class="result-details">
-                    Enter text to begin verification
+                    Results will appear here after analysis
                 </div>
             </div>
         </div>
-    </div>
-
-    <div class="footer" style="text-align: center; position: fixed; inset-block-end: 0; inline-size: 100%; background-color: var(--primary-color); padding: 1rem 0; box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);">
-        <p>Powered by TruthBot.AI 2024</p>
-    </div>
+    </main>
 
     <script>
         $(document).ready(function() {
             const textInput = $('#text-input');
             const wordCount = $('#wordCount');
-            const submitButton = $('input[type="submit"]');
-            const resultCard = $('.report-card');
-            const deleteBtn = $('.delete-btn');
-            const pasteBtn = $('.paste-btn');
-    
+            const resultCard = $('#result');
+            const loadingAnimation = $('#loadingAnimation');
+
+            // Word count functionality
             function updateWordCount() {
                 const text = textInput.val().trim();
                 const words = text.split(/\s+/);
-                const count = words.length === 1 && words[0] === '' ? 0 : words.length;
-    
-                if (count > 300) {
+                const count = text ? words.length : 0;
+                wordCount.text(Math.min(count, 300));
+                if(count > 300) {
                     textInput.val(words.slice(0, 300).join(' '));
-                    wordCount.text(300);
-                } else {
-                    wordCount.text(count);
                 }
             }
-    
-            // Delete button functionality
-            deleteBtn.on('click', function() {
+
+            // Delete button
+            $('#clear-btn').on('click', function() {
                 textInput.val('');
                 updateWordCount();
-                resultCard.removeClass('show').hide();
+                resultCard.removeClass('show result-real result-fake').hide();
             });
-    
-            // Paste button functionality
-            pasteBtn.on('click', function() {
+
+            // Paste button
+            $('#paste-btn').on('click', function() {
                 navigator.clipboard.readText().then(clipText => {
                     textInput.val(clipText);
                     updateWordCount();
@@ -363,107 +317,82 @@
                     alert('Unable to paste. Please manually paste your text.');
                 });
             });
-    
+
+            // Input handling
             textInput.on('input', updateWordCount);
-            updateWordCount(); // Initial count
-    
+            updateWordCount();
+
+            // Form submission
             $('#news-form').on('submit', function(e) {
                 e.preventDefault();
                 const text = textInput.val().trim();
                 const words = text.split(/\s+/).slice(0, 300);
                 const limitedText = words.join(' ');
-    
-                // Reset and prepare UI
-                resultCard.removeClass('show').hide();
-                $('.loading').show();
-                $('.loading-bar').css('width', '0%');
-                
-                // Simulate loading progress
-                var progress = 0;
-                var interval = setInterval(function() {
-                    progress += 5;
-                    $('.loading-bar').css('width', progress + '%');
-                    if (progress >= 100) {
-                        clearInterval(interval);
+
+                if(!text) {
+                    alert('Please enter text to analyze');
+                    return;
+                }
+
+                // Show loading animation
+                loadingAnimation.css('display', 'flex');
+                resultCard.removeClass('show result-real result-fake').hide();
+
+                // Simulate API call
+                setTimeout(() => {
+                    // Random result generation
+                    const isFake = Math.random() > 0.5;
+                    const mockResponse = {
+                        prediction: isFake ? 'fake' : 'real',
+                        confidence: Math.floor(Math.random() * 40 + 60),
+                        details: isFake ? 
+                            'Our analysis detected sensational language and unverified claims.' : 
+                            'Content appears credible with verified sources.'
+                    };
+
+                    // Update UI
+                    resultCard.removeClass('result-real result-fake');
+                    
+                    const icon = resultCard.find('.result-icon');
+                    const resultText = resultCard.find('.result-text');
+                    const confidence = resultCard.find('.confidence');
+                    const details = resultCard.find('.result-details');
+
+                    if(mockResponse.prediction === 'real') {
+                        resultCard.addClass('result-real');
+                        icon.removeClass().addClass('result-icon fas fa-check-circle');
+                    } else {
+                        resultCard.addClass('result-fake');
+                        icon.removeClass().addClass('result-icon fas fa-exclamation-triangle');
                     }
-                }, 50);
-                
-                // AJAX call to verify news
-                $.ajax({
-                    url: '/analyze',
-                    method: 'POST',
-                    data: { text: limitedText },
-                    success: function(response) {
-                        setTimeout(function() {
-                            $('.loading').hide();
-                            
-                            // Determine result based on prediction
-                            const prediction = (response.prediction || '').toLowerCase();
-                            
-                            // Set up result card
-                            let resultElement = $('#result');
-                            let iconElement = resultElement.find('.result-icon');
-                            let textElement = resultElement.find('.result-text');
-                            let confidenceElement = resultElement.find('.confidence');
-                            let detailsElement = resultElement.find('.result-details');
 
-                            // Reset classes
-                            resultElement.removeClass('result-real result-fake');
-
-                            if (prediction === 'real') {
-                                resultElement.addClass('result-real');
-                                resultElement.css('background-color', 'var(--positive-color)');
-                                iconElement.removeClass().addClass('result-icon fas fa-check-circle').css('color', '#FFFFFF');
-                                textElement.text('Verified: Real News').css('color', '#FFFFFF');
-                                confidenceElement.css('color', '#FFFFFF');
-                                detailsElement.css('color', '#FFFFFF');
-                            } else if (prediction === 'fake') {
-                                resultElement.addClass('result-fake');
-                                resultElement.css('background-color', 'var(--negative-color)');
-                                iconElement.removeClass().addClass('result-icon fas fa-exclamation-triangle').css('color', '#FFFF00');
-                                textElement.text('Alert: Potential Fake News').css('color', '#FFFF00');
-                                confidenceElement.css('color', '#FFFF00');
-                                detailsElement.css('color', '#FFFF00');
-                            } else {
-                                iconElement.removeClass().addClass('result-icon fas fa-question-circle');
-                                textElement.text('Inconclusive Analysis');
-                                resultElement.css('background-color', 'var(--card-bg)');
-                            }
-
-                            // Set confidence and details
-                            confidenceElement.text(`Confidence Level: ${response.confidence || 0}%`);
-                            detailsElement.text(`Our AI-powered analysis suggests this content is ${prediction} with ${response.confidence || 0}% confidence. Always verify information from multiple reliable sources.`);
-                            
-                            // Show result with animation
-                            resultCard.show();
-                            setTimeout(() => {
-                                resultCard.addClass('show');
-                                resultCard[0].scrollIntoView({ behavior: 'smooth', block: 'start' });
-                            }, 50);
-                        }, 500);
-                    },
-                    error: function(xhr, status, error) {
-                        // Error handling
-                        $('.loading').hide();
+                    resultText.text(mockResponse.prediction === 'real' 
+                        ? 'Verified: Real News' 
+                        : 'Alert: Potential Fake News');
                         
-                        let resultElement = $('#result');
-                        let iconElement = resultElement.find('.result-icon');
-                        let textElement = resultElement.find('.result-text');
-                        let confidenceElement = resultElement.find('.confidence');
-                        let detailsElement = resultElement.find('.result-details');
-    
-                        resultElement.removeClass('result-real result-fake');
-                        iconElement.removeClass().addClass('result-icon fas fa-exclamation-circle');
-                        textElement.text('Analysis Error');
-                        confidenceElement.text('');
-                        detailsElement.text('An error occurred. Please try again or check your input.');
-                        
-                        resultCard.show().addClass(' show');
-                        console.error('Verification error:', error);
-                    }
-                });
+                    confidence.text(`Confidence Level: ${mockResponse.confidence}%`);
+                    details.text(mockResponse.details);
+
+                    // Show results
+                    loadingAnimation.hide();
+                    resultCard.show().addClass('show');
+                    resultCard[0].scrollIntoView({
+                        behavior: 'smooth', 
+                        block: 'start'
+                    });
+                }, 2000);
+            });
+
+            // Theme toggle
+            $('#theme-toggle').on('click', function() {
+                const currentTheme = $('html').attr('data-theme') || 'light';
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                $('html').attr('data-theme', newTheme);
+                $(this).html(
+                    `<i class="fas fa-${newTheme === 'dark' ? 'sun' : 'moon'}"></i> Theme`
+                );
             });
         });
-        </script>
-    </body>
-    </html>
+    </script>
+</body>
+</html>
