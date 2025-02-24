@@ -192,16 +192,49 @@
       transform: translateX(0);
     }
 
-    .about-image {
-      opacity: 0;
-      transform: translateX(50px);
-      transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-    }
+    .about {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
 
-    .about-image.visible {
-      opacity: 1;
-      transform: translateX(0);
-    }
+.about-content {
+  display: flex;
+  align-items: center;
+  gap: 20px; /* Adds space between the text and the image */
+  max-width: 1200px; /* Adjust based on your layout */
+  width: 100%;
+}
+
+.about-text {
+  flex: 1; /* Allows the text to take up available space */
+}
+
+.about-image {
+  flex: 1; /* Allows the image to take up available space */
+  max-width: 100%; /* Ensures the image container doesn't overflow */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.about-image img {
+  max-width: 100%; /* Ensures the image doesn't exceed its container */
+  height: auto; /* Maintains aspect ratio */
+  border-radius: 10px; /* Optional: Adds rounded corners */
+  opacity: 0;
+  transform: translateX(50px);
+  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.about-image.visible img {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+
+   
 
     .about h2 {
       font-family: 'Cormorant Garamond', serif;
@@ -302,7 +335,7 @@
         <p>We're dedicated to maintaining information integrity in the digital age through cutting-edge AI technology and comprehensive fact-checking systems that evolve with every interaction.</p>
       </div>
       <div class="about-image">
-        <img src="/api/placeholder/600/400" alt="About Us">
+        <img src="static/images/fake_news_2.jpg" alt="About Us">
       </div>
     </div>
   </section>
