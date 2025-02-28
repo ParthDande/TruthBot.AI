@@ -2,7 +2,8 @@ from flask import Flask, request, render_template, jsonify
 import requests
 
 app = Flask(__name__)
-
+import warnings
+warnings.filterwarnings("ignore") 
 # Hugging Face API URL for summarization
 API_URL = "https://api-inference.huggingface.co/models/facebook/bart-large-cnn"
 headers = {"Authorization": "Bearer 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"}

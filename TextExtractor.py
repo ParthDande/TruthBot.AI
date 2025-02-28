@@ -2,7 +2,8 @@ import PyPDF2
 from newspaper import Article
 import requests
 import io
-
+import warnings
+warnings.filterwarnings("ignore") 
 class TextExtractor:
     def __init__(self, max_words=400):
         """

@@ -9,7 +9,8 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 import nltk
 from nltk import word_tokenize
 from nltk.corpus import stopwords
-
+import warnings
+warnings.filterwarnings("ignore") 
 # Load the model and vectorizer
 model = joblib.load('Models/plagiarism.pkl')
 vectorizer  = joblib.load('vectorizers/plagiarism_vectorizer.pkl')

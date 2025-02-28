@@ -10,7 +10,8 @@ import nltk
 from nltk import word_tokenize
 from nltk.corpus import stopwords
 nltk.data.path.append('nltk_data/')
-
+import warnings
+warnings.filterwarnings("ignore") 
 # stopwords
 stop_words = set(stopwords.words('english'))
 models = ["XGBClassifier_Model.pkl", "LGBMClassifier_Model.pkl", "logistic_regression_model.pkl", "Random_forest_Model.pkl","Support_Vector_Machine_Model.pkl"]

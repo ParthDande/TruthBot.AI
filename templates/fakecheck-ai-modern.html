@@ -250,7 +250,7 @@
     <main class="main-content">
         <div class="input-section">
             <h1>Fake News Detector</h1>
-            <form id="news-form">
+            <form id="news-form" method="POST">
                 <textarea 
                     id="text-input" 
                     placeholder="Paste news content to verify..."
@@ -324,64 +324,59 @@
 
             // Form submission
             $('#news-form').on('submit', function(e) {
-                e.preventDefault();
-                const text = textInput.val().trim();
-                const words = text.split(/\s+/).slice(0, 300);
-                const limitedText = words.join(' ');
+    e.preventDefault();
+    const text = textInput.val().trim();
 
-                if(!text) {
-                    alert('Please enter text to analyze');
-                    return;
-                }
+    if (!text) {
+        alert('Please enter text to analyze');
+        return;
+    }
 
-                // Show loading animation
-                loadingAnimation.css('display', 'flex');
-                resultCard.removeClass('show result-real result-fake').hide();
+    // Show loading animation
+    loadingAnimation.css('display', 'flex');
+    resultCard.removeClass('show result-real result-fake').hide();
 
-                // Simulate API call
-                setTimeout(() => {
-                    // Random result generation
-                    const isFake = Math.random() > 0.5;
-                    const mockResponse = {
-                        prediction: isFake ? 'fake' : 'real',
-                        confidence: Math.floor(Math.random() * 40 + 60),
-                        details: isFake ? 
-                            'Our analysis detected sensational language and unverified claims.' : 
-                            'Content appears credible with verified sources.'
-                    };
+    $.ajax({
+        url: "/analyze",
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({ text: text }),  // Sending text input as JSON
+        success: function(response) {
+            // Update UI with real response
+            resultCard.removeClass('result-real result-fake');
 
-                    // Update UI
-                    resultCard.removeClass('result-real result-fake');
-                    
-                    const icon = resultCard.find('.result-icon');
-                    const resultText = resultCard.find('.result-text');
-                    const confidence = resultCard.find('.confidence');
-                    const details = resultCard.find('.result-details');
+            const icon = resultCard.find('.result-icon');
+            const resultText = resultCard.find('.result-text');
+            const confidence = resultCard.find('.confidence');
+            const details = resultCard.find('.result-details');
 
-                    if(mockResponse.prediction === 'real') {
-                        resultCard.addClass('result-real');
-                        icon.removeClass().addClass('result-icon fas fa-check-circle');
-                    } else {
-                        resultCard.addClass('result-fake');
-                        icon.removeClass().addClass('result-icon fas fa-exclamation-triangle');
-                    }
+            if (response.prediction === 'Real') {
+                resultCard.addClass('result-real');
+                icon.removeClass().addClass('result-icon fas fa-check-circle');
+                resultText.text('Verified: Real News');
+            } else {
+                resultCard.addClass('result-fake');
+                icon.removeClass().addClass('result-icon fas fa-exclamation-triangle');
+                resultText.text('Alert: Potential Fake News');
+            }
 
-                    resultText.text(mockResponse.prediction === 'real' 
-                        ? 'Verified: Real News' 
-                        : 'Alert: Potential Fake News');
-                        
-                    confidence.text(`Confidence Level: ${mockResponse.confidence}%`);
-                    details.text(mockResponse.details);
+            confidence.text(`Confidence Level: ${response.confidence}%`);
+            details.text(response.details || "No additional details provided.");
 
-                    // Show results
-                    loadingAnimation.hide();
-                    resultCard.show().addClass('show');
-                    resultCard[0].scrollIntoView({
-                        behavior: 'smooth', 
-                        block: 'start'
-                    });
-                }, 2000);
+            // Show results
+            loadingAnimation.hide();
+            resultCard.show().addClass('show');
+            resultCard[0].scrollIntoView({
+                behavior: 'smooth', 
+                block: 'start'
             });
+        },
+        error: function(xhr) {
+            alert("Error analyzing news: " + (xhr.responseJSON?.error || "Unknown error"));
+            loadingAnimation.hide();
+        }
+    });
+});
 
             // Theme toggle
             $('#theme-toggle').on('click', function() {
