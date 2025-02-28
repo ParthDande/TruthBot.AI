@@ -1,7 +1,8 @@
 import time
 import random
 from huggingface_hub import InferenceClient
-
+import warnings
+warnings.filterwarnings("ignore") 
 class TextAnalysis:
     def __init__(self):
             self.client = InferenceClient(

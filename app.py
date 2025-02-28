@@ -9,8 +9,48 @@ app = Flask(__name__)
 import PyPDF2
 from newspaper import Article
 from TextExtractor import TextExtractor
+from flask_sqlalchemy import SQLAlchemy
 API_URL = "https://api-inference.huggingface.co/models/facebook/bart-large-cnn"
 headers = {"Authorization": "Bearer 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"}
+
+
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///news_database.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db = SQLAlchemy(app)
+
+# Database Models
+class FakeNewsRecord(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    url = db.Column(db.String(500), unique=True, nullable=False)
+    label = db.Column(db.String(50), nullable=False)
+    confidence = db.Column(db.Float, nullable=False)
+
+class SentimentRecord(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    url = db.Column(db.String(500), unique=True, nullable=False)
+    sentiment = db.Column(db.String(50), nullable=False)
+    confidence = db.Column(db.Float, nullable=False)
+
+class SummarizationRecord(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    url = db.Column(db.String(500), unique=True, nullable=False)
+    summary = db.Column(db.Text, nullable=False)
+
+class PlagiarismRecord(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    url = db.Column(db.String(500), unique=True, nullable=False)
+    output = db.Column(db.Text, nullable=False)
+    human_score = db.Column(db.Float, nullable=False)
+    ai_score = db.Column(db.Float, nullable=False)
+
+# Create the database and tables
+with app.app_context():
+    db.create_all()
+# Create the database and table
+with app.app_context():
+    db.create_all()
 @app.route("/", methods=["GET"])
 def home():
     return render_template('landing_page.html')
@@ -20,15 +60,14 @@ def index():
 
 @app.route("/analyze", methods=["GET", "POST"])
 def analyze():
-    # Render the HTML page for input and output
     if request.method == "GET":
         return render_template("fakecheck-ai-modern.html")
     
-    # Handle the analysis when POST request is made
     if request.method == "POST":
-        input_source = request.form.get("text", "")
+        print("POST request received")
+        input_data = request.get_json()
+        input_source = input_data.get("text", "")
         
-        # Validate input
         if not input_source:
             return jsonify({
                 "error": "No text provided",
@@ -37,7 +76,16 @@ def analyze():
             }), 400
         
         try:
-            # Extract and preprocess text
+            # Check if the URL is already in the database
+            existing_record = FakeNewsRecord.query.filter_by(url=input_source).first()
+            if existing_record:
+                print("Existing record found")
+                return jsonify({
+                    "prediction": existing_record.label,
+                    "confidence": existing_record.confidence
+                })
+            
+            # If not, proceed with analysis
             text = extractor.extract_text(input_source)
             if not text:
                 return jsonify({
@@ -46,25 +94,23 @@ def analyze():
                     "confidence": 0
                 }), 400
             
-            # Preprocess the text
             processed_text = news_detection.preprocess_custom_input(text)
-            
-            # Classify the text
             prediction, confidence = news_detection.fake_news_classifier(processed_text)
+            print(prediction,confidence)
+            # Store the result in the database
+            new_record = FakeNewsRecord(url=input_source, label=prediction, confidence=round(float(confidence) * 100, 2))
+            db.session.add(new_record)
+            db.session.commit()
             
-            # Prepare response
             response = {
-                "prediction": str(prediction),  # Ensure string conversion
-                "confidence": round(float(confidence) * 100, 2)  # Ensure float conversion
+                "prediction": str(prediction),
+                "confidence": round(float(confidence) * 100, 2)
             }
             
             return jsonify(response)
         
         except Exception as e:
-            # Log the full error for debugging
             app.logger.error(f"News analysis error: {str(e)}")
-            
-            # Return a user-friendly error response
             return jsonify({
                 "error": "An unexpected error occurred during analysis",
                 "prediction": "inconclusive",
@@ -155,71 +201,90 @@ def news_plagiarism_check():
         })
 
     return render_template('plagiarism.html') # Render the template for GET requests
-def truncate_text(text, max_tokens=500):
-    tokens = text.split()
-    if len(tokens) > max_tokens:
-        return ' '.join(tokens[:max_tokens])
-    return text
 
-def get_report_data(text):
-    report_results = {}
-
-    # Fake News Detection
-    processed_text = news_detection.preprocess_custom_input(text)
-    prediction, confidence = news_detection.fake_news_classifier(processed_text)
-    report_results['fake_news'] = {
-        'prediction': prediction,
-        'confidence': round(confidence * 100, 2)
-    }
-
-    # Summarization
-    summary_response = requests.post(
-        API_URL,
-        headers=headers,
-        json={"inputs": text, "parameters": {"max_length": 130, "min_length": 50}}
-    )
-    summary_result = summary_response.json()
-    report_results['summarization'] = summary_result[0]['summary_text']
-
-    # Plagiarism Check
-    output, human, ai = news_detection.ai_plagiarism(text)
-    report_results['plagiarism'] = {
-        'output': output,
-        'human_score': human,
-        'ai_score': ai
-    }
-
-    sentiment, confidence = obj.analyze_sentiment(text[:1000])
-    report_results['sentiment'] = {
-        'prediction': sentiment,
-        'confidence': round(confidence * 100, 2)}
-    return report_results
-
-@app.route('/report', methods=['GET', 'POST'])
+@app.route("/report", methods=["GET", "POST"])
 def comprehensive_report():
+    if request.method == "GET":
+        return render_template("result.html", report=None)
+    
     if request.method == "POST":
-        input_source = request.form["text"]
-        app.logger.info(f"Received input source: {input_source}")
-        
-        text = extractor.extract_text(input_source)
-        app.logger.info(f"Extracted text: {text}")
-        
-        if not text:
+        input_source = request.form.get("text", "")
+        if not input_source:
             return jsonify({"error": "Text is required"}), 400
 
-        try:
-            # Truncate the text to a maximum of 500 tokens
-            truncated_text = truncate_text(text)
-            app.logger.info(f"Truncated text: {truncated_text}")
+        text = extractor.extract_text(input_source)
+        if not text:
+            return jsonify({"error": "Could not extract meaningful text"}), 400
 
-            report_results = get_report_data(truncated_text)
-            return render_template("result.html", report=report_results)
-        except Exception as e:
-            app.logger.error(f"Error in comprehensive report generation: {str(e)}", exc_info=True)
-            return jsonify({"error": f"Error occurred: {str(e)}"}), 500
+        report_results = {}
 
-    return render_template("result.html", report=None)
+        # Check Fake News Record
+        fake_news_record = FakeNewsRecord.query.filter_by(url=input_source).first()
+        if fake_news_record:
+            report_results['fake_news'] = {
+                'prediction': fake_news_record.label,
+                'confidence': fake_news_record.confidence
+            }
+        else:
+            processed_text = news_detection.preprocess_custom_input(text)
+            prediction, confidence = news_detection.fake_news_classifier(processed_text)
+            new_record = FakeNewsRecord(url=input_source, label=prediction, confidence=round(confidence * 100, 2))
+            db.session.add(new_record)
+            db.session.commit()
+            report_results['fake_news'] = {'prediction': prediction, 'confidence': round(confidence * 100, 2)}
 
+        # Check Sentiment Record
+        sentiment_record = SentimentRecord.query.filter_by(url=input_source).first()
+        if sentiment_record:
+            report_results['sentiment'] = {
+                'prediction': sentiment_record.sentiment,
+                'confidence': sentiment_record.confidence
+            }
+        else:
+            sentiment, confidence = obj.analyze_sentiment(text[:1000])
+            new_record = SentimentRecord(url=input_source, sentiment=sentiment, confidence=round(confidence * 100, 2))
+            db.session.add(new_record)
+            db.session.commit()
+            report_results['sentiment'] = {'prediction': sentiment, 'confidence': round(confidence * 100, 2)}
+
+        # Check Summarization Record
+        summary_record = SummarizationRecord.query.filter_by(url=input_source).first()
+        if summary_record:
+            report_results['summarization'] = summary_record.summary
+        else:
+            response = requests.post(API_URL, headers=headers, json={
+                "inputs": text,
+                "parameters": {"max_length": 130, "min_length": 50}
+            })
+            summary = response.json()[0]['summary_text']
+            new_record = SummarizationRecord(url=input_source, summary=summary)
+            db.session.add(new_record)
+            db.session.commit()
+            report_results['summarization'] = summary
+
+        # Check Plagiarism Record
+        plagiarism_record = PlagiarismRecord.query.filter_by(url=input_source).first()
+        if plagiarism_record:
+            report_results['plagiarism'] = {
+                'output': plagiarism_record.output,
+                'human_score': plagiarism_record.human_score,
+                'ai_score': plagiarism_record.ai_score
+            }
+        else:
+            output, human, ai = news_detection.ai_plagiarism(text)
+            new_record = PlagiarismRecord(url=input_source, output=output, human_score=human, ai_score=ai)
+            db.session.add(new_record)
+            db.session.commit()
+            report_results['plagiarism'] = {'output': output, 'human_score': human, 'ai_score': ai}
+
+        return render_template("result.html", report=report_results)
+@app.route("/history", methods=["GET"])
+def view_history():
+    fake_news_records = FakeNewsRecord.query.all()
+    sentiment_records = SentimentRecord.query.all()
+    summarization_records = SummarizationRecord.query.all()
+    plagiarism_records = PlagiarismRecord.query.all()
+    return render_template("history.html", fake_news_records=fake_news_records, sentiment_records=sentiment_records, summarization_records=summarization_records, plagiarism_records=plagiarism_records)
 
 if __name__ == '__main__':
     news_detection = FakeNewsClassifier()
