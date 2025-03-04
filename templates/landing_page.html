@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TruthBot.ai</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet">
  
   <style>
     /* Previous styles remain the same until animations */
@@ -17,21 +18,18 @@
     }
 
     :root {
-      --background-color: #F4F1F8; /* Pale Lavender */
+      --background-color: #fffeff; /* Pale Lavender */
 --primary-color: #5D3FD3;    /* Rich Indigo */
 --highlight-color: #9F7AEA;  /* Soft Amethyst */
 --accent-color: #E5DEF2;     /* Gentle Lavender Gray */
 --text-color: #292627;       /* Deep Onyx */
-
-
-
-
+--error-color: #FF3860; /* Added red color for misinformation */
     }
 
     body {
-      background-color: var(--Background-color);
+      background-color: var(--background-color);
       color: var(--text-color);
-      font-family: 'DM Sans', sans-serif;
+      font-family: 'Montserrat', sans-serif;
       line-height: 1.6;
       overflow-x: hidden;
     }
@@ -54,7 +52,6 @@
     }
 
     .logo {
-      font-family: 'Cormorant Garamond', serif;
       font-size: 1.8rem;
       font-weight: 600;
       color: var(--Primary-color);
@@ -113,7 +110,7 @@
     }
 
     .headline {
-      font-family: 'Cormorant Garamond', serif;
+      background-color: var(--background-color);
       font-size: 7vw;
       line-height: 1.1;
       font-weight: 500;
@@ -125,6 +122,22 @@
     .accent {
       color: var(--highlight-color);
       text-transform: capitalize;
+    }
+
+    .misinformation {
+      color: var(--error-color);
+      position: relative;
+      text-transform: capitalize;
+      text-decoration: line-through;
+    }
+
+    @keyframes glitch {
+      0% { transform: translate(0); }
+      20% { transform: translate(-2px, 2px); text-shadow: 2px -2px rgba(255,0,0,0.5); }
+      40% { transform: translate(2px, -2px); text-shadow: -2px 2px rgba(0,0,255,0.5); }
+      60% { transform: translate(-2px, 2px); }
+      80% { transform: translate(2px, -2px); }
+      100% { transform: translate(0); }
     }
 
     .subheadline {
@@ -237,7 +250,7 @@
    
 
     .about h2 {
-      font-family: 'Cormorant Garamond', serif;
+      background-color: var(--accent-color);
       font-size: 3rem;
       margin-bottom: 2rem;
       color: var(--Primary-color);
@@ -264,7 +277,7 @@
     }
 
     .contact h2 {
-      font-family: 'Cormorant Garamond', serif;
+      background-color: var(--background-color);
       font-size: 3rem;
       margin-bottom: 2rem;
     }
@@ -281,6 +294,57 @@
       align-items: center;
       gap: 1rem;
     }
+
+    .team {
+      padding: 8rem 2rem;
+      background: var(--text-color);
+    }
+
+    .team-content {
+    text-align: center;
+    margin-top: 40px;
+}
+
+.team-grid {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.team-member {
+    background: #f8f8f8;
+    padding: 15px;
+    border-radius: 8px;
+    width: 220px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    flex: 1 1 calc(25% - 20px); /* Makes sure 4 members fit in one row on laptops */
+    min-width: 200px;
+}
+
+.team-member h3 {
+    margin: 5px 0;
+    font-size: 18px;
+}
+
+.team-member p {
+    font-size: 14px;
+    color: #666;
+}
+
+/* Responsive Design: Stack on mobile */
+@media (max-width: 768px) {
+    .team-grid {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .team-member {
+        width: 80%;
+        flex: none;
+    }
+}
 
     @media (max-width: 768px) {
       .nav-links {
@@ -299,6 +363,7 @@
       .contact-info {
         flex-direction: column;
         gap: 2rem;
+        
       }
     }
   </style>
@@ -309,7 +374,7 @@
       <div class="logo">TruthBot.ai</div>
       <div class="nav-links">
         <a href="#about">About</a>
-        <a href="#contact">Contact</a>
+        <a href="#team">Team</a>
       </div>
     </div>
   </nav>
@@ -317,11 +382,11 @@
   <section class="hero">
     <div class="hero-content">
       <h1 class="headline">
-        <span class="headline-word">Discover</span>
-        <span class="headline-word">truth</span>
-        <span class="headline-word">with</span>
-        <span class="headline-word accent">artificial</span>
-        <span class="headline-word">intelligence</span>
+        <span class="headline-word">Combat</span>
+        <span class="headline-word misinformation">Misinformation</span>
+        <span class="headline-word">using</span>
+        <span class="headline-word accent">Artificial</span>
+        <span class="headline-word">Intelligence</span>
       </h1>
       <p class="subheadline">Advanced AI tools that detect and analyze misinformation in real-time, helping you stay ahead of false narratives with unparalleled accuracy.</p>
       <a href="/home" class="cta-button">Try Now</a>
@@ -331,8 +396,8 @@
   <section class="about" id="about">
     <div class="about-content">
       <div class="about-text">
-        <h2>Our Mission</h2>
-        <p>We're dedicated to maintaining information integrity in the digital age through cutting-edge AI technology and comprehensive fact-checking systems that evolve with every interaction.</p>
+        <h2>About Project</h2>
+        <p>This project leverages AI to integrate multiple tools, creating a comprehensive metric that assesses the safety of sharing news articles. By analyzing various parameters, it helps users make informed decisions, educating them about misinformation and empowering them to combat its spread.</p>
       </div>
       <div class="about-image">
         <img src="static/images/fake_news_2.jpg" alt="About Us">
@@ -340,22 +405,30 @@
     </div>
   </section>
 
-  <section class="contact" id="contact">
-    <div class="contact-content">
-      <h2>Get in Touch</h2>
-      <p>We're here to help you navigate the world of information verification.</p>
-      <div class="contact-info">
-        <div class="contact-item">
-          <i class="fas fa-envelope"></i>
-          <span>hello@truthbot.ai</span>
+  <!-- New Team Section -->
+  <section class="team" id="team">
+    <div class="team-content">
+        <h2>Meet the Team</h2>
+        <div class="team-grid">
+            <div class="team-member">
+                <h3>Parth Dande</h3>
+                <p>Data Science & Machine Learning</p>
+            </div>
+            <div class="team-member">
+                <h3>Pratik Bhatia</h3>
+                <p>Front-End & Design</p>
+            </div>
+            <div class="team-member">
+                <h3>Shrinit Sandhan</h3>
+                <p>Planning & Data</p>
+            </div>
+            <div class="team-member">
+                <h3>Bhargav Joshi</h3>
+                <p>Project Management</p>
+            </div>
         </div>
-        <div class="contact-item">
-          <i class="fas fa-phone"></i>
-          <span>+1 (555) 123-4567</span>
-        </div>
-      </div>
     </div>
-  </section>
+</section>
 
   <script>
     // Intersection Observer for scroll animations
@@ -382,12 +455,20 @@
     observer.observe(document.querySelector('.cta-button'));
     observer.observe(document.querySelector('.about-text'));
     observer.observe(document.querySelector('.about-image'));
-    observer.observe(document.querySelector('.contact-content'));
+    observer.observe(document.querySelector('.team-content')); // Added team section
 
     // Add stagger delay to headline words
     document.querySelectorAll('.headline-word').forEach((word, index) => {
       word.style.transitionDelay = `${index * 0.1}s`;
     });
+
+    // Update observer to watch team members
+    document.querySelectorAll('.team-member').forEach(member => {
+      observer.observe(member);
+    });
+
+    // Remove contact section observer
+    // observer.observe(document.querySelector('.contact-content')); // Removed
   </script>
 </body>
 </html>
