@@ -95,6 +95,7 @@
             width: 100%;
             max-width: 1200px;
             height: calc(100vh - 150px);
+            margin-top:-20px;
         }
 
         .box {
@@ -272,6 +273,55 @@
         .summary-point {
             margin-bottom: 12px;
         }
+        .safety-assessment-box {
+            flex: 1;
+        }
+
+        .parameter {
+            display: flex;
+            justify-content: space-between;
+            margin: 12px 0;
+            font-size: 0.9rem;
+        }
+
+        .param-label {
+            color: #64748b;
+        }
+
+        .param-value {
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .risk-bar {
+            height: 8px;
+            background-color: #e2e8f0;
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .risk-bar-fill {
+            height: 100%;
+            width: 0;
+            transition: width 0.5s ease;
+        }
+
+        .risk-label {
+            font-size: 1.4rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        .suggested-action {
+            text-align: center;
+            font-size: 0.95rem;
+            padding: 8px;
+            border-radius: 6px;
+            background-color: var(--background-color);
+            margin: 0;
+        }
     </style>
 </head>
 <body>
@@ -382,6 +432,91 @@
                         This article appears to be from reliable sources.
                     </p>
                 {% endif %}
+            </div>
+            <div class="box safety-assessment-box">
+                <h2><i class="fas fa-shield-alt icon-warning"></i> Safety Assessment</h2>
+                <div class="parameter">
+                    <span class="param-label">Fake News Prediction:</span>
+                    <span class="param-value">{{ report.fake_news.prediction }}</span>
+                </div>
+                <div class="parameter">
+                    <span class="param-label">Sentiment:</span>
+                    <span class="param-value">{{ report.sentiment.prediction|capitalize }}</span>
+                </div>
+                <div class="parameter">
+                    <span class="param-label">AI-Generated:</span>
+                    <span class="param-value">{{ report.plagiarism.output }}</span>
+                </div>
+
+                {% set fake_pred = report.fake_news.prediction %}
+{% set sentiment = report.sentiment.prediction|lower %}
+{% set is_ai = report.plagiarism.output == 'AI-generated' %}
+
+{# Determine risk level #}
+{% if fake_pred == 'Real' %}
+    {% if sentiment == 'positive' %}
+        {% if not is_ai %}
+            {% set risk = 'Low' %}
+            {% set width = 25 %}
+            {% set color = '#10b981' %}
+            {% set action = 'Likely safe to share' %}
+        {% else %}
+            {% set risk = 'Moderate' %}
+            {% set width = 50 %}
+            {% set color = '#f59e0b' %}
+            {% set action = 'Check source credibility' %}
+        {% endif %}
+    {% elif sentiment == 'neutral' %}
+        {% if not is_ai %}
+            {% set risk = 'Low' %}
+            {% set width = 25 %}
+            {% set color = '#10b981' %}
+            {% set action = 'Verify key claims' %}
+        {% else %}
+            {% set risk = 'Moderate' %}
+            {% set width = 50 %}
+            {% set color = '#f59e0b' %}
+            {% set action = 'Cross-check with trusted sources' %}
+        {% endif %}
+    {% else %} {# Negative #}
+        {% if not is_ai %}
+            {% set risk = 'Moderate to Low' %}
+            {% set width = 35 %}
+            {% set color = '#f59e0b' %}
+            {% set action = 'Verify source before sharing' %}
+        {% else %}
+            {% set risk = 'Moderate to High' %}
+            {% set width = 65 %}
+            {% set color = '#ef4444' %}
+            {% set action = 'Consider fact-checking' %}
+        {% endif %}
+    {% endif %}
+{% else %} {# Fake #}
+    {% if sentiment == 'positive' %}
+        {% set risk = 'High' if is_ai else 'Moderate' %}
+        {% set width = 75 if is_ai else 50 %}
+        {% set color = '#ef4444' if is_ai else '#f59e0b' %}
+        {% set action = 'Avoid sharing' if is_ai else 'Needs verification' %}
+    {% elif sentiment == 'neutral' %}
+        {% set risk = 'High' if is_ai else 'Moderate to High' %}
+        {% set width = 75 if is_ai else 60 %}
+        {% set color = '#ef4444' %}
+        {% set action = 'Verify carefully' if is_ai else 'Verify before sharing' %}
+    {% else %} {# Negative #}
+        {% set risk = 'Very High' if is_ai else 'High' %}
+        {% set width = 95 if is_ai else 85 %}
+        {% set color = '#ef4444' %}
+        {% set action = 'Do not share' if is_ai else 'Avoid sharing' %}
+    {% endif %}
+{% endif %}
+
+                <div class="risk-bar">
+                    <div class="risk-bar-fill" style="width: {{ width }}%; background-color: {{ color }};"></div>
+                </div>
+                <div class="risk-label" style="color: {{ color }};">
+                    {{ risk }} Risk
+                </div>
+                <p class="suggested-action">{{ action }}</p>
             </div>
         </div>
     </div>

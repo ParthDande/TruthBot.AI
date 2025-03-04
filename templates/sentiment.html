@@ -3,230 +3,229 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="static\images\truth-bot-high-resolution-logo-transparent.png"> <!-- For PNG -->
-    <title>News Sentiment Analysis</title>
+    <link rel="icon" type="image/png" href="static\images\truth-bot-high-resolution-logo-transparent.png">
+    <title>News Sentiment Analysis | TruthBot.AI</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Cormorant+Garamond:wght@600&display=swap" rel="stylesheet">
     <script src="/static/js/theme.js"></script>
     <style>
         :root {
-            --primary-color: #FFFFFF;
-            --secondary-color: #007BFF;
-            --background-color: linear-gradient(135deg, #e9dff3 0%, #2575fc 100%);
-            --text-color: #333333;
+            --background-color: #f8fafc;
+            --primary-color: #5D3FD3;
+            --secondary-color: #9F7AEA;
+            --accent-color: #E5DEF2;
+            --text-color: #292627;
             --card-bg: rgba(255, 255, 255, 0.95);
-            --team-bg: rgba(248, 249, 250, 0.9);
+            --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             --positive-color: #4CAF50;
             --negative-color: #ff4d4d;
             --neutral-color: #f6ef1d;
-            --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            --hover-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
         }
 
         [data-theme="dark"] {
-            --primary-color: #1A1A1A;
-            --secondary-color: #3399FF;
-            --background-color: linear-gradient(135deg, #1c1c1c 0%, #506dee 100%);
-            --text-color: #EAEAEA;
+            --primary-color: #F5F5F1;
+            --secondary-color: #9F7AEA;
+            --background-color: #0b0b0a;
+            --text-color: #F4F1F8;
             --card-bg: rgba(40, 40, 40, 0.95);
-            --team-bg: rgba(26, 26, 26, 0.9);
             --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            --hover-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
-      
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: var(--background-color);
+            color: var(--text-color);
             min-height: 100vh;
-            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
         }
-        .container {
-            width: 90%;
-            max-width: 800px;
-            margin: 2rem auto;
-            padding: 2rem;
-            background-color: var(--card-bg);
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        /* Header Styles */
+
         header {
-            background-color: var(--primary-color);
-            color: var(--text-color);
-            padding: 1rem 0;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        nav {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        width: 100%; /* Make the nav bar full width */
-        max-width: 1200px;
-        margin: 0 auto; /* Center the nav in the container */
-        padding: 0; /* Remove padding to ensure it touches the edge */
-    }
+    padding: 1rem 2rem;
+    background: var(--background-color);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+nav {
+    display: flex;
+            justify-content: space-between;
+            align-items: center;
+}
+
+.nav-links {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    margin-left: auto; /* Pushes links to the right */
+    margin-right: 2rem;
+}
+
+.header-controls {
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: var(--text-color);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.logo img {
+    height: 40px;
+    width: auto;
+}
+
+.nav-links a {
+    color: var(--text-color);
+    text-decoration: none;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.nav-links a:hover {
+    color: var(--secondary-color);
+    transform: translateY(-2px);
+}
         .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text-color);
+            text-decoration: none;
             display: flex;
             align-items: center;
-            color: var(--secondary-color);
-            text-decoration: none;
+            gap: 0.5rem;
         }
-        .logo i {
-            margin-right: 0.5rem;
-        }
+
         .logo img {
-            height: 50px; 
-            width: auto;  
-            margin-left: 0; 
+            height: 40px;
+            width: auto;
         }
-        .nav-links {
+
+        .main-content {
+            flex: 1;
             display: flex;
-            gap: 1.5rem;
+            gap: 2rem;
+            width: 95%;
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 1rem;
+            max-height: 600px;
         }
-        .nav-links a {
-            color: var(--text-color);
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s ease;
+
+        .input-section, .report-section {
+            flex: 1;
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: var(--card-shadow);
+            min-height: 400px;
         }
-        .nav-links a:hover {
-            color: var(--text-color);
-        }
-        /* Existing styles */
+
         h1 {
-            color: var(--text-color);
-            text-align: center;
+            font-family: 'Cormorant Garamond', serif;
             font-size: 2.5rem;
             margin-bottom: 2rem;
-        }
-        form {
-            margin-bottom: 2rem;
-        }
-        input[type="text"] {
-            width: 100%;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            background-color: var(--primary-color);
-            border: 1px solid var(--text-color);
-            border-radius: 5px;
             color: var(--text-color);
-            font-size: 1rem;
         }
-        @keyframes comicPop {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-        input[type="submit"] {
-            background-color: var(--primary-color);
-            color: var(--text-color);
-            padding: 1rem 2rem;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: background-color 0.3s;
+
+        .text-input-container {
             position: relative;
-            overflow: hidden;
+            width: 100%;
+            margin-bottom: 1.5rem;
         }
-        
-        .result {
-            background-color: var(--card-bg);
-            border-left: 6px solid var(--positive-color);
-            padding: 1rem;
+
+        #user_input {
+            width: 100%;
+            min-height: 200px;
+            padding: 1.5rem;
+            border: 2px solid var(--primary-color);
+            border-radius: 8px;
+            background: transparent;
+            color: var(--text-color);
+            font-size: 1rem;
+            resize: vertical;
+        }
+
+        .word-count {
+            color: var(--text-color);
             margin-bottom: 1rem;
-            border-radius: 5px;
-            display: none;
+            font-size: 0.9rem;
         }
+
+        .action-button {
+    padding: 0.8rem 1.5rem;
+    border: 2px solid var(--primary-color);
+    border-radius: 8px;
+    background: var(--card-bg);
+    color: var(--text-color);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.action-button:hover {
+    background: var(--primary-color);
+    color: var(--background-color);
+}
         .loading {
-            display: none;
             text-align: center;
-            margin-top: 2rem;
-        }
-        .loading-bar {
-            width: 0;
-            height: 4px;
-            background-color: var(--positive-color);
-            transition: width 0.5s;
-        }
-        .report-card {
-            background-color: var(--card-bg);
-            border-radius: 10px;
             padding: 2rem;
-            margin-top: 2rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            display: none;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.5s ease, transform 0.5s ease;
         }
-        .report-card.show {
-            opacity: 1;
-            transform: translateY(0);
+
+        .report-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: var(--card-shadow);
         }
-        .sentiment-result {
-            font-size: 1.5rem;
-            font-weight: bold;
-            margin-bottom: 1rem;
-            opacity: 0;
-            transform: scale(0.9);
-            transition: opacity 0.5s ease 0.2s, transform 0.5s ease 0.2s;
-        }
-        .report-card.show .sentiment-result {
-            opacity: 1;
-            transform: scale(1);
-        }
+
         .sentiment-meter {
             width: 100%;
             height: 20px;
-            background-color: var(--primary-color);
+            background-color: var(--background-color);
             border-radius: 10px;
             overflow: hidden;
-            margin-top: 1rem;
-            margin-bottom: 1rem;
-            border: 2px solid var(--text-color);
-            opacity: 0;
-            transform: scaleX(0.9);
-            transition: opacity 0.5s ease 0.4s, transform 0.5s ease 0.4s;
+            margin: 1.5rem 0;
         }
-        .report-card.show .sentiment-meter {
-            opacity: 1;
-            transform: scaleX(1);
-        }
+
         .sentiment-value {
             height: 100%;
             width: 0;
-            background-color: var(--positive-color);
-            transition: width 1s ease 0.6s;
+            transition: width 1s ease;
+            border-radius: 10px;
         }
-        .confidence {
-            opacity: 0;
-            transition: opacity 0.5s ease 0.8s;
-        }
-        .report-card.show .confidence {
-            opacity: 1;
-        }
-        .footer {
-            text-align: center;
-            margin-top: 2rem;
-            color: var(--text-color);
-        }
-        /* Responsive Design */
+        
         @media (max-width: 768px) {
-            .nav-links {
-                display: none;
+            .main-content {
+                flex-direction: column;
             }
-            .container {
-                width: 95%;
-                padding: 1rem;
+            
+            .nav-links {
+        display: none;
+    }
+            
+            h1 {
+                font-size: 2rem;
             }
         }
         .text-input-container {
@@ -313,145 +312,157 @@
     <header>
         <nav>
             <a href="/" class="logo">
-                <img src="static/images/truthbot-high-resolution-logo-transparent.png" alt="TruthBot.AI Logo">
-               
+                Truthbot.ai
             </a>
             <div class="nav-links">
-                <a href="/analyze"><i class="fas fa-file-alt"></i> Fake News Detector</a>
-                <a href="/summarization"><i class="fas fa-file-alt"></i> Text Summarizer</a>
-                <a href="/plagiarism"><i class="fas fa-check-circle"></i> Plagiarism Check</a>
+                <a href="/analyze"><i class="fas fa-file-alt"></i>Fake News</a>
+                <a href="/summarization"><i class="fas fa-newspaper"></i>Summarizer</a>
+                <a href="/plagiarism"><i class="fas fa-check-circle"></i>Plagiarism</a>
+                <a href="/sentiment"><i class="fas fa-chart-bar"></i>Sentiment</a>
+            </div>
+            <div class="header-controls">
+                <button id="theme-toggle" class="action-button">
+                    <i class="fas fa-moon"></i> Theme
+                </button>
             </div>
         </nav>
     </header>
 
-    <div class="container">
-        <h1>News Sentiment Report</h1>
-        <form id="sentiment-form" method="POST">
+    <main class="main-content">
+        <div class="input-section">
+            <h1>News Sentiment Analysis</h1>
             <div class="text-input-container">
                 <textarea id="user_input" name="user_input" placeholder="Enter your text here for sentiment analysis (max 300 words)" required></textarea>
-                <div class="word-count">Words: <span id="wordCount">0</span>/300</div>
             </div>
+            <div class="word-count">Words: <span id="wordCount">0</span>/300</div>
             <p id="wordLimitMessage" class="error-message"></p>
-            <input type="submit" value="Analyze Sentiment">
-        </form>
-        <div class="loading">
-            <p>Analyzing sentiment...</p>
-            <div class="loading-bar"></div>
-        </div>
-        <div class="report-card">
-            <h2>Sentiment Analysis Report</h2>
-            <p><strong>Sentiment:</strong> <span id="sentiment-result"></span></p>
-            <div class="sentiment-meter">
-                <div class="sentiment-value"></div>
+            <button class="action-button" id="analyze-btn">
+                <i class="fas fa-chart-bar"></i> Analyze Sentiment
+            </button>
+            <div class="loading">
+                <p>Analyzing sentiment...</p>
+                <div class="loading-bar"></div>
             </div>
-            <p><strong>Confidence:</strong> <span id="confidence"></span></p>
         </div>
-        <div class="footer">
-            <p>Powered by TruthBot.AI 2024</p>
+
+        <div class="report-section">
+            <div class="report-card">
+                <h2>Sentiment Analysis Report</h2>
+                <p><strong>Sentiment:</strong> <span id="sentiment-result"></span></p>
+                <div class="sentiment-meter">
+                    <div class="sentiment-value"></div>
+                </div>
+                <p><strong>Confidence:</strong> <span id="confidence"></span></p>
+            </div>
         </div>
-    </div>
+    </main>
+
     <script>
-        $(document).ready(function() {
-    const userInput = $('#user_input');
-    const wordCount = $('#wordCount');
-    const wordLimitMessage = $('#wordLimitMessage');
-    const submitButton = $('input[type="submit"]');
+         $(document).ready(function() {
+            const userInput = $('#user_input');
+            const wordCount = $('#wordCount');
+            const wordLimitMessage = $('#wordLimitMessage');
+            const analyzeBtn = $('#analyze-btn');
+            const loading = $('.loading');
+            const loadingBar = $('.loading-bar');
+            const reportCard = $('.report-card');
 
-    function updateWordCount() {
-        const text = userInput.val().trim();
-        const words = text.split(/\s+/);
-        const count = words.length;
+            function updateWordCount() {
+                const text = userInput.val().trim();
+                const words = text.split(/\s+/);
+                const count = words.length;
 
-        if (count > 300) {
-            userInput.val(words.slice(0, 300).join(' '));
-            wordLimitMessage.text("Input limited to 300 words. Excess words have been removed.");
-        } else {
-            wordLimitMessage.text("");
-        }
-
-        wordCount.text(Math.min(count, 300));
-    }
-
-    userInput.on('input', updateWordCount);
-    updateWordCount(); // Initial count
-
-    $('#sentiment-form').on('submit', function(e) {
-        e.preventDefault();
-        const text = userInput.val().trim();
-        const words = text.split(/\s+/).slice(0, 300);
-        const limitedText = words.join(' ');
-
-        $('.report-card').removeClass('show').hide();
-        $('.loading').show();
-        $('.loading-bar').css('width', '0%');
-        
-        var progress = 0;
-        var interval = setInterval(function() {
-            progress += 5;
-            $('.loading-bar').css('width', progress + '%');
-            if (progress >= 100) {
-                clearInterval(interval);
+                if (count > 300) {
+                    userInput.val(words.slice(0, 300).join(' '));
+                    wordLimitMessage.text("Input limited to 300 words. Excess words removed.");
+                } else {
+                    wordLimitMessage.text("");
+                }
+                wordCount.text(Math.min(count, 300));
             }
-        }, 50);
-        
-        $.ajax({
-            url: '/sentiment',
-            method: 'POST',
-            data: { text: limitedText },
-            success: function(response) {
-                setTimeout(function() {
-                    $('.loading').hide();
-                    
-                    // Normalize sentiment to handle variations
-                    const sentiment = response.sentiment.toLowerCase();
-                    
-                    // Mapping for sentiment colors and labels
-                    const sentimentMap = {
-                        'positive': {
-                            color: 'var(--positive-color)',
-                            label: 'Positive'
-                        },
-                        'negative': {
-                            color: 'var(--negative-color)',
-                            label: 'Negative'
-                        },
-                        'neutral': {
-                            color: 'var(--neutral-color)',
-                            label: 'Neutral'
-                        }
-                    };
 
-                    // Default to neutral if sentiment is not recognized
-                    const selectedSentiment = sentimentMap[sentiment] || sentimentMap['neutral'];
-                    
-                    $('#sentiment-result').text(selectedSentiment.label);
-                    $('.sentiment-value').css({
-                        'background-color': selectedSentiment.color,
-                        'width': '0%'
-                    });
-                    $('#confidence').text(response.confidence + '%');
-                    
-                    $('.report-card').show();
-                    setTimeout(() => {
-                        $('.report-card').addClass('show');
+            userInput.on('input', updateWordCount);
+            updateWordCount();
+
+            analyzeBtn.on('click', function(e) {
+                e.preventDefault();
+                const text = userInput.val().trim();
+                const words = text.split(/\s+/).slice(0, 300);
+                const limitedText = words.join(' ');
+
+                reportCard.removeClass('show').hide();
+                loading.show();
+                loadingBar.css('width', '0%');
+
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += 5;
+                    loadingBar.css('width', progress + '%');
+                    if (progress >= 100) clearInterval(interval);
+                }, 50);
+
+                $.ajax({
+                    url: '/sentiment',
+                    method: 'POST',
+                    data: { text: limitedText },
+                    success: function(response) {
                         setTimeout(() => {
-                            $('.sentiment-value').css('width', response.confidence + '%');
-                        }, 100);
+                            loading.hide();
+                            const sentiment = response.sentiment.toLowerCase();
+                            const sentimentMap = {
+                                positive: { color: 'var(--positive-color)', label: 'Positive' },
+                                negative: { color: 'var(--negative-color)', label: 'Negative' },
+                                neutral: { color: 'var(--neutral-color)', label: 'Neutral' }
+                            };
 
-                        // Scroll to the result
-                        $('.report-card')[0].scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    }, 50);
-                }, 500);
-            },
-            error: function(xhr, status, error) {
-                // Handle any errors in the AJAX request
-                $('.loading').hide();
-                $('.report-card').show();
-                $('#sentiment-result').text('Error');
-                $('#confidence').text('0%');
-                console.error('Sentiment analysis error:', error);
-            }
-        });
+                            const selected = sentimentMap[sentiment] || sentimentMap.neutral;
+                            $('#sentiment-result').text(selected.label);
+                            $('.sentiment-value').css({
+                                'background-color': selected.color,
+                                'width': '0%'
+                            });
+
+                            $('#confidence').text(response.confidence + '%');
+                            reportCard.show();
+                            setTimeout(() => {
+                                reportCard.addClass('show');
+                                setTimeout(() => {
+                                    $('.sentiment-value').css('width', response.confidence + '%');
+                                }, 100);
+                                $('.report-section')[0].scrollIntoView({ behavior: 'smooth' });
+                            }, 50);
+                        }, 500);
+                    },
+                    error: function(xhr, status, error) {
+                        loading.hide();
+                        reportCard.show();
+                        $('#sentiment-result').text('Error');
+                        $('#confidence').text('0%');
+                        console.error('Error:', error);
+                    }
+                });
+            });
+        }
+        
+    );
+    document.addEventListener('DOMContentLoaded', function() {
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeIcon = themeToggle.querySelector('i');
+    
+    // Load saved theme
+    const currentTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', currentTheme);
+    themeIcon.className = currentTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    updateThemeIcon(newTheme);
+
+    themeToggle.addEventListener('click', () => {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        themeIcon.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
     });
 });
     </script>
