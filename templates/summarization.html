@@ -61,10 +61,10 @@
 
         .nav-links {
             display: flex;
-            gap: 2rem;
-            align-items: center;
-            margin-left: auto;
-            margin-right: 2rem;
+    gap: 2rem;
+    align-items: center;
+    margin-left: auto; /* Pushes links to the right */
+    margin-right: 2rem;
         }
 
         .header-controls {
@@ -101,6 +101,8 @@
             gap: 2rem;
             width: 95%;
             max-width: 1200px;
+            max-height: 600px;
+
             margin: 2rem auto;
             padding: 1rem;
         }
@@ -330,6 +332,8 @@
             $('#theme-toggle').on('click', function() {
                 const currentTheme = $('html').attr('data-theme') || 'light';
                 const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                localStorage.setItem('theme', newTheme);
+
                 $('html').attr('data-theme', newTheme);
                 $(this).html(
                     `<i class="fas fa-${newTheme === 'dark' ? 'sun' : 'moon'}"></i> Theme`

@@ -110,6 +110,8 @@
             gap: 2rem;
             width: 95%;
             max-width: 1200px;
+            max-height: 600px;
+
             margin: 2rem auto;
             padding: 1rem;
         }
@@ -154,15 +156,24 @@
             color: var(--background-color);
         }
 
-        .report-card {
+     
+        .result-uncertain {
+    background-color: var(--background-color);
+    border: 2px solid #6c757d;
+    color: var(--text-color);
+}
+.report-card {
             background: var(--card-bg);
             border-radius: 12px;
-            padding: 2rem;
+            padding: 2.5rem;
             margin-top: 2rem;
             box-shadow: var(--card-shadow);
             opacity: 0;
             transform: translateY(20px);
             transition: all 0.4s ease;
+            text-align: center;
+            position: relative;
+            border: 3px solid transparent;
         }
 
         .report-card.show {
@@ -171,18 +182,109 @@
         }
 
         .result-icon {
-            font-size: 3rem;
-            text-align: center;
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            display: block;
+        }
+
+        .result-text {
+            font-size: 2rem;
+            font-weight: 700;
             margin-bottom: 1rem;
+            letter-spacing: -0.5px;
         }
 
+        .confidence {
+            font-size: 1.25rem;
+            font-weight: 500;
+            margin: 1.5rem 0;
+            color:black;
+        }
+
+        .confidence-bar {
+            width: 100%;
+            height: 20px;
+            background: rgba(0,0,0,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 2rem 0;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            width: 0;
+            transition: width 0.5s ease;
+        }
+
+        .result-details {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-top: 1.5rem;
+            padding: 1rem;
+            border-radius: 8px;
+            background: rgba(0,0,0,0.05);
+        }
+
+        /* Enhanced Result States */
+        .result-uncertain {
+            border-color: #ffc107;
+            background: linear-gradient(45deg, rgba(255,193,7,0.1), transparent);
+        }
+        .result-uncertain .result-icon {
+            color: #ffc107;
+        }
+        .result-uncertain .confidence-fill {
+            background: #ffc107;
+        }
+
+        .result-real {
+            border-color: #34a853;
+            background: linear-gradient(45deg, rgba(52,168,83,0.1), transparent);
+        }
         .result-real .result-icon {
-            color: var(--positive-color);
+            color: #34a853;
+        }
+        .result-real .confidence-fill {
+            background: #34a853;
         }
 
-        .result-fake .result-icon {
-            color: var(--negative-color);
+        .result-fake {
+            border-color: #ea4335;
+            background: linear-gradient(45deg, rgba(234,67,53,0.1), transparent);
         }
+        .result-fake .result-icon {
+            color: #ea4335;
+        }
+        .result-fake .confidence-fill {
+            background: #ea4335;
+        }
+
+        .uncertain-warning {
+            color: #ffc107;
+            font-weight: 600;
+            margin-top: 1rem;
+            padding: 1rem;
+            border: 2px dashed #ffc107;
+            border-radius: 8px;
+        }
+.result-uncertain .result-icon {
+    color: #ffc107;
+}
+
+.result-real {
+    background-color: #e6f4ea;
+    border: 2px solid #34a853;
+    color: #0d652d;
+}
+
+.result-fake {
+    background-color: #fce8e6;
+    border: 2px solid #ea4335;
+    color: #b31412;
+    
+}
+
+/* Ensure Font Awesome icons display properly */
 
         .loading-container {
             position: fixed;
@@ -273,12 +375,14 @@
         <div class="output-section">
             <h2>Analysis Report</h2>
             <div class="report-card" id="result">
-                <div class="result-icon fas fa-search"></div>
+                <i class="result-icon fas fa-search"></i>
                 <div class="result-text">Awaiting Analysis</div>
                 <div class="confidence">-</div>
-                <div class="result-details">
-                    Results will appear here after analysis
+                <div class="confidence-bar" style="display: none;">
+                    <div class="confidence-fill"></div>
                 </div>
+                <div class="result-details">Results will appear here after analysis</div>
+                <div class="uncertain-warning" style="display: none;"></div>
             </div>
         </div>
     </main>
@@ -332,45 +436,71 @@
         return;
     }
 
-    // Show loading animation
     loadingAnimation.css('display', 'flex');
-    resultCard.removeClass('show result-real result-fake').hide();
+    resultCard.removeClass('show result-real result-fake result-uncertain').hide();
 
     $.ajax({
         url: "/analyze",
         type: "POST",
         contentType: "application/json",
-        data: JSON.stringify({ text: text }),  // Sending text input as JSON
+        data: JSON.stringify({ text: text }),
         success: function(response) {
-            // Update UI with real response
-            resultCard.removeClass('result-real result-fake');
+    resultCard.removeClass('result-real result-fake result-uncertain');
+    const icon = resultCard.find('.result-icon');
+    const resultText = resultCard.find('.result-text');
+    const confidence = resultCard.find('.confidence');
+    const details = resultCard.find('.result-details');
+    const confidenceBar = resultCard.find('.confidence-bar');
+    const confidenceFill = resultCard.find('.confidence-fill');
+    const warning = resultCard.find('.uncertain-warning');
 
-            const icon = resultCard.find('.result-icon');
-            const resultText = resultCard.find('.result-text');
-            const confidence = resultCard.find('.confidence');
-            const details = resultCard.find('.result-details');
+    const confidenceValue = parseFloat(response.confidence);
+    const isCertain = confidenceValue >= 80;
 
-            if (response.prediction === 'Real') {
-                resultCard.addClass('result-real');
-                icon.removeClass().addClass('result-icon fas fa-check-circle');
-                resultText.text('Verified: Real News');
-            } else {
-                resultCard.addClass('result-fake');
-                icon.removeClass().addClass('result-icon fas fa-exclamation-triangle');
-                resultText.text('Alert: Potential Fake News');
-            }
+    // Reset UI elements
+    confidenceBar.hide();
+    warning.hide();
+    confidenceFill.css('width', '0');
 
-            confidence.text(`Confidence Level: ${response.confidence}%`);
-            details.text(response.details || "No additional details provided.");
+    if (isCertain) {
+        confidenceBar.show();
+        confidenceFill.css('width', confidenceValue + '%');
+        
+        if (response.prediction === 'Real') {
+            resultCard.addClass('result-real');
+            icon.removeClass().addClass('result-icon fas fa-check-circle');
+            resultText.text('✅ Verified Real News');
+        } else {
+            resultCard.addClass('result-fake');
+            icon.removeClass().addClass('result-icon fas fa-skull-crossbones');
+            resultText.text('❌ Detected Fake News');
+        }
+    } else {
+        // Use actual prediction from model
+        resultCard.addClass('result-uncertain');
+        icon.removeClass().addClass('result-icon fas fa-question-circle');
+        
+        // Base the message on the actual prediction
+        if (response.prediction === 'Real') {
+            resultText.text('⚠️ Possibly Real');
+        } else {
+            resultText.text('⚠️ Possibly Fake');
+        }
+        
+        warning.show().html(`
+            <i class="fas fa-exclamation-triangle"></i>
+            Low confidence result (${response.confidence}%)<br>
+            Model suggests "${response.prediction}" but needs verification
+        `);
+    }
 
-            // Show results
-            loadingAnimation.hide();
-            resultCard.show().addClass('show');
-            resultCard[0].scrollIntoView({
-                behavior: 'smooth', 
-                block: 'start'
-            });
-        },
+    confidence.text(`Confidence Level: ${response.confidence}%`);
+    details.text(response.details || "No additional details provided.");
+
+    loadingAnimation.hide();
+    resultCard.show().addClass('show');
+    resultCard[0].scrollIntoView({ behavior: 'smooth', block: 'start' });
+},
         error: function(xhr) {
             alert("Error analyzing news: " + (xhr.responseJSON?.error || "Unknown error"));
             loadingAnimation.hide();
@@ -382,6 +512,8 @@
             $('#theme-toggle').on('click', function() {
                 const currentTheme = $('html').attr('data-theme') || 'light';
                 const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                localStorage.setItem('theme', newTheme);
+
                 $('html').attr('data-theme', newTheme);
                 $(this).html(
                     `<i class="fas fa-${newTheme === 'dark' ? 'sun' : 'moon'}"></i> Theme`
