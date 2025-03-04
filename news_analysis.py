@@ -3,11 +3,13 @@ import random
 from huggingface_hub import InferenceClient
 import warnings
 warnings.filterwarnings("ignore") 
+import os 
+from dotenv import load_dotenv
 class TextAnalysis:
     def __init__(self):
             self.client = InferenceClient(
             model="cardiffnlp/twitter-roberta-base-sentiment-latest",
-            token="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"
+            token=os.getenv("SENTIMENT_API")
         )
 
     def analyze_sentiment(self, text):

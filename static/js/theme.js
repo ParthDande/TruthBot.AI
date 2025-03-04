@@ -5,7 +5,7 @@ function initializeTheme() {
 
     // If no saved preference, check system preference
     if (!savedTheme) {
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const prefersDark = window.matchMedia('(prefers-color-scheme: light)').matches;
         document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
         localStorage.setItem('theme', prefersDark ? 'dark' : 'light');
     } else {

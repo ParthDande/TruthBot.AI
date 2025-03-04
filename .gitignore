@@ -1,3 +1,4 @@
 
 .codegpt
 myenv/
+.env
