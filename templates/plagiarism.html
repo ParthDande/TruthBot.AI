@@ -33,7 +33,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'Cormorant Garamond', serif;
+            font-family: 'DM Sans', sans-serif;
         }
 
         body {
@@ -59,10 +59,10 @@
 
         .nav-links {
             display: flex;
-            gap: 2rem;
-            align-items: center;
-            margin-left: auto;
-            margin-right: 2rem;
+    gap: 2rem;
+    align-items: center;
+    margin-left: auto; /* Pushes links to the right */
+    margin-right: 2rem;
         }
 
         .header-controls {
@@ -105,6 +105,8 @@
             gap: 2rem;
             width: 95%;
             max-width: 1200px;
+            max-height: 600px;
+
             margin: 2rem auto;
             padding: 1rem;
         }
@@ -307,6 +309,7 @@ function initializeTheme() {
     const currentTheme = localStorage.getItem('theme') || 'light';
     document.documentElement.setAttribute('data-theme', currentTheme);
     updateThemeIcon(themeIcon, currentTheme);
+    
 
     // Add click event listener to theme toggle button
     themeToggleBtn.addEventListener('click', () => {
