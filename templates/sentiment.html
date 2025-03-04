@@ -36,7 +36,8 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'DM Sans', sans-serif;
+
         }
 
         body {
@@ -140,7 +141,8 @@ nav {
         }
 
         h1 {
-            font-family: 'Cormorant Garamond', serif;
+            font-family: 'DM Sans', sans-serif;
+
             font-size: 2.5rem;
             margin-bottom: 2rem;
             color: var(--text-color);
@@ -233,7 +235,7 @@ nav {
 <body>
     <header>
         <nav>
-            <a href="/" class="logo">
+            <a href="/home" class="logo">
                 Truthbot.ai
             </a>
             <div class="nav-links">
@@ -367,26 +369,27 @@ nav {
         }
         
     );
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
     const themeToggle = document.getElementById('theme-toggle');
     const themeIcon = themeToggle.querySelector('i');
     
     // Load saved theme
-    const currentTheme = localStorage.getItem('theme') || 'light';
+    let currentTheme = localStorage.getItem('theme') || 'light';
     document.documentElement.setAttribute('data-theme', currentTheme);
     themeIcon.className = currentTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
-    document.documentElement.setAttribute('data-theme', newTheme);
-    localStorage.setItem('theme', newTheme);
-    updateThemeIcon(newTheme);
 
     themeToggle.addEventListener('click', () => {
-        const currentTheme = document.documentElement.getAttribute('data-theme');
-        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        // Toggle theme
+        let newTheme = currentTheme === 'light' ? 'dark' : 'light';
         document.documentElement.setAttribute('data-theme', newTheme);
         localStorage.setItem('theme', newTheme);
         themeIcon.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+
+        // Update currentTheme for next click
+        currentTheme = newTheme;
     });
 });
+
     </script>
 </body>
 </html>

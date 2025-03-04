@@ -10,9 +10,13 @@ import PyPDF2
 from newspaper import Article
 from TextExtractor import TextExtractor
 from flask_sqlalchemy import SQLAlchemy
-API_URL = "https://api-inference.huggingface.co/models/facebook/bart-large-cnn"
-headers = {"Authorization": "Bearer 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"}
-
+import os 
+from dotenv import load_dotenv
+print("Loaded API Key:", os.getenv("SENTIMENT_API"))
+API_URL = os.getenv("API_URL")
+headers = {"Authorization": f"Bearer {os.getenv('HF_AUTH_TOKEN')}"}
+sentiment_api = os.getenv("SENTIMENT_API")
+print("Loaded API Key:", os.getenv("HF_AUTH_TOKEN"))
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///news_database.db'
@@ -26,6 +30,7 @@ class FakeNewsRecord(db.Model):
     url = db.Column(db.String(500), unique=True, nullable=False)
     label = db.Column(db.String(50), nullable=False)
     confidence = db.Column(db.Float, nullable=False)
+    
 
 class SentimentRecord(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -136,7 +141,7 @@ def news_sentiment_analysis():
 def summarize():
     API_URL = "https://api-inference.huggingface.co/models/facebook/bart-large-cnn"
     headers = {
-        "Authorization": "Bearer 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",
+        "Authorization": f"Bearer {os.getenv('HF_AUTH_TOKEN')}",
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.5735.110 Safari/537.36'
     }
     if request.method == "POST":
@@ -151,7 +156,6 @@ def summarize():
         input_length = len(text.split())
         target_length = max(1, int(input_length * (length_percent/100)))
         
-        # Call Hugging Face API for summarization
         try:
             response = requests.post(API_URL, headers=headers, json={
                 "inputs": text,
@@ -254,7 +258,7 @@ def comprehensive_report():
         else:
             response = requests.post(API_URL, headers=headers, json={
                 "inputs": text,
-                "parameters": {"max_length": 130, "min_length": 50}
+                "parameters": {"max_length": 150, "min_length": 80}
             })
             summary = response.json()[0]['summary_text']
             new_record = SummarizationRecord(url=input_source, summary=summary)

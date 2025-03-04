@@ -3,10 +3,12 @@ import requests
 
 app = Flask(__name__)
 import warnings
+import os 
+from dotenv import load_dotenv
 warnings.filterwarnings("ignore") 
 # Hugging Face API URL for summarization
 API_URL = "https://api-inference.huggingface.co/models/facebook/bart-large-cnn"
-headers = {"Authorization": "Bearer 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"}
+headers = {"Authorization": f"Bearer {os.getenv('HF_AUTH_TOKEN')}"}
 
 def query(payload):
     response = requests.post(API_URL, headers=headers, json=payload)
@@ -17,8 +19,9 @@ def index():
     if request.method == "POST":
         text = request.form["text"]
         input_length = len(text)
-        min_length = max(1, int(input_length * 0.1))
-        min_length = max(1, int(input_length * 0.05))
+        print(input_length)
+        min_length = max(1, int(input_length * 0.3))
+        max_length = max(1, int(input_length * 0.6))
         result = query({
             "inputs": text,
             "parameters": {
@@ -26,6 +29,8 @@ def index():
                 "min_length": min_length
             }
         })
+        print(min_length)
+        print(max_length)
 
         # Extract the summary text from the response
         summary = result[0]['summary_text']
