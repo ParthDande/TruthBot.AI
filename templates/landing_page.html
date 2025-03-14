@@ -8,9 +8,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet">
  
   <style>
-    /* Previous styles remain the same until animations */
-    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@400;500;700&display=swap');
-
     * {
       margin: 0;
       padding: 0;
@@ -18,16 +15,18 @@
     }
 
     :root {
-      --background-color: #fffeff; /* Pale Lavender */
---primary-color: #5D3FD3;    /* Rich Indigo */
---highlight-color: #9F7AEA;  /* Soft Amethyst */
---accent-color: #E5DEF2;     /* Gentle Lavender Gray */
---text-color: #292627;       /* Deep Onyx */
---error-color: #FF3860; /* Added red color for misinformation */
+      --background-color: #fffeff;
+      --primary-color: #5D3FD3;
+      --highlight-color: #9F7AEA;
+      --accent-color: #E5DEF2;
+      --text-color: #292627;
+      --error-color: #FF3860;
     }
 
     body {
-      background-color: var(--background-color);
+      background-size: cover;
+      background-blend-mode: overlay;
+      background-color: rgba(246, 245, 245, 0.8);
       color: var(--text-color);
       font-family: 'Montserrat', sans-serif;
       line-height: 1.6;
@@ -35,11 +34,11 @@
     }
 
     nav {
-      padding: 2rem;
+      padding: 1rem 2rem;
       position: fixed;
       width: 100%;
       z-index: 100;
-      background: var(--Background-color);
+      background: var(--background-color);
       backdrop-filter: blur(10px);
     }
 
@@ -54,7 +53,7 @@
     .logo {
       font-size: 1.8rem;
       font-weight: 600;
-      color: var(--Primary-color);
+      color: var(--text-color);
     }
 
     .nav-links a {
@@ -96,7 +95,6 @@
       padding-top: 4rem;
     }
 
-    /* Updated Animation Styles */
     .headline-word {
       display: inline-block;
       opacity: 0;
@@ -110,11 +108,10 @@
     }
 
     .headline {
-      background-color: var(--background-color);
       font-size: 7vw;
       line-height: 1.1;
       font-weight: 500;
-      color: var(--Primary-color);
+      color: var(--text-color);
       margin-bottom: 2rem;
       
     }
@@ -129,15 +126,6 @@
       position: relative;
       text-transform: capitalize;
       text-decoration: line-through;
-    }
-
-    @keyframes glitch {
-      0% { transform: translate(0); }
-      20% { transform: translate(-2px, 2px); text-shadow: 2px -2px rgba(255,0,0,0.5); }
-      40% { transform: translate(2px, -2px); text-shadow: -2px 2px rgba(0,0,255,0.5); }
-      60% { transform: translate(-2px, 2px); }
-      80% { transform: translate(2px, -2px); }
-      100% { transform: translate(0); }
     }
 
     .subheadline {
@@ -166,7 +154,6 @@
       transition: all 0.3s ease;
       opacity: 0;
       transform: translateY(30px);
-      
     }
 
     .cta-button.visible {
@@ -180,21 +167,24 @@
     }
 
     .about {
-      padding: 8rem 2rem;
-      background: var(--accent-color);
-      overflow: hidden;
-    }
-
-    .about-content {
-      max-width: 1400px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 6rem;
+      padding: 6rem 2rem;
+      background: var(--text-color);
+      display: flex;
+      justify-content: center;
       align-items: center;
     }
 
+    .about-content {
+      display: flex;
+      align-items: center;
+      gap: 4rem;
+      max-width: 1200px;
+      width: 100%;
+    }
+
     .about-text {
+      flex: 1;
+      color: whitesmoke;
       opacity: 0;
       transform: translateX(-50px);
       transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
@@ -205,146 +195,101 @@
       transform: translateX(0);
     }
 
-    .about {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-}
+    .about-image {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
-.about-content {
-  display: flex;
-  align-items: center;
-  gap: 20px; /* Adds space between the text and the image */
-  max-width: 1200px; /* Adjust based on your layout */
-  width: 100%;
-}
+    .about-image img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 10px;
+      opacity: 0;
+      transform: translateX(50px);
+      transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
 
-.about-text {
-  flex: 1; /* Allows the text to take up available space */
-}
-
-.about-image {
-  flex: 1; /* Allows the image to take up available space */
-  max-width: 100%; /* Ensures the image container doesn't overflow */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.about-image img {
-  max-width: 100%; /* Ensures the image doesn't exceed its container */
-  height: auto; /* Maintains aspect ratio */
-  border-radius: 10px; /* Optional: Adds rounded corners */
-  opacity: 0;
-  transform: translateX(50px);
-  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.about-image.visible img {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-
-   
+    .about-image.visible img {
+      opacity: 1;
+      transform: translateX(0);
+    }
 
     .about h2 {
-      background-color: var(--accent-color);
-      font-size: 3rem;
+      font-size: 2.5rem;
       margin-bottom: 2rem;
-      color: var(--Primary-color);
+      color: whitesmoke;
     }
 
-    .contact {
-      padding: 8rem 2rem;
+    .team {
+      padding: 6rem 2rem;
       background: var(--text-color);
-      color: var(--background-color);
     }
 
-    .contact-content {
+    .team-content {
+      text-align: center;
+      margin-top: 40px;
       max-width: 1400px;
       margin: 0 auto;
-      text-align: center;
+      color: var(--primary-color);
       opacity: 0;
       transform: translateY(50px);
       transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .contact-content.visible {
+    .team-content.visible {
       opacity: 1;
       transform: translateY(0);
     }
 
-    .contact h2 {
-      background-color: var(--background-color);
-      font-size: 3rem;
-      margin-bottom: 2rem;
-    }
-
-    .contact-info {
+    .team-grid {
       display: flex;
       justify-content: center;
-      gap: 4rem;
+      gap: 20px;
+      flex-wrap: wrap;
       margin-top: 3rem;
     }
 
-    .contact-item {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-
-    .team {
-      padding: 8rem 2rem;
-      background: var(--text-color);
-    }
-
-    .team-content {
-    text-align: center;
-    margin-top: 40px;
-}
-
-.team-grid {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    flex-wrap: wrap;
-}
-
-.team-member {
-    background: #f8f8f8;
-    padding: 15px;
-    border-radius: 8px;
-    width: 220px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    flex: 1 1 calc(25% - 20px); /* Makes sure 4 members fit in one row on laptops */
-    min-width: 200px;
-}
-
-.team-member h3 {
-    margin: 5px 0;
-    font-size: 18px;
-}
-
-.team-member p {
-    font-size: 14px;
-    color: #666;
-}
-
-/* Responsive Design: Stack on mobile */
-@media (max-width: 768px) {
-    .team-grid {
-        flex-direction: column;
-        align-items: center;
-    }
-    
     .team-member {
-        width: 80%;
-        flex: none;
+      background: var(--background-color);
+      padding: 15px;
+      border-radius: 8px;
+      width: 220px;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      flex: 1 1 calc(25% - 20px); 
+      min-width: 200px;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
     }
-}
+
+    .team-member.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .team-member h3 {
+      margin: 5px 0;
+      font-size: 18px;
+    }
+
+    .team-member p {
+      font-size: 14px;
+      color: #666;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 992px) {
+      .headline {
+        font-size: 5.5vw;
+      }
+      
+      .about-content {
+        gap: 3rem;
+      }
+    }
 
     @media (max-width: 768px) {
       .nav-links {
@@ -352,18 +297,37 @@
       }
       
       .headline {
-        font-size: 3rem;
+        font-size: 2.5rem;
       }
 
       .about-content {
-        grid-template-columns: 1fr;
+        flex-direction: column;
         gap: 3rem;
       }
+      
+      .about-text, .about-image {
+        flex: none;
+        width: 100%;
+      }
+      
+      .team-member {
+        flex: 1 1 calc(50% - 20px);
+      }
+    }
 
-      .contact-info {
+    @media (max-width: 480px) {
+      .headline {
+        font-size: 2rem;
+      }
+      
+      .team-grid {
         flex-direction: column;
-        gap: 2rem;
-        
+        align-items: center;
+      }
+      
+      .team-member {
+        width: 100%;
+        flex: none;
       }
     }
   </style>
@@ -371,7 +335,7 @@
 <body>
   <nav>
     <div class="nav-content">
-      <div class="logo">TruthBot.ai</div>
+      <div class="logo">Truth<span style="color: var(--primary-color);">Bot</span>.ai</div>
       <div class="nav-links">
         <a href="#about">About</a>
         <a href="#team">Team</a>
@@ -400,12 +364,11 @@
         <p>This project leverages AI to integrate multiple tools, creating a comprehensive metric that assesses the safety of sharing news articles. By analyzing various parameters, it helps users make informed decisions, educating them about misinformation and empowering them to combat its spread.</p>
       </div>
       <div class="about-image">
-        <img src="static/images/fake_news_2.jpg" alt="About Us">
+        <img src="static/images/TruthBot AI.png" alt="About Us">
       </div>
     </div>
   </section>
 
-  <!-- New Team Section -->
   <section class="team" id="team">
     <div class="team-content">
         <h2>Meet the Team</h2>
@@ -428,7 +391,7 @@
             </div>
         </div>
     </div>
-</section>
+  </section>
 
   <script>
     // Intersection Observer for scroll animations
@@ -445,8 +408,9 @@
       });
     }, observerOptions);
 
-    // Observe headline words
-    document.querySelectorAll('.headline-word').forEach(word => {
+    // Observe headline words with staggered delay
+    document.querySelectorAll('.headline-word').forEach((word, index) => {
+      word.style.transitionDelay = `${index * 0.1}s`;
       observer.observe(word);
     });
 
@@ -455,20 +419,13 @@
     observer.observe(document.querySelector('.cta-button'));
     observer.observe(document.querySelector('.about-text'));
     observer.observe(document.querySelector('.about-image'));
-    observer.observe(document.querySelector('.team-content')); // Added team section
+    observer.observe(document.querySelector('.team-content'));
 
-    // Add stagger delay to headline words
-    document.querySelectorAll('.headline-word').forEach((word, index) => {
-      word.style.transitionDelay = `${index * 0.1}s`;
-    });
-
-    // Update observer to watch team members
-    document.querySelectorAll('.team-member').forEach(member => {
+    // Observe team members with staggered delay
+    document.querySelectorAll('.team-member').forEach((member, index) => {
+      member.style.transitionDelay = `${index * 0.1}s`;
       observer.observe(member);
     });
-
-    // Remove contact section observer
-    // observer.observe(document.querySelector('.contact-content')); // Removed
   </script>
 </body>
 </html>

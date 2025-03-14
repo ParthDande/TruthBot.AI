@@ -9,6 +9,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Cormorant+Garamond:wght@600&display=swap" rel="stylesheet">
     <script src="/static/js/theme.js"></script>
+    <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
     <style>
         :root {
             --background-color: #f8fafc;
@@ -189,11 +190,6 @@ nav {
     background: var(--primary-color);
     color: var(--background-color);
 }
-        .loading {
-            text-align: center;
-            padding: 2rem;
-        }
-
         .report-card {
             background: var(--card-bg);
             border-radius: 12px;
@@ -263,14 +259,16 @@ nav {
             <button class="action-button" id="analyze-btn">
                 <i class="fas fa-chart-bar"></i> Analyze Sentiment
             </button>
-            <div class="loading">
-                <p>Analyzing sentiment...</p>
-                <div class="loading-bar"></div>
-            </div>
         </div>
 
         <div class="report-section">
-            <div class="report-card">
+            <div id="lottie-loading" style="display: none; text-align: center; margin-top: 2rem; margin-left: 24%;">
+                <dotlottie-player src="https://lottie.host/de3e1567-9bd3-4143-a64e-eaca2639a456/mAZzJmBLW9.lottie" 
+                                 background="transparent" speed="1" 
+                                 style="width: 300px; height: 300px;" 
+                                 loop autoplay></dotlottie-player>
+            </div>
+            <div class="report-card" style="display: none;">
                 <h2>Sentiment Analysis Report</h2>
                 <p><strong>Sentiment:</strong> <span id="sentiment-result"></span></p>
                 <div class="sentiment-meter">
@@ -287,8 +285,7 @@ nav {
             const wordCount = $('#wordCount');
             const wordLimitMessage = $('#wordLimitMessage');
             const analyzeBtn = $('#analyze-btn');
-            const loading = $('.loading');
-            const loadingBar = $('.loading-bar');
+            const loading = $('#lottie-loading');
             const reportCard = $('.report-card');
 
             function updateWordCount() {
@@ -314,16 +311,8 @@ nav {
                 const words = text.split(/\s+/).slice(0, 300);
                 const limitedText = words.join(' ');
 
-                reportCard.removeClass('show').hide();
+                reportCard.hide();
                 loading.show();
-                loadingBar.css('width', '0%');
-
-                let progress = 0;
-                const interval = setInterval(() => {
-                    progress += 5;
-                    loadingBar.css('width', progress + '%');
-                    if (progress >= 100) clearInterval(interval);
-                }, 50);
 
                 $.ajax({
                     url: '/sentiment',
@@ -349,12 +338,9 @@ nav {
                             $('#confidence').text(response.confidence + '%');
                             reportCard.show();
                             setTimeout(() => {
-                                reportCard.addClass('show');
-                                setTimeout(() => {
-                                    $('.sentiment-value').css('width', response.confidence + '%');
-                                }, 100);
-                                $('.report-section')[0].scrollIntoView({ behavior: 'smooth' });
-                            }, 50);
+                                $('.sentiment-value').css('width', response.confidence + '%');
+                            }, 100);
+                            $('.report-section')[0].scrollIntoView({ behavior: 'smooth' });
                         }, 500);
                     },
                     error: function(xhr, status, error) {
@@ -366,9 +352,8 @@ nav {
                     }
                 });
             });
-        }
+        });
         
-    );
     document.addEventListener('DOMContentLoaded', function () {
     const themeToggle = document.getElementById('theme-toggle');
     const themeIcon = themeToggle.querySelector('i');
