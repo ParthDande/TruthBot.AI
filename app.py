@@ -21,8 +21,13 @@ logger = logging.getLogger(__name__)
 API_URL = os.getenv("API_URL")
 headers = {"Authorization": f"Bearer {os.getenv('HF_AUTH_TOKEN')}"}
 sentiment_api = os.getenv("SENTIMENT_API")
+#objects for the classes
+news_detection = FakeNewsClassifier()
+obj = TextAnalysis()
+extractor = TextExtractor(max_words=400)
 
 app = Flask(__name__)
+
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///news_database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -258,7 +263,4 @@ def view_history():
         return jsonify({"error": "Failed to load history"}), 500
 
 if __name__ == '__main__':
-    news_detection = FakeNewsClassifier()
-    obj = TextAnalysis()
-    extractor = TextExtractor(max_words=400)
     app.run(host='0.0.0.0', port=5000, debug=False)
