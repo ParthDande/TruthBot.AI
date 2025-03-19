@@ -1,3 +1,21 @@
+import joblib
+from sklearn.ensemble import VotingClassifier
+from sklearn.svm import SVC
+from xgboost import XGBClassifier
+from lightgbm import LGBMClassifier
+from catboost import CatBoostClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.feature_extraction.text import TfidfVectorizer
+import nltk
+from nltk import word_tokenize
+from nltk.corpus import stopwords
+nltk.data.path.append('nltk_data/')
+import warnings
+warnings.filterwarnings("ignore") 
+# stopwords
+stop_words = set(stopwords.words('english'))
+#  TF-IDF vectorizer
+
 class FakeNewsClassifier:
     def __init__(self):
         self.model_paths = [
@@ -45,3 +63,5 @@ class FakeNewsClassifier:
         ai_generated_prob = probabilities[1] * 100
         prediction = "AI_Generated" if ai_generated_prob > human_written_prob else "Human_Written"
         return prediction, human_written_prob, ai_generated_prob
+
+    
