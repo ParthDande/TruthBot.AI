@@ -346,15 +346,19 @@
         <div class="left-column">
             <div class="box summary-box">
                 <h2><i class="fas fa-file-alt icon-primary"></i> Summary</h2>
-                <ul class="summary-list" style ="font-size:2vh;">
-                    {% for point in report.summarization.split('.') %}
-                        {% if point|trim %}
-                            <li class="summary-point">
-                                {{ point|trim }}{% if not point|trim|last == '.' %}.{% endif %}
-                            </li>
-                        {% endif %}
-                    {% endfor %}
-                </ul>
+                {% if report.summarization is string %}
+                    <ul class="summary-list" style ="font-size:2vh;">
+                        {% for point in report.summarization.split('.') %}
+                            {% if point|trim %}
+                                <li class="summary-point">
+                                    {{ point|trim }}{% if not point|trim|last == '.' %}.{% endif %}
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="subtitle">Summarization failed: {{ report.summarization.error }}</p>
+                {% endif %}
             </div>
             <div class="box safety-assessment-box">
                 <h2><i class="fas fa-shield-alt icon-warning"></i> Safety Assessment</h2>
@@ -447,81 +451,66 @@
         <div class="right-column">
             <div class="box plagiarism-box">
                 <h2><i class="fas fa-copy icon-warning"></i> Plagiarism</h2>
-                <div class="score-container">
-                    <div class="score-item">
-                        <div class="circular-progress">
-                            <svg viewBox="0 0 36 36">
-                                <circle class="background" cx="18" cy="18" r="14"/>
-                                <circle class="progress ai-progress" cx="18" cy="18" r="14"
-                                    stroke-dasharray="{{ "%.1f"|format(report.plagiarism.ai_score|float) }} 100"/>
-                            </svg>
+                {% if report.plagiarism.error %}
+                    <p class="subtitle">Plagiarism check failed: {{ report.plagiarism.error }}</p>
+                {% else %}
+                    <div class="score-container">
+                        <div class="score-item">
+                            <div class="circular-progress">
+                                <svg viewBox="0 0 36 36">
+                                    <circle class="background" cx="18" cy="18" r="14"/>
+                                    <circle class="progress ai-progress" cx="18" cy="18" r="14"
+                                        stroke-dasharray="{{ "%.1f"|format(report.plagiarism.ai_score|float) }} 100"/>
+                                </svg>
+                            </div>
+                            <p><strong>AI Score</strong><br>{{ "%.1f"|format(report.plagiarism.ai_score|float) }}%</p>
                         </div>
-                        <p><strong>AI Score</strong><br>{{ "%.1f"|format(report.plagiarism.ai_score|float) }}%</p>
-                    </div>
-                    <div class="score-item">
-                        <div class="circular-progress">
-                            <svg viewBox="0 0 36 36">
-                                <circle class="background" cx="18" cy="18" r="14"/>
-                                <circle class="progress human-progress" cx="18" cy="18" r="14" 
-                                    stroke-dasharray="{{ "%.1f"|format(report.plagiarism.human_score|float) }} 100"/>
-                            </svg>
+                        <div class="score-item">
+                            <div class="circular-progress">
+                                <svg viewBox="0 0 36 36">
+                                    <circle class="background" cx="18" cy="18" r="14"/>
+                                    <circle class="progress human-progress" cx="18" cy="18" r="14" 
+                                        stroke-dasharray="{{ "%.1f"|format(report.plagiarism.human_score|float) }} 100"/>
+                                </svg>
+                            </div>
+                            <p><strong>Human Score</strong><br>{{ "%.1f"|format(report.plagiarism.human_score|float) }}%</p>
                         </div>
-                        <p><strong>Human Score</strong><br>{{ "%.1f"|format(report.plagiarism.human_score|float) }}%</p>
                     </div>
-                </div>
-                <div class="prediction">
-                    <i class="fas fa-info-circle"></i>
-                    The article seems to be {{ report.plagiarism.output }}
-                </div>
+                    <div class="prediction">
+                        <i class="fas fa-info-circle"></i>
+                        The article seems to be {{ report.plagiarism.output }}
+                    </div>
+                {% endif %}
             </div>
 
             <div class="box fake-news-box">
                 <h2><i class="fas fa-exclamation-triangle icon-danger"></i> Fake News Checker</h2>
-                <div class="prediction" style="text-align: center;">
-                    {% if report.fake_news.prediction == 'Real' %}
-                        <i class="fas fa-check-circle fa-2x" style="color: #10b981;"></i>
-                        <span style="margin-left: 10px; font-size: 2.2rem;">{{ report.fake_news.prediction }}</span>
-                    {% else %}
-                        <i class="fas fa-times-circle fa-2x" style="color: #ef4444;"></i>
-                        <span style="margin-left: 10px; font-size: 1.2rem;">{{ report.fake_news.prediction }}</span>
-                    {% endif %}
-                </div>
-                <div class="confidence-bar">
-                    <div class="confidence-bar-fill" style="width: {{report.fake_news.confidence}}%"></div>
-                </div>
-                <p class="confidence">Confidence: {{ report.fake_news.confidence }}%</p>
-                {% if report.fake_news.prediction == 'Fake' %}
-                    <p style="color: #ef4444; margin-top: 12px; font-size: 1.1rem;">
-                        This article needs additional verification. Please cross-reference with reliable sources.
-                    </p>
+                {% if report.fake_news.error %}
+                    <p class="subtitle">Fake news check failed: {{ report.fake_news.error }}</p>
                 {% else %}
-                    <p style="color: #10b981; margin-top: 12px; font-size: 1.1rem;">
-                        This article appears to be from reliable sources.
-                    </p>
+                    <div class="prediction" style="text-align: center;">
+                        {% if report.fake_news.prediction == 'Real' %}
+                            <i class="fas fa-check-circle fa-2x" style="color: #10b981;"></i>
+                            <span style="margin-left: 10px; font-size: 2.2rem;">{{ report.fake_news.prediction }}</span>
+                        {% else %}
+                            <i class="fas fa-times-circle fa-2x" style="color: #ef4444;"></i>
+                            <span style="margin-left: 10px; font-size: 1.2rem;">{{ report.fake_news.prediction }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="confidence-bar">
+                        <div class="confidence-bar-fill" style="width: {{report.fake_news.confidence}}%"></div>
+                    </div>
+                    <p class="confidence">Confidence: {{ report.fake_news.confidence }}%</p>
+                    {% if report.fake_news.prediction == 'Fake' %}
+                        <p style="color: #ef4444; margin-top: 12px; font-size: 1.1rem;">
+                            This article needs additional verification. Please cross-reference with reliable sources.
+                        </p>
+                    {% else %}
+                        <p style="color: #10b981; margin-top: 12px; font-size: 1.1rem;">
+                            This article appears to be from reliable sources.
+                        </p>
+                    {% endif %}
                 {% endif %}
-            </div>
-            <div class="box sentiment-box">
-                <h2><i class="fas fa-heart icon-success"></i> Sentiment</h2>
-                <div class="prediction">
-                    {% if report.sentiment.prediction == 'positive' %}
-                        <i class="far fa-smile fa-2x" style="color: #10b981;"></i>
-                    {% elif report.sentiment.prediction == 'neutral' %}
-                        <i class="far fa-meh fa-2x" style="color: #f59e0b;"></i>
-                    {% else %}
-                        <i class="far fa-angry fa-2x" style="color: #ef4444;"></i>
-                    {% endif %}
-                    <span style="margin-left: 10px; vertical-align: middle;">{{report.sentiment.prediction}}</span>
-                </div>
-                <div class="confidence-bar" style ='height: 20%;'>
-                    {% if report.sentiment.prediction == 'positive' %}
-                    <div class="confidence-bar-fill" style="width: {{report.sentiment.confidence}}%;background-color:green;"></div>
-                    {% elif report.sentiment.prediction == 'neutral' %}
-                    <div class="confidence-bar-fill" style="width: {{report.sentiment.confidence}}%;background-color:orange;"></div>
-                    {% else %}
-                    <div class="confidence-bar-fill" style="width: {{report.sentiment.confidence}}%;background-color:red;"></div>
-                    {% endif %}
-                </div>
-                <p class="confidence">Confidence: {{report.sentiment.confidence}}%</p>
             </div>
           
         </div>
