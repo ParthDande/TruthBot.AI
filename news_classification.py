@@ -14,7 +14,7 @@ import warnings
 warnings.filterwarnings("ignore") 
 # stopwords
 stop_words = set(stopwords.words('english'))
-models = ["XGBClassifier_Model.pkl", "LGBMClassifier_Model.pkl", "logistic_regression_model.pkl", "Random_forest_Model.pkl","Support_Vector_Machine_Model.pkl"]
+models = ["XGBClassifier_Model.pkl", "LGBMClassifier_Model.pkl", "logistic_regression_model.pkl", "Random_Forest_Model.pkl","Support_Vector_Machine_Model.pkl"]
 #  TF-IDF vectorizer
 fake_news_model = joblib.load("Models/XGBClassifier_Model.pkl")
 tfidf = joblib.load('vectorizers/tfidf_vectorizer.pkl')
