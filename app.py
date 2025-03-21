@@ -11,7 +11,9 @@ from plagiarism import PlagiarismDetection
 from TextExtractor import TextExtractor
 from flask_sqlalchemy import SQLAlchemy
 from PyPDF2 import PdfReader
-
+import logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 load_dotenv()
 
 # basic logging setup
@@ -105,16 +107,31 @@ def analyze():
 def news_sentiment_analysis():
     if request.method == 'POST':
         try:
-            input_source = request.form["text"]
-            text = extractor.extract_text(input_source)
+            logger.info("📩 POST request received at /sentiment")
+
+            data = request.get_json()
+            raw_text = data.get('text', '').strip()
+            text = extractor.extract_text(raw_text)
+            if not text:
+                return jsonify({"error": "No valid text provided"}), 400
+            logger.info(f"✏️ Received input text: {text[:100]}...")
+
             sentiment, confidence = obj.analyze_sentiment(text[:1000])
             time.sleep(random.uniform(1, 2))
-            return jsonify({'text': text, 'sentiment': sentiment, 'confidence': round(confidence * 100, 2)})
-        except Exception as e:
-            logger.exception("Error in /sentiment")
-            return jsonify({"error": "Sentiment analysis failed"}), 500
 
+            logger.info(f"✅ Sentiment: {sentiment}, Confidence: {confidence}")
+            return jsonify({
+                'sentiment': sentiment,
+                'confidence': round(confidence * 100, 2)
+            })
+
+        except Exception as e:
+            logger.exception("❌ Error in /sentiment route")
+            return jsonify({"error": f"Analysis failed: {str(e)}"}), 500
+
+    logger.info("📥 GET request - rendering template")
     return render_template('sentiment.html')
+
 
 @app.route("/summarization", methods=["GET", "POST"])
 def summarize():
@@ -133,7 +150,20 @@ def summarize():
                 "parameters": {"max_length": target_length, "min_length": max(1, int(target_length * 0.8))}
             })
             result = response.json()
-            summary = result[0]['summary_text']
+            
+            # Add debugging
+            print("API Response:", result)
+            
+            # Check the structure of the response and adjust accordingly
+            if isinstance(result, list) and len(result) > 0 and 'summary_text' in result[0]:
+                summary = result[0]['summary_text']
+            elif isinstance(result, dict) and 'summary_text' in result:
+                summary = result['summary_text']
+            else:
+                # If you need to explore the structure more
+                import json
+                print("JSON Response:", json.dumps(result, indent=2))
+                summary = str(result)  # Fallback to showing the raw response
 
             if mode == "bullet":
                 summary = summary.replace('. ', '.\n')
@@ -191,6 +221,7 @@ def comprehensive_report():
 
             report_results = {}
 
+            # Fake News Check
             try:
                 record = FakeNewsRecord.query.filter_by(url=input_source).first()
                 if record:
@@ -205,6 +236,7 @@ def comprehensive_report():
                 logger.exception("Fake news check failed")
                 report_results['fake_news'] = {'error': 'Fake news check failed'}
 
+            # Sentiment Analysis
             try:
                 record = SentimentRecord.query.filter_by(url=input_source).first()
                 if record:
@@ -218,6 +250,7 @@ def comprehensive_report():
                 logger.exception("Sentiment check failed")
                 report_results['sentiment'] = {'error': 'Sentiment check failed'}
 
+            # Summarization
             try:
                 record = SummarizationRecord.query.filter_by(url=input_source).first()
                 if record:
@@ -232,6 +265,7 @@ def comprehensive_report():
                 logger.exception("Summarization check failed")
                 report_results['summarization'] = 'Summarization failed'
 
+            # Plagiarism Check
             try:
                 record = PlagiarismRecord.query.filter_by(url=input_source).first()
                 if record:
@@ -244,6 +278,9 @@ def comprehensive_report():
             except Exception as e:
                 logger.exception("Plagiarism check failed")
                 report_results['plagiarism'] = {'error': 'Plagiarism check failed'}
+
+            # Log the report_results for debugging
+            logger.info(f"Generated Report: {report_results}")
 
             return render_template("result.html", report=report_results)
         except Exception as e:
@@ -263,4 +300,4 @@ def view_history():
         return jsonify({"error": "Failed to load history"}), 500
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=False)
+    app.run(host='0.0.0.0', port=5000, debug=True)

@@ -8,10 +8,10 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Cormorant+Garamond:wght@600&display=swap" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
-    <script src="/static/js/theme.js"></script>
     
     <style>
         :root {
+            /* Colors */
             --background-color: #f8fafc;
             --primary-color: #5D3FD3;
             --secondary-color: #9F7AEA;
@@ -21,6 +21,12 @@
             --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             --positive-color: #4CAF50;
             --negative-color: #ff4d4d;
+            --warning-color: #ffc107;
+            --border-radius: 12px;
+
+            /* Transitions */
+            --transition-speed: 0.3s;
+            --transition-timing: ease;
         }
 
         [data-theme="dark"] {
@@ -45,6 +51,8 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            transition: background var(--transition-speed) var(--transition-timing),
+                        color var(--transition-speed) var(--transition-timing);
         }
 
         header {
@@ -52,48 +60,17 @@
             background: var(--background-color);
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             position: relative;
+            transition: background var(--transition-speed) var(--transition-timing),
+                        box-shadow var(--transition-speed) var(--transition-timing);
+            z-index: 10;
         }
 
         nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.nav-links {
-    display: flex;
-    gap: 2rem;
-    align-items: center;
-    margin-left: auto; /* Pushes links to the right */
-    margin-right: 2rem; /* Space between links and theme toggle */
-}
-
-.header-controls {
-    display: flex;
-    align-items: center;
-}
-
-        .nav-links a {
-            color: var(--text-color);
-            text-decoration: none;
-            font-weight: 500;
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 0.5rem;
-            transition: all 0.3s ease;
-            font-family: 'DM Sans', sans-serif;
         }
 
-        .nav-links a:hover {
-            color: var(--secondary-color);
-            transform: translateY(-2px);
-        }
-
-        .nav-links a i {
-            font-size: 1.1rem;
-        }
-
-        
         .logo {
             font-family: 'Cormorant Garamond', serif;
             font-size: 1.8rem;
@@ -102,6 +79,128 @@
             text-decoration: none;
             display: flex;
             align-items: center;
+            transition: color var(--transition-speed) var(--transition-timing);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            margin-left: auto;
+            margin-right: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all var(--transition-speed) var(--transition-timing);
+            padding: 0.5rem;
+            border-radius: 8px;
+        }
+
+        .nav-links a:hover {
+            color: var(--secondary-color);
+            transform: translateY(-2px);
+            background-color: rgba(157, 122, 234, 0.1);
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition-speed) var(--transition-timing);
+            padding: 0.5rem;
+        }
+
+        .mobile-menu-toggle:hover {
+            color: var(--secondary-color);
+        }
+
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            right: -280px;
+            width: 280px;
+            height: 100vh;
+            background: var(--card-bg);
+            box-shadow: var(--card-shadow);
+            z-index: 1000;
+            padding: 2rem;
+            transition: right 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .mobile-menu.active {
+            right: 0;
+        }
+
+        .mobile-menu-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition-speed) var(--transition-timing);
+        }
+
+        .mobile-nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 3rem;
+        }
+
+        .mobile-nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition-speed) var(--transition-timing);
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+        }
+
+        .mobile-nav-links a:hover {
+            background-color: rgba(157, 122, 234, 0.1);
+            transform: translateX(5px);
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
         }
 
         .main-content {
@@ -110,8 +209,6 @@
             gap: 2rem;
             width: 95%;
             max-width: 1200px;
-            max-height: 600px;
-
             margin: 2rem auto;
             padding: 1rem;
         }
@@ -119,10 +216,29 @@
         .input-section, .output-section {
             flex: 1;
             background: var(--card-bg);
-            border-radius: 12px;
+            border-radius: var(--border-radius);
             padding: 2rem;
             box-shadow: var(--card-shadow);
             min-height: 400px;
+            transition: background var(--transition-speed) var(--transition-timing),
+                        box-shadow var(--transition-speed) var(--transition-timing);
+        }
+
+        .word-count-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .word-count {
+            color: var(--text-color);
+            transition: color var(--transition-speed) var(--transition-timing);
+        }
+
+        .word-count.limit-exceeded {
+            color: var(--negative-color);
+            font-weight: bold;
         }
 
         textarea {
@@ -136,6 +252,22 @@
             font-size: 1rem;
             resize: vertical;
             margin-bottom: 1rem;
+            transition: border var(--transition-speed) var(--transition-timing),
+                        background var(--transition-speed) var(--transition-timing),
+                        color var(--transition-speed) var(--transition-timing);
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(157, 122, 234, 0.2);
+        }
+
+        .button-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
         }
 
         .action-button {
@@ -148,7 +280,7 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            transition: all 0.3s ease;
+            transition: all var(--transition-speed) var(--transition-timing);
         }
 
         .action-button:hover {
@@ -156,15 +288,9 @@
             color: var(--background-color);
         }
 
-     
-        .result-uncertain {
-    background-color: var(--background-color);
-    border: 2px solid #6c757d;
-    color: var(--text-color);
-}
-.report-card {
+        .report-card {
             background: var(--card-bg);
-            border-radius: 12px;
+            border-radius: var(--border-radius);
             padding: 2.5rem;
             margin-top: 2rem;
             box-shadow: var(--card-shadow);
@@ -185,6 +311,7 @@
             font-size: 4rem;
             margin-bottom: 1.5rem;
             display: block;
+            transition: color var(--transition-speed) var(--transition-timing);
         }
 
         .result-text {
@@ -192,13 +319,15 @@
             font-weight: 700;
             margin-bottom: 1rem;
             letter-spacing: -0.5px;
+            transition: color var(--transition-speed) var(--transition-timing);
         }
 
         .confidence {
             font-size: 1.25rem;
             font-weight: 500;
             margin: 1.5rem 0;
-            color:black;
+            color: var(--text-color);
+            transition: color var(--transition-speed) var(--transition-timing);
         }
 
         .confidence-bar {
@@ -223,69 +352,58 @@
             padding: 1rem;
             border-radius: 8px;
             background: rgba(0,0,0,0.05);
+            transition: background var(--transition-speed) var(--transition-timing);
         }
 
         /* Enhanced Result States */
         .result-uncertain {
-            border-color: #ffc107;
+            border-color: var(--warning-color);
             background: linear-gradient(45deg, rgba(255,193,7,0.1), transparent);
         }
         .result-uncertain .result-icon {
-            color: #ffc107;
+            color: var(--warning-color);
         }
         .result-uncertain .confidence-fill {
-            background: #ffc107;
+            background: var(--warning-color);
         }
 
         .result-real {
-            border-color: #34a853;
+            border-color: var(--positive-color);
             background: linear-gradient(45deg, rgba(52,168,83,0.1), transparent);
         }
         .result-real .result-icon {
-            color: #34a853;
+            color: var(--positive-color);
         }
         .result-real .confidence-fill {
-            background: #34a853;
+            background: var(--positive-color);
         }
 
         .result-fake {
-            border-color: #ea4335;
+            border-color: var(--negative-color);
             background: linear-gradient(45deg, rgba(234,67,53,0.1), transparent);
         }
         .result-fake .result-icon {
-            color: #ea4335;
+            color: var(--negative-color);
         }
         .result-fake .confidence-fill {
-            background: #ea4335;
+            background: var(--negative-color);
         }
 
         .uncertain-warning {
-            color: #ffc107;
+            color: var(--warning-color);
             font-weight: 600;
             margin-top: 1rem;
             padding: 1rem;
-            border: 2px dashed #ffc107;
+            border: 2px dashed var(--warning-color);
             border-radius: 8px;
+            transition: color var(--transition-speed) var(--transition-timing),
+                        border-color var(--transition-speed) var(--transition-timing);
         }
-.result-uncertain .result-icon {
-    color: #ffc107;
-}
 
-.result-real {
-    background-color: #e6f4ea;
-    border: 2px solid #34a853;
-    color: #0d652d;
-}
-
-.result-fake {
-    background-color: #fce8e6;
-    border: 2px solid #ea4335;
-    color: #b31412;
-    
-}
-
-/* Ensure Font Awesome icons display properly */
-
+        .mobileThemeToggle{
+            
+        }
+        /* Loading Animation */
         .loading-container {
             position: fixed;
             top: 0;
@@ -298,26 +416,75 @@
             align-items: center;
             flex-direction: column;
             z-index: 9999;
+            transition: background var(--transition-speed) var(--transition-timing);
         }
 
-        [data-theme="dark"] .loading-container {
-            background: rgba(11, 11, 10, 0.95);
-        }
-
-        .loading-text {
-            margin-top: 1rem;
-            font-size: 1.2rem;
-            text-align: center;
+        @media (max-width: 1024px) {
+            .main-content {
+                width: 98%;
+                padding: 0.5rem;
+            }
         }
 
         @media (max-width: 768px) {
             .main-content {
                 flex-direction: column;
             }
+
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            header {
+                padding: 1rem;
+            }
+
+            .input-section, .output-section {
+                padding: 1.5rem;
+            }
+
+            .report-card {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .button-row {
+                flex-direction: column;
+            }
+
+            .action-button {
+                width: 100%;
+            }
+
+            .input-section, .output-section {
+                min-height: 300px;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Mobile Menu -->
+    <div class="overlay" id="overlay"></div>
+    <div class="mobile-menu" id="mobileMenu">
+        <button class="mobile-menu-close" id="mobileMenuClose">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="mobile-nav-links">
+            <a href="/analyze"><i class="fas fa-file-alt"></i>Fake News</a>
+            <a href="/summarization"><i class="fas fa-newspaper"></i>Summarizer</a>
+            <a href="/plagiarism"><i class="fas fa-check-circle"></i>Plagiarism</a>
+            <a href="/sentiment"><i class="fas fa-chart-bar"></i>Sentiment</a>
+            <button id="mobileThemeToggle" class="action-button" style="margin-top: 1rem;">
+                <i class="fas fa-moon"></i> Toggle Theme
+            </button>
+        </div>
+    </div>
+
     <!-- Loading Animation -->
     <div class="loading-container" id="loadingAnimation">
         <dotlottie-player
@@ -343,28 +510,40 @@
             </div>
 
             <div class="header-controls">
-                <button id="theme-toggle" class="action-button">
-                    <i class="fas fa-moon"></i> Theme
+                <button id="theme-toggle" class="action-button" aria-label="Toggle theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                    <i class="fas fa-bars"></i>
                 </button>
             </div>
         </nav>
     </header>
+
     <main class="main-content">
         <div class="input-section">
             <h1>Fake News Detector</h1>
             <form id="news-form" method="POST">
+                <div class="word-count-container">
+                    <span id="wordCount" class="word-count">0</span>/300 words
+                </div>
                 <textarea 
                     id="text-input" 
                     placeholder="Paste news content to verify..."
                     required
+                    aria-label="News content to analyze"
                 ></textarea>
-                <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                <div class="button-row">
                     <button type="button" class="action-button" id="paste-btn">
                         <i class="fas fa-paste"></i> Paste
                     </button>
                     <button type="button" class="action-button" id="clear-btn">
                         <i class="fas fa-eraser"></i> Clear
                     </button>
+                    <button type="button" class="action-button" id="file-btn">
+                        <i class="fas fa-file-import"></i> Import
+                    </button>
+                    <input type="file" id="file-input" accept=".txt,.md,.doc,.docx" style="display: none;">
                 </div>
                 <button type="submit" class="action-button" style="width: 100%">
                     <i class="fas fa-search"></i> Analyze
@@ -389,135 +568,184 @@
 
     <script>
         $(document).ready(function() {
+            // DOM Elements
             const textInput = $('#text-input');
             const wordCount = $('#wordCount');
             const resultCard = $('#result');
             const loadingAnimation = $('#loadingAnimation');
+            const fileInput = $('#file-input');
+            const fileBtn = $('#file-btn');
+            const mobileMenuToggle = $('#mobileMenuToggle');
+            const mobileMenu = $('#mobileMenu');
+            const mobileMenuClose = $('#mobileMenuClose');
+            const overlay = $('#overlay');
+            const themeToggle = $('#theme-toggle');
+            const mobileThemeToggle = $('#mobileThemeToggle');
+
+            // Theme initialization
+            const initTheme = function() {
+                const currentTheme = localStorage.getItem('theme') || 'light';
+                $('html').attr('data-theme', currentTheme);
+                themeToggle.html(
+                    `<i class="fas fa-${currentTheme === 'dark' ? 'sun' : 'moon'}"></i>`
+                );
+            };
+            
+            initTheme();
+
+            // Mobile Menu Toggle
+            const toggleMobileMenu = function() {
+                mobileMenu.toggleClass('active');
+                overlay.toggleClass('active');
+                $('body').css('overflow', mobileMenu.hasClass('active') ? 'hidden' : '');
+            };
+
+            mobileMenuToggle.on('click', toggleMobileMenu);
+            mobileMenuClose.on('click', toggleMobileMenu);
+            overlay.on('click', toggleMobileMenu);
 
             // Word count functionality
             function updateWordCount() {
                 const text = textInput.val().trim();
-                const words = text.split(/\s+/);
+                const words = text.split(/\s+/).filter(word => word.length > 0);
                 const count = text ? words.length : 0;
-                wordCount.text(Math.min(count, 300));
+                wordCount.text(count);
+                
                 if(count > 300) {
-                    textInput.val(words.slice(0, 300).join(' '));
+                    const limitedText = words.slice(0, 300).join(' ');
+                    textInput.val(limitedText);
+                    updateWordCount();
                 }
             }
 
-            // Delete button
+            // Clear button
             $('#clear-btn').on('click', function() {
                 textInput.val('');
                 updateWordCount();
-                resultCard.removeClass('show result-real result-fake').hide();
+                resultCard.removeClass('show result-real result-fake result-uncertain').hide();
             });
 
             // Paste button
-            $('#paste-btn').on('click', function() {
-                navigator.clipboard.readText().then(clipText => {
-                    textInput.val(clipText);
+            $('#paste-btn').on('click', async function() {
+                try {
+                    const clipboardText = await navigator.clipboard.readText();
+                    textInput.val(clipboardText);
                     updateWordCount();
-                }).catch(err => {
-                    alert('Unable to paste. Please manually paste your text.');
-                });
+                } catch (err) {
+                    alert('Clipboard access denied. Please paste manually.');
+                }
+            });
+
+            // File import functionality
+            fileBtn.on('click', () => fileInput.click());
+            
+            fileInput.on('change', function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    textInput.val(e.target.result);
+                    updateWordCount();
+                };
+                reader.onerror = () => alert('Error reading file');
+                reader.readAsText(file);
             });
 
             // Input handling
             textInput.on('input', updateWordCount);
-            updateWordCount();
 
             // Form submission
             $('#news-form').on('submit', function(e) {
-    e.preventDefault();
-    const text = textInput.val().trim();
+                e.preventDefault();
+                const text = textInput.val().trim();
+                
+                if (!text) {
+                    alert('Please enter text to analyze');
+                    return;
+                }
+                
+                loadingAnimation.css('display', 'flex');
+                resultCard.removeClass('show').hide();
 
-    if (!text) {
-        alert('Please enter text to analyze');
-        return;
-    }
+                // AJAX call
+                $.ajax({
+                    url: "/analyze",
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify({ text: text }),
+                    success: function(response) {
+                        processResult(response);
+                    },
+                    error: function(xhr) {
+                        alert("Error analyzing news: " + (xhr.responseJSON?.error || "Unknown error"));
+                        loadingAnimation.hide();
+                    }
+                });
+            });
 
-    loadingAnimation.css('display', 'flex');
-    resultCard.removeClass('show result-real result-fake result-uncertain').hide();
+            // Process result
+            function processResult(response) {
+            resultCard.removeClass('result-real result-fake result-uncertain');
+            const icon = resultCard.find('.result-icon');
+            const resultText = resultCard.find('.result-text');
+            const confidence = resultCard.find('.confidence');
+            const details = resultCard.find('.result-details');
+            const confidenceBar = resultCard.find('.confidence-bar');
+            const confidenceFill = resultCard.find('.confidence-fill');
+            const warning = resultCard.find('.uncertain-warning');
 
-    $.ajax({
-        url: "/analyze",
-        type: "POST",
-        contentType: "application/json",
-        data: JSON.stringify({ text: text }),
-        success: function(response) {
-    resultCard.removeClass('result-real result-fake result-uncertain');
-    const icon = resultCard.find('.result-icon');
-    const resultText = resultCard.find('.result-text');
-    const confidence = resultCard.find('.confidence');
-    const details = resultCard.find('.result-details');
-    const confidenceBar = resultCard.find('.confidence-bar');
-    const confidenceFill = resultCard.find('.confidence-fill');
-    const warning = resultCard.find('.uncertain-warning');
+            const confidenceValue = parseFloat(response.confidence);
+            const isCertain = confidenceValue >= 80;
 
-    const confidenceValue = parseFloat(response.confidence);
-    const isCertain = confidenceValue >= 80;
+            confidenceBar.hide();
+            warning.hide();
+            confidenceFill.css('width', '0');
 
-    // Reset UI elements
-    confidenceBar.hide();
-    warning.hide();
-    confidenceFill.css('width', '0');
+            if (isCertain) {
+                confidenceBar.show();
+                confidenceFill.css('width', confidenceValue + '%');
+                
+                if (response.prediction === 'Real') {
+                    resultCard.addClass('result-real');
+                    icon.removeClass().addClass('result-icon fas fa-check-circle');
+                    resultText.text('✅ Verified Real News');
+                } else {
+                    resultCard.addClass('result-fake');
+                    icon.removeClass().addClass('result-icon fas fa-skull-crossbones');
+                    resultText.text('❌ Detected Fake News');
+                }
+            } else {
+                resultCard.addClass('result-uncertain');
+                icon.removeClass().addClass('result-icon fas fa-question-circle');
+                
+                if (response.prediction === 'Real') {
+                    resultText.text('⚠️ Possibly Real');
+                } else {
+                    resultText.text('⚠️ Possibly Fake');
+                }
+                
+                warning.show().html(`
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Low confidence result (${response.confidence}%)<br>
+                    Model suggests "${response.prediction}" but needs verification
+                `);
+            }
 
-    if (isCertain) {
-        confidenceBar.show();
-        confidenceFill.css('width', confidenceValue + '%');
-        
-        if (response.prediction === 'Real') {
-            resultCard.addClass('result-real');
-            icon.removeClass().addClass('result-icon fas fa-check-circle');
-            resultText.text('✅ Verified Real News');
-        } else {
-            resultCard.addClass('result-fake');
-            icon.removeClass().addClass('result-icon fas fa-skull-crossbones');
-            resultText.text('❌ Detected Fake News');
-        }
-    } else {
-        // Use actual prediction from model
-        resultCard.addClass('result-uncertain');
-        icon.removeClass().addClass('result-icon fas fa-question-circle');
-        
-        // Base the message on the actual prediction
-        if (response.prediction === 'Real') {
-            resultText.text('⚠️ Possibly Real');
-        } else {
-            resultText.text('⚠️ Possibly Fake');
-        }
-        
-        warning.show().html(`
-            <i class="fas fa-exclamation-triangle"></i>
-            Low confidence result (${response.confidence}%)<br>
-            Model suggests "${response.prediction}" but needs verification
-        `);
-    }
-
-    confidence.text(`Confidence Level: ${response.confidence}%`);
-    details.text(response.details || "No additional details provided.");
-
-    loadingAnimation.hide();
-    resultCard.show().addClass('show');
-    resultCard[0].scrollIntoView({ behavior: 'smooth', block: 'start' });
-},
-        error: function(xhr) {
-            alert("Error analyzing news: " + (xhr.responseJSON?.error || "Unknown error"));
+            confidence.text(`Confidence Level: ${response.confidence}%`);
+            details.text(response.details || "No additional details provided.");
             loadingAnimation.hide();
+            resultCard.show().addClass('show');
+            resultCard[0].scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
-    });
-});
 
             // Theme toggle
-            $('#theme-toggle').on('click', function() {
+            themeToggle.add(mobileThemeToggle).on('click', function() {
                 const currentTheme = $('html').attr('data-theme') || 'light';
                 const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
                 localStorage.setItem('theme', newTheme);
-
                 $('html').attr('data-theme', newTheme);
-                $(this).html(
-                    `<i class="fas fa-${newTheme === 'dark' ? 'sun' : 'moon'}"></i> Theme`
-                );
+                $('.fa-moon, .fa-sun').toggleClass('fa-moon fa-sun');
             });
         });
     </script>
