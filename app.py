@@ -299,5 +299,59 @@ def view_history():
         logger.exception("Error loading /history")
         return jsonify({"error": "Failed to load history"}), 500
 
+@app.route("/quickcheck", methods=["POST"])
+def quickcheck_api():
+    try:
+        input_data = request.get_json()
+        input_url = input_data.get("url", "")
+        if not input_url:
+            return jsonify({"error": "URL is required"}), 400
+
+        text = extractor.extract_text(input_url)
+        if not text:
+            return jsonify({"error": "Could not extract text"}), 400
+
+        response = {}
+
+        # Fake News Check
+        try:
+            processed_text = news_detection.preprocess_custom_input(text)
+            prediction, confidence = news_detection.fake_news_classifier(processed_text)
+            response["fake_news"] = {
+                "prediction": prediction,
+                "confidence": round(confidence * 100, 2)
+            }
+        except:
+            response["fake_news"] = {"error": "Failed"}
+
+        # Sentiment
+        try:
+            sentiment, sent_conf = obj.analyze_sentiment(text[:1000])
+            response["sentiment"] = {
+                "prediction": sentiment,
+                "confidence": round(sent_conf * 100, 2)
+            }
+        except:
+            response["sentiment"] = {"error": "Failed"}
+
+        # AI Plagiarism Check
+        try:
+            output, human, ai = news_detection.ai_plagiarism(text)
+            response["ai_generated"] = {
+                "output": output,
+                "human_score": human,
+                "ai_score": ai
+            }
+        except:
+            response["ai_generated"] = {"error": "Failed"}
+
+        return jsonify(response)
+
+    except Exception as e:
+        logger.exception("QuickCheck API failed")
+        return jsonify({"error": "Server error"}), 500
+
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
