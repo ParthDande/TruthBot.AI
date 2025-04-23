@@ -7,25 +7,22 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="/static/js/theme.js"></script>
     <style>
-
-   
         :root {
             --background-color: #f8fafc; /* Pale Lavender */
---primary-color: #5D3FD3;    /* Rich Indigo */
---secondary-color: #9F7AEA;  /* Soft Amethyst */
---accent-color: #ffffff;     /* Gentle Lavender Gray */
---text-color: #292627;       /* Deep Onyx */
-
+            --primary-color: #5D3FD3;    /* Rich Indigo */
+            --secondary-color: #9F7AEA;  /* Soft Amethyst */
+            --accent-color: #ffffff;     /* Gentle Lavender Gray */
+            --text-color: #292627;       /* Deep Onyx */
         }
 
         [data-theme="dark"] {
             --primary-color: #E2E2E2;  /* Lighter neutral tone for a soft look */
-    --secondary-color: #9F7AEA;  /* Keep your secondary color */
-    --background-color: #000000;  /* Darker background for better contrast */
-    --text-color: #ffffff;  /* Lighter text for readability */
-    --accent-color: #000000;  /* Slightly lighter accent to avoid harsh contrast */
-            
+            --secondary-color: #9F7AEA;  /* Keep your secondary color */
+            --background-color: #000000;  /* Darker background for better contrast */
+            --text-color: #ffffff;  /* Lighter text for readability */
+            --accent-color: #000000;  /* Slightly lighter accent to avoid harsh contrast */
         }
+        
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
@@ -70,13 +67,13 @@
         .back-button {
             display: flex;
             align-items: center;
-            left:10;
-            position:absolute;
-            background-color:  var(--background-color);
+            left: 10px;
+            position: absolute;
+            background-color: var(--background-color);
             color: var(--primary-color);
             text-decoration: none;
             padding: 12px 20px;
-            margin-top:10px;
+            margin-top: 10px;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
             transition: all 0.3s ease;
@@ -98,7 +95,8 @@
             width: 100%;
             max-width: 1200px;
             height: calc(100vh - 150px);
-            margin-top:10px;
+            min-height: 600px;
+            margin-top:-30px;
         }
 
         .box {
@@ -110,7 +108,6 @@
             box-sizing: border-box;
             animation: fadeIn 0.5s ease-out forwards;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
-            ;
         }
 
         .box:hover {
@@ -118,44 +115,34 @@
             box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
         }
 
-        .left-column {
+        .left-column, .right-column {
             display: flex;
             flex-direction: column;
-            gap: 24px;
-            height: 100%;
-        }
-
-        .right-column {
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
+            gap: 12px;
             height: 100%;
         }
 
         .summary-box {
-            flex: 0.7;
+            flex: 2;
             overflow-y: auto;
             background-color: var(--accent-color);
-            max-height: 650px;
         }
 
         .sentiment-box {
-            flex: 0.3;
+            flex: 1;
             background-color: var(--accent-color);
-            max-height: 300px;
+            display: flex;
+            flex-direction: column;
         }
 
         .plagiarism-box {
-            flex: 0.5;
+            flex: 1.2;
             background-color: var(--accent-color);
-            max-height: 300px;
-
         }
 
         .fake-news-box {
-            flex: 0.5;
-            max-height: 270px;
-        
+            flex: 1;
+            background-color: var(--accent-color);
         }
 
         h1 {
@@ -277,14 +264,18 @@
         .summary-list {
             padding-left: 20px;
             margin: 0;
+            max-height: 100%;
+            overflow-y: auto;
         }
 
         .summary-point {
             margin-bottom: 12px;
         }
+
         .safety-assessment-box {
             flex: 1;
-            max-height: 300px;
+            display: flex;
+            flex-direction: column;
         }
 
         .parameter {
@@ -332,6 +323,55 @@
             background-color: var(--background-color);
             margin: 0;
         }
+
+        /* Responsive adjustments */
+        @media screen and (max-width: 1366px) {
+            .report-container {
+                height: calc(100vh - 120px);
+                min-height: 500px;
+            }
+            
+            .box {
+                padding: 16px;
+            }
+            
+            .summary-list {
+                font-size: 14px;
+            }
+            
+            .circular-progress {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .risk-label {
+                font-size: 1.2rem;
+            }
+        }
+
+        @media screen and (max-height: 768px) {
+            .report-container {
+                height: calc(100vh - 100px);
+            }
+            
+            .box {
+                padding: 12px;
+            }
+            
+            h2 {
+                font-size: 1.1rem;
+                margin-bottom: 12px;
+            }
+            
+            p {
+                margin: 6px 0;
+                font-size: 0.9rem;
+            }
+            
+            .summary-point {
+                margin-bottom: 8px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -346,7 +386,7 @@
         <div class="left-column">
             <div class="box summary-box">
                 <h2><i class="fas fa-file-alt icon-primary"></i> Summary</h2>
-                <ul class="summary-list" style ="font-size:2vh;">
+                <ul class="summary-list">
                     {% for point in report.summarization.split('.') %}
                         {% if point|trim %}
                             <li class="summary-point">
@@ -372,66 +412,66 @@
                 </div>
 
                 {% set fake_pred = report.fake_news.prediction %}
-{% set sentiment = report.sentiment.prediction|lower %}
-{% set is_ai = report.plagiarism.output == 'AI-generated' %}
+                {% set sentiment = report.sentiment.prediction|lower %}
+                {% set is_ai = report.plagiarism.output == 'AI-generated' %}
 
-{# Determine risk level #}
-{% if fake_pred == 'Real' %}
-    {% if sentiment == 'positive' %}
-        {% if not is_ai %}
-            {% set risk = 'Low' %}
-            {% set width = 25 %}
-            {% set color = '#10b981' %}
-            {% set action = 'Likely safe to share' %}
-        {% else %}
-            {% set risk = 'Moderate' %}
-            {% set width = 50 %}
-            {% set color = '#f59e0b' %}
-            {% set action = 'Check source credibility' %}
-        {% endif %}
-    {% elif sentiment == 'neutral' %}
-        {% if not is_ai %}
-            {% set risk = 'Low' %}
-            {% set width = 25 %}
-            {% set color = '#10b981' %}
-            {% set action = 'Verify key claims' %}
-        {% else %}
-            {% set risk = 'Moderate' %}
-            {% set width = 50 %}
-            {% set color = '#f59e0b' %}
-            {% set action = 'Cross-check with trusted sources' %}
-        {% endif %}
-    {% else %} {# Negative #}
-        {% if not is_ai %}
-            {% set risk = 'Moderate to Low' %}
-            {% set width = 35 %}
-            {% set color = '#f59e0b' %}
-            {% set action = 'Verify source before sharing' %}
-        {% else %}
-            {% set risk = 'Moderate to High' %}
-            {% set width = 65 %}
-            {% set color = '#ef4444' %}
-            {% set action = 'Consider fact-checking' %}
-        {% endif %}
-    {% endif %}
-{% else %} {# Fake #}
-    {% if sentiment == 'positive' %}
-        {% set risk = 'High' if is_ai else 'Moderate' %}
-        {% set width = 75 if is_ai else 50 %}
-        {% set color = '#ef4444' if is_ai else '#f59e0b' %}
-        {% set action = 'Avoid sharing' if is_ai else 'Needs verification' %}
-    {% elif sentiment == 'neutral' %}
-        {% set risk = 'High' if is_ai else 'Moderate to High' %}
-        {% set width = 75 if is_ai else 60 %}
-        {% set color = '#ef4444' %}
-        {% set action = 'Verify carefully' if is_ai else 'Verify before sharing' %}
-    {% else %} {# Negative #}
-        {% set risk = 'Very High' if is_ai else 'High' %}
-        {% set width = 95 if is_ai else 85 %}
-        {% set color = '#ef4444' %}
-        {% set action = 'Do not share' if is_ai else 'Avoid sharing' %}
-    {% endif %}
-{% endif %}
+                {# Determine risk level #}
+                {% if fake_pred == 'Real' %}
+                    {% if sentiment == 'positive' %}
+                        {% if not is_ai %}
+                            {% set risk = 'Low' %}
+                            {% set width = 25 %}
+                            {% set color = '#10b981' %}
+                            {% set action = 'Likely safe to share' %}
+                        {% else %}
+                            {% set risk = 'Moderate' %}
+                            {% set width = 50 %}
+                            {% set color = '#f59e0b' %}
+                            {% set action = 'Check source credibility' %}
+                        {% endif %}
+                    {% elif sentiment == 'neutral' %}
+                        {% if not is_ai %}
+                            {% set risk = 'Low' %}
+                            {% set width = 25 %}
+                            {% set color = '#10b981' %}
+                            {% set action = 'Verify key claims' %}
+                        {% else %}
+                            {% set risk = 'Moderate' %}
+                            {% set width = 50 %}
+                            {% set color = '#f59e0b' %}
+                            {% set action = 'Cross-check with trusted sources' %}
+                        {% endif %}
+                    {% else %} {# Negative #}
+                        {% if not is_ai %}
+                            {% set risk = 'Moderate to Low' %}
+                            {% set width = 35 %}
+                            {% set color = '#f59e0b' %}
+                            {% set action = 'Verify source before sharing' %}
+                        {% else %}
+                            {% set risk = 'Moderate to High' %}
+                            {% set width = 65 %}
+                            {% set color = '#ef4444' %}
+                            {% set action = 'Consider fact-checking' %}
+                        {% endif %}
+                    {% endif %}
+                {% else %} {# Fake #}
+                    {% if sentiment == 'positive' %}
+                        {% set risk = 'High' if is_ai else 'Moderate' %}
+                        {% set width = 75 if is_ai else 50 %}
+                        {% set color = '#ef4444' if is_ai else '#f59e0b' %}
+                        {% set action = 'Avoid sharing' if is_ai else 'Needs verification' %}
+                    {% elif sentiment == 'neutral' %}
+                        {% set risk = 'High' if is_ai else 'Moderate to High' %}
+                        {% set width = 75 if is_ai else 60 %}
+                        {% set color = '#ef4444' %}
+                        {% set action = 'Verify carefully' if is_ai else 'Verify before sharing' %}
+                    {% else %} {# Negative #}
+                        {% set risk = 'Very High' if is_ai else 'High' %}
+                        {% set width = 95 if is_ai else 85 %}
+                        {% set color = '#ef4444' %}
+                        {% set action = 'Do not share' if is_ai else 'Avoid sharing' %}
+                    {% endif %}
+                {% endif %}
 
                 <div class="risk-bar">
                     <div class="risk-bar-fill" style="width: {{ width }}%; background-color: {{ color }};"></div>
@@ -441,7 +481,6 @@
                 </div>
                 <p class="suggested-action">{{ action }}</p>
             </div>
-           
         </div>
 
         <div class="right-column">
@@ -491,11 +530,11 @@
                 </div>
                 <p class="confidence">Confidence: {{ report.fake_news.confidence }}%</p>
                 {% if report.fake_news.prediction == 'Fake' %}
-                    <p style="color: #ef4444; margin-top: 12px; font-size: 1.1rem;">
+                    <p style="color: #ef4444; margin-top: 12px; font-size: 0.9rem;">
                         This article needs additional verification. Please cross-reference with reliable sources.
                     </p>
                 {% else %}
-                    <p style="color: #10b981; margin-top: 12px; font-size: 1.1rem;">
+                    <p style="color: #10b981; margin-top: 12px; font-size: 0.9rem;">
                         This article appears to be from reliable sources.
                     </p>
                 {% endif %}
@@ -512,7 +551,7 @@
                     {% endif %}
                     <span style="margin-left: 10px; vertical-align: middle;">{{report.sentiment.prediction}}</span>
                 </div>
-                <div class="confidence-bar" style ='height: 20%;'>
+                <div class="confidence-bar">
                     {% if report.sentiment.prediction == 'positive' %}
                     <div class="confidence-bar-fill" style="width: {{report.sentiment.confidence}}%;background-color:green;"></div>
                     {% elif report.sentiment.prediction == 'neutral' %}
@@ -523,7 +562,6 @@
                 </div>
                 <p class="confidence">Confidence: {{report.sentiment.confidence}}%</p>
             </div>
-          
         </div>
     </div>
 </body>

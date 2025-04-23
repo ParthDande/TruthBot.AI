@@ -9,6 +9,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Cormorant+Garamond:wght@600&display=swap" rel="stylesheet">
     <script src="/static/js/theme.js"></script>
+    <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
     <style>
         :root {
             --background-color: #f8fafc;
@@ -21,6 +22,10 @@
             --positive-color: #4CAF50;
             --negative-color: #ff4d4d;
             --neutral-color: #f6ef1d;
+            --error-color: #ff4d4d;
+            --transition: all 0.3s ease;
+            --mobile-breakpoint: 768px;
+            --tablet-breakpoint: 1024px;
         }
 
         [data-theme="dark"] {
@@ -37,7 +42,6 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'DM Sans', sans-serif;
-
         }
 
         body {
@@ -46,64 +50,36 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            transition: var(--transition);
         }
 
         header {
-    padding: 1rem 2rem;
-    background: var(--background-color);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    position: relative;
-}
+            padding: 1rem 2rem;
+            background: var(--background-color);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+            transition: var(--transition);
+        }
 
-nav {
-    display: flex;
+        nav {
+            display: flex;
             justify-content: space-between;
             align-items: center;
-}
+        }
 
-.nav-links {
-    display: flex;
-    gap: 2rem;
-    align-items: center;
-    margin-left: auto; /* Pushes links to the right */
-    margin-right: 2rem;
-}
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            margin-left: auto;
+            margin-right: 2rem;
+        }
 
-.header-controls {
-    display: flex;
-    align-items: center;
-}
+        .header-controls {
+            display: flex;
+            align-items: center;
+        }
 
-.logo {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.8rem;
-    font-weight: 600;
-    color: var(--text-color);
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.logo img {
-    height: 40px;
-    width: auto;
-}
-
-.nav-links a {
-    color: var(--text-color);
-    text-decoration: none;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    transition: all 0.3s ease;
-}
-
-.nav-links a:hover {
-    color: var(--secondary-color);
-    transform: translateY(-2px);
-}
         .logo {
             font-family: 'Cormorant Garamond', serif;
             font-size: 1.8rem;
@@ -113,11 +89,30 @@ nav {
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            transition: var(--transition);
         }
 
         .logo img {
             height: 40px;
             width: auto;
+        }
+
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all var(--transition-speed) var(--transition-timing);
+            padding: 0.5rem;
+            border-radius: 8px;
+        }
+
+        .nav-links a:hover {
+            color: var(--secondary-color);
+            transform: translateY(-2px);
+            background-color: rgba(157, 122, 234, 0.1);
         }
 
         .main-content {
@@ -128,7 +123,7 @@ nav {
             max-width: 1200px;
             margin: 2rem auto;
             padding: 1rem;
-            max-height: 600px;
+            transition: var(--transition);
         }
 
         .input-section, .report-section {
@@ -138,14 +133,15 @@ nav {
             padding: 2rem;
             box-shadow: var(--card-shadow);
             min-height: 400px;
+            transition: var(--transition);
         }
 
         h1 {
             font-family: 'DM Sans', sans-serif;
-
             font-size: 2.5rem;
             margin-bottom: 2rem;
             color: var(--text-color);
+            transition: var(--transition);
         }
 
         .text-input-container {
@@ -164,34 +160,53 @@ nav {
             color: var(--text-color);
             font-size: 1rem;
             resize: vertical;
+            transition: var(--transition);
+        }
+
+        #user_input:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(93, 63, 211, 0.3);
         }
 
         .word-count {
             color: var(--text-color);
             margin-bottom: 1rem;
             font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .word-count.error {
+            color: var(--error-color);
+            font-weight: 500;
+        }
+
+        .error-message {
+            color: var(--error-color);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            min-height: 20px;
         }
 
         .action-button {
-    padding: 0.8rem 1.5rem;
-    border: 2px solid var(--primary-color);
-    border-radius: 8px;
-    background: var(--card-bg);
-    color: var(--text-color);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    transition: all 0.3s ease;
-}
+            padding: 0.8rem 1.5rem;
+            border: 2px solid var(--primary-color);
+            border-radius: 8px;
+            background: var(--card-bg);
+            color: var(--text-color);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all var(--transition-speed) var(--transition-timing);
+        }
 
-.action-button:hover {
-    background: var(--primary-color);
-    color: var(--background-color);
-}
-        .loading {
-            text-align: center;
-            padding: 2rem;
+        .action-button:hover {
+            background: var(--primary-color);
+            color: var(--background-color);
+        }
+
+        .action-button:active {
+            transform: translateY(1px);
         }
 
         .report-card {
@@ -199,6 +214,7 @@ nav {
             border-radius: 12px;
             padding: 2rem;
             box-shadow: var(--card-shadow);
+            transition: var(--transition);
         }
 
         .sentiment-meter {
@@ -208,6 +224,7 @@ nav {
             border-radius: 10px;
             overflow: hidden;
             margin: 1.5rem 0;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
         }
 
         .sentiment-value {
@@ -216,18 +233,188 @@ nav {
             transition: width 1s ease;
             border-radius: 10px;
         }
-        
+
+        /* Mobile menu */
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+            padding: 0.5rem;
+        }
+
+        .mobile-menu-toggle:hover {
+            color: var(--secondary-color);
+        }
+
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            right: -280px;
+            width: 280px;
+            height: 100vh;
+            background: var(--card-bg);
+            box-shadow: var(--card-shadow);
+            z-index: 1000;
+            padding: 2rem;
+            transition: right 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .mobile-menu.active {
+            right: 0;
+        }
+
+        .mobile-menu-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .mobile-menu-close:hover {
+            color: var(--secondary-color);
+            transform: rotate(90deg);
+        }
+
+        .mobile-nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 3rem;
+        }
+
+        .mobile-nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+        }
+
+        .mobile-nav-links a:hover {
+            background-color: rgba(157, 122, 234, 0.1);
+            transform: translateX(5px);
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Loading spinner */
+        #lottie-loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        /* Media Queries */
+        @media (max-width: 1024px) {
+            .main-content {
+                width: 98%;
+                padding: 0.5rem;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .input-section, .report-section {
+                padding: 1.5rem;
+            }
+        }
+
         @media (max-width: 768px) {
             .main-content {
                 flex-direction: column;
+                max-height: none;
             }
             
             .nav-links {
-        display: none;
-    }
+                display: none;
+            }
+            
+            .mobile-menu-toggle {
+                display: block;
+            }
             
             h1 {
                 font-size: 2rem;
+            }
+            
+            .header-controls {
+                display: flex;
+                gap: 1rem;
+            }
+            
+            .action-button {
+                padding: 0.6rem 1.2rem;
+            }
+            
+            .input-section, .report-section {
+                padding: 1.5rem;
+                min-height: 300px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            header {
+                padding: 1rem;
+            }
+            
+            .logo {
+                font-size: 1.5rem;
+            }
+            
+            .main-content {
+                margin: 1rem auto;
+                width: 100%;
+                padding: 0.5rem;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            #user_input {
+                min-height: 150px;
+                padding: 1rem;
+            }
+            
+            .input-section, .report-section {
+                padding: 1rem;
             }
         }
     </style>
@@ -245,12 +432,31 @@ nav {
                 <a href="/sentiment"><i class="fas fa-chart-bar"></i>Sentiment</a>
             </div>
             <div class="header-controls">
-                <button id="theme-toggle" class="action-button">
-                    <i class="fas fa-moon"></i> Theme
+                <button id="theme-toggle" class="action-button" aria-label="Toggle theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="mobile-menu-toggle" id="mobile-menu-toggle">
+                    <i class="fas fa-bars"></i>
                 </button>
             </div>
         </nav>
     </header>
+
+    <!-- Mobile Menu -->
+    <div class="overlay" id="overlay"></div>
+    <div class="mobile-menu" id="mobile-menu">
+        <button class="mobile-menu-close" id="mobile-menu-close">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="mobile-nav-links">
+            <a href="/analyze"><i class="fas fa-file-alt"></i>Fake News</a>
+            <a href="/summarization"><i class="fas fa-newspaper"></i>Summarizer</a>
+            <a href="/plagiarism"><i class="fas fa-check-circle"></i>Plagiarism</a>
+            <a href="/sentiment"><i class="fas fa-chart-bar"></i>Sentiment</a>
+            <button id="mobileThemeToggle" class="action-button" style="margin-top: 1rem;">
+                <i class="fas fa-moon"></i> Toggle Theme
+        </div>
+    </div>
 
     <main class="main-content">
         <div class="input-section">
@@ -258,138 +464,221 @@ nav {
             <div class="text-input-container">
                 <textarea id="user_input" name="user_input" placeholder="Enter your text here for sentiment analysis (max 300 words)" required></textarea>
             </div>
-            <div class="word-count">Words: <span id="wordCount">0</span>/300</div>
+            <div class="word-count" id="word-count-container">Words: <span id="wordCount">0</span>/300</div>
             <p id="wordLimitMessage" class="error-message"></p>
             <button class="action-button" id="analyze-btn">
                 <i class="fas fa-chart-bar"></i> Analyze Sentiment
             </button>
-            <div class="loading">
-                <p>Analyzing sentiment...</p>
-                <div class="loading-bar"></div>
-            </div>
         </div>
 
         <div class="report-section">
-            <div class="report-card">
+            <div id="lottie-loading" style="display: none;">
+                <dotlottie-player src="https://lottie.host/de3e1567-9bd3-4143-a64e-eaca2639a456/mAZzJmBLW9.lottie" 
+                                 background="transparent" speed="1" 
+                                 style="width: 250px; height: 250px;" 
+                                 loop autoplay></dotlottie-player>
+            </div>
+            <div class="report-card" style="display: none;">
                 <h2>Sentiment Analysis Report</h2>
                 <p><strong>Sentiment:</strong> <span id="sentiment-result"></span></p>
                 <div class="sentiment-meter">
                     <div class="sentiment-value"></div>
                 </div>
                 <p><strong>Confidence:</strong> <span id="confidence"></span></p>
+                <div id="result-details" style="margin-top: 1.5rem;">
+                    <!-- Additional details will be added here -->
+                </div>
             </div>
         </div>
     </main>
 
     <script>
-         $(document).ready(function() {
+        $(document).ready(function() {
+            // DOM Elements
             const userInput = $('#user_input');
             const wordCount = $('#wordCount');
             const wordLimitMessage = $('#wordLimitMessage');
+            const wordCountContainer = $('#word-count-container');
             const analyzeBtn = $('#analyze-btn');
-            const loading = $('.loading');
-            const loadingBar = $('.loading-bar');
+            const loading = $('#lottie-loading');
             const reportCard = $('.report-card');
+            const mobileMenuToggle = $('#mobile-menu-toggle');
+            const mobileMenu = $('#mobile-menu');
+            const mobileMenuClose = $('#mobile-menu-close');
+            const overlay = $('#overlay');
+            const themeToggle = $('#theme-toggle');
+            const mobileThemeToggle = $('#mobile-theme-toggle');
+            const themeIcon = themeToggle.find('i');
+            const mobileThemeIcon = mobileThemeToggle.find('i');
 
+            // Word Count Logic
             function updateWordCount() {
                 const text = userInput.val().trim();
-                const words = text.split(/\s+/);
-                const count = words.length;
+                const words = text.split(/\s+/).filter(word => word.length > 0);
+                const count = words.length === 1 && words[0] === "" ? 0 : words.length;
 
                 if (count > 300) {
                     userInput.val(words.slice(0, 300).join(' '));
                     wordLimitMessage.text("Input limited to 300 words. Excess words removed.");
+                    wordCountContainer.addClass('error');
                 } else {
                     wordLimitMessage.text("");
+                    wordCountContainer.removeClass('error');
                 }
                 wordCount.text(Math.min(count, 300));
             }
 
-            userInput.on('input', updateWordCount);
-            updateWordCount();
+            // Sentiment Analysis Logic
+            function analyzeSentiment() {
+            const text = userInput.val().trim();
+            if (!text) {
+                wordLimitMessage.text("Please enter some text to analyze.");
+                return;
+            }
 
-            analyzeBtn.on('click', function(e) {
-                e.preventDefault();
-                const text = userInput.val().trim();
-                const words = text.split(/\s+/).slice(0, 300);
-                const limitedText = words.join(' ');
+            const words = text.split(/\s+/).filter(word => word.length > 0);
+            const limitedText = words.slice(0, 300).join(' ');
 
-                reportCard.removeClass('show').hide();
-                loading.show();
-                loadingBar.css('width', '0%');
+            reportCard.hide();
+            loading.show();
 
-                let progress = 0;
-                const interval = setInterval(() => {
-                    progress += 5;
-                    loadingBar.css('width', progress + '%');
-                    if (progress >= 100) clearInterval(interval);
-                }, 50);
-
-                $.ajax({
-                    url: '/sentiment',
-                    method: 'POST',
-                    data: { text: limitedText },
-                    success: function(response) {
-                        setTimeout(() => {
-                            loading.hide();
-                            const sentiment = response.sentiment.toLowerCase();
-                            const sentimentMap = {
-                                positive: { color: 'var(--positive-color)', label: 'Positive' },
-                                negative: { color: 'var(--negative-color)', label: 'Negative' },
-                                neutral: { color: 'var(--neutral-color)', label: 'Neutral' }
-                            };
-
-                            const selected = sentimentMap[sentiment] || sentimentMap.neutral;
-                            $('#sentiment-result').text(selected.label);
-                            $('.sentiment-value').css({
-                                'background-color': selected.color,
-                                'width': '0%'
-                            });
-
-                            $('#confidence').text(response.confidence + '%');
-                            reportCard.show();
-                            setTimeout(() => {
-                                reportCard.addClass('show');
-                                setTimeout(() => {
-                                    $('.sentiment-value').css('width', response.confidence + '%');
-                                }, 100);
-                                $('.report-section')[0].scrollIntoView({ behavior: 'smooth' });
-                            }, 50);
-                        }, 500);
-                    },
-                    error: function(xhr, status, error) {
-                        loading.hide();
-                        reportCard.show();
-                        $('#sentiment-result').text('Error');
-                        $('#confidence').text('0%');
-                        console.error('Error:', error);
-                    }
-                });
+            // Real API call
+            $.ajax({
+                url: '/sentiment',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ text: limitedText }),
+                success: function(response) {
+                    displayResults(response);
+                },
+                error: function(xhr, status, error) {
+                    loading.hide();
+                    reportCard.show();
+                    $('#sentiment-result').text('Error analyzing text');
+                    $('#confidence').text('0%');
+                    $('.sentiment-value').css({
+                        'background-color': 'var(--negative-color)',
+                        'width': '0%'
+                    });
+                    $('#result-details').html('<p class="error-message">There was an error processing your request. Please try again.</p>');
+                    console.error('Error:', error);
+                }
             });
         }
-        
-    );
-    document.addEventListener('DOMContentLoaded', function () {
-    const themeToggle = document.getElementById('theme-toggle');
-    const themeIcon = themeToggle.querySelector('i');
-    
-    // Load saved theme
-    let currentTheme = localStorage.getItem('theme') || 'light';
-    document.documentElement.setAttribute('data-theme', currentTheme);
-    themeIcon.className = currentTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
 
-    themeToggle.addEventListener('click', () => {
-        // Toggle theme
-        let newTheme = currentTheme === 'light' ? 'dark' : 'light';
-        document.documentElement.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
-        themeIcon.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+            // Display Results Logic
+            function displayResults(response) {
+                loading.hide();
+                const sentiment = response.sentiment.toLowerCase();
+                const sentimentMap = {
+                    positive: { color: 'var(--positive-color)', label: 'Positive', icon: 'fa-smile' },
+                    negative: { color: 'var(--negative-color)', label: 'Negative', icon: 'fa-frown' },
+                    neutral: { color: 'var(--neutral-color)', label: 'Neutral', icon: 'fa-meh' }
+                };
 
-        // Update currentTheme for next click
-        currentTheme = newTheme;
-    });
-});
+                const selected = sentimentMap[sentiment] || sentimentMap.neutral;
+                $('#sentiment-result').html(`<i class="far ${selected.icon}"></i> ${selected.label}`);
+                $('.sentiment-value').css({
+                    'background-color': selected.color,
+                    'width': '0%'
+                });
 
+                $('#confidence').text(response.confidence + '%');
+                
+                // Additional details based on sentiment
+                let detailsHTML = '<h3>Analysis Details</h3><ul>';
+                if (sentiment === 'positive') {
+                    detailsHTML += '<li>The text contains predominantly positive language</li>';
+                    detailsHTML += '<li>This content is likely to evoke positive emotions</li>';
+                } else if (sentiment === 'negative') {
+                    detailsHTML += '<li>The text contains predominantly negative language</li>';
+                    detailsHTML += '<li>This content may evoke negative emotions</li>';
+                } else {
+                    detailsHTML += '<li>The text contains balanced or neutral language</li>';
+                    detailsHTML += '<li>This content has a neutral emotional tone</li>';
+                }
+                detailsHTML += '</ul>';
+                $('#result-details').html(detailsHTML);
+                
+                reportCard.show();
+                setTimeout(() => {
+                    $('.sentiment-value').css('width', response.confidence + '%');
+                }, 100);
+                
+                // Scroll to the report section on mobile
+                if (window.innerWidth <= 768) {
+                    $('.report-section')[0].scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+
+            // Mobile Menu Logic
+            function toggleMobileMenu() {
+                mobileMenu.toggleClass('active');
+                overlay.toggleClass('active');
+                
+                // Prevent body scrolling when menu is open
+                if (mobileMenu.hasClass('active')) {
+                    $('body').css('overflow', 'hidden');
+                } else {
+                    $('body').css('overflow', '');
+                }
+            }
+
+            // Theme Toggle Logic
+            function toggleTheme() {
+                let currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+                let newTheme = currentTheme === 'light' ? 'dark' : 'light';
+                
+                document.documentElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                
+                // Update icons
+                themeIcon.removeClass().addClass(newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon');
+                mobileThemeIcon.removeClass().addClass(newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon');
+            }
+
+            // Initialize theme
+            function initTheme() {
+                let savedTheme = localStorage.getItem('theme') || 'light';
+                document.documentElement.setAttribute('data-theme', savedTheme);
+                themeIcon.removeClass().addClass(savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon');
+                mobileThemeIcon.removeClass().addClass(savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon');
+            }
+
+            // Event Listeners
+            userInput.on('input', updateWordCount);
+            analyzeBtn.on('click', analyzeSentiment);
+            mobileMenuToggle.on('click', toggleMobileMenu);
+            mobileMenuClose.on('click', toggleMobileMenu);
+            overlay.on('click', toggleMobileMenu);
+            themeToggle.on('click', toggleTheme);
+            mobileThemeToggle.on('click', toggleTheme);
+
+            // Touch Events for Mobile
+            userInput.on('touchend', function() {
+                this.focus();
+            });
+
+            // Initialization
+            updateWordCount();
+            initTheme();
+
+            // Handle window resize
+            $(window).on('resize', function() {
+                if (window.innerWidth > 768 && mobileMenu.hasClass('active')) {
+                    mobileMenu.removeClass('active');
+                    overlay.removeClass('active');
+                    $('body').css('overflow', '');
+                }
+            });
+
+            // Handle ESC key to close mobile menu
+            $(document).on('keydown', function(e) {
+                if (e.key === 'Escape' && mobileMenu.hasClass('active')) {
+                    toggleMobileMenu();
+                }
+            });
+        });
     </script>
 </body>
 </html>
